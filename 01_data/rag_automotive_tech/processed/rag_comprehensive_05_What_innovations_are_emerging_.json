@@ -1,0 +1,60 @@
+{
+  "question": "What innovations are emerging in automotive software development?",
+  "answer": "🔍 **Answer for:** 'What innovations are emerging in automotive software development?'\n📊 **Found 5 relevant chunks** across 3 document types\n\n## 📋 Summary by Document Type\n📄 **Research Paper** (2 chunks)\n   • Best match: automating_automative_software_development_a_synergy_of_generative_AI_and_formal_methods.txt (score: 0.508)\n   • Sample: Automating Automotive Software Development:\nA Synergy of Generative AI and Formal Methods\nFengjunjie Pan, Yinglei Song, Long Wen, Nenad Petrovic, Krzy...\n\n🚀 **Startups Data** (1 chunks)\n   • Best match: startups_processed.txt (score: 0.421)\n   • Sample: STARTUP #38995:\n  Name: fliiSolutions\n  Location: N/A\n  Tagline: Personalized Rehab Program Development and Remote Patient Management\n  Description: ....\n\n🔍 **Tech Report** (2 chunks)\n   • Best match: wef_emerging_tech_2025.txt (score: 0.379)\n   • Sample: scientific potential with practical implementation. \nThe most profound innovations are rarely obvious \nat first glance. They emerge through persistent...\n\n## 💡 Key Insights\n1. 📄 **From automating_automative_software_development_a_synergy_of_generative_AI_and_formal_methods.txt:**\n   Automating Automotive Software Development:\nA Synergy of Generative AI and Formal Methods\nFengjunjie Pan, Yinglei Song, Long Wen, Nenad Petrovic, Krzysztof Lebioda and Alois Knoll\nAbstract — As the au...\n   *Relevance score: 0.508*\n\n2. 🚀 **From startups_processed.txt:**\n   STARTUP #38995:\n  Name: fliiSolutions\n  Location: N/A\n  Tagline: Personalized Rehab Program Development and Remote Patient Management\n  Description: ...\n-----------------------------------------------...\n   *Relevance score: 0.421*\n\n3. 📄 **From automotive-software-and-electronics-2030-full-report.txt:**\n   of a new market 26\n3. Disruptive trends along the industry’s long-established value chains 29\n3.1 New technologies are breaking up the “power dynamic” of traditional \nrelationships between OEMs and ti...\n   *Relevance score: 0.385*\n\n## 🔎 Recommended Next Steps\n• Explore these source files: startups_processed.txt, automotive-software-and-electronics-2030-full-report.txt, automating_automative_software_development_a_synergy_of_generative_AI_and_formal_methods.txt, wef_emerging_tech_2025.txt\n• Consider querying specific document types for focused results\n• Use the source snippets below for detailed investigation",
+  "sources": [
+    {
+      "source_file": "automating_automative_software_development_a_synergy_of_generative_AI_and_formal_methods.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.5082238644072077,
+      "content_snippet": "Automating Automotive Software Development:\nA Synergy of Generative AI and Formal Methods\nFengjunjie Pan, Yinglei Song, Long Wen, Nenad Petrovic, Krzysztof Lebioda and Alois Knoll\nAbstract — As the au..."
+    },
+    {
+      "source_file": "startups_processed.txt",
+      "doc_type": "startups_data",
+      "relevance_score": 0.4206733201215863,
+      "content_snippet": "STARTUP #38995:\n  Name: fliiSolutions\n  Location: N/A\n  Tagline: Personalized Rehab Program Development and Remote Patient Management\n  Description: ...\n-----------------------------------------------..."
+    },
+    {
+      "source_file": "automotive-software-and-electronics-2030-full-report.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.3848408002233249,
+      "content_snippet": "of a new market 26\n3. Disruptive trends along the industry’s long-established value chains 29\n3.1 New technologies are breaking up the “power dynamic” of traditional \nrelationships between OEMs and ti..."
+    },
+    {
+      "source_file": "wef_emerging_tech_2025.txt",
+      "doc_type": "tech_report",
+      "relevance_score": 0.3793858380808403,
+      "content_snippet": "scientific potential with practical implementation. \nThe most profound innovations are rarely obvious \nat first glance. They emerge through persistent \nobservation, interdisciplinary collaboration and..."
+    },
+    {
+      "source_file": "wef_emerging_tech_2025.txt",
+      "doc_type": "tech_report",
+      "relevance_score": 0.37189682324145446,
+      "content_snippet": "risks. Generative AI watermarking, which embeds \ninvisible markers to verify authenticity and origins, \nmay help offer a way forward.\nApplied collaboratively and wisely, as always, \nemergent innovatio..."
+    }
+  ],
+  "context_used": {
+    "total_chunks_used": 5,
+    "unique_documents": [
+      "startups_processed.txt",
+      "automotive-software-and-electronics-2030-full-report.txt",
+      "automating_automative_software_development_a_synergy_of_generative_AI_and_formal_methods.txt",
+      "wef_emerging_tech_2025.txt"
+    ],
+    "document_types_used": [
+      "tech_report",
+      "research_paper",
+      "startups_data"
+    ],
+    "top_sources": [
+      "automating_automative_software_development_a_synergy_of_generative_AI_and_formal_methods.txt",
+      "startups_processed.txt",
+      "automotive-software-and-electronics-2030-full-report.txt"
+    ]
+  },
+  "retrieval_metrics": {
+    "average_score": 0.4130041292148827,
+    "max_score": 0.5082238644072077,
+    "min_score": 0.37189682324145446
+  }
+}

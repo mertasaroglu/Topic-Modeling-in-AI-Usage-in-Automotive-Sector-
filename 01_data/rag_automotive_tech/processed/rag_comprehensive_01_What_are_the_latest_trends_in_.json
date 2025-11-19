@@ -1,0 +1,58 @@
+{
+  "question": "What are the latest trends in automotive startups and AI technology?",
+  "answer": "🔍 **Answer for:** 'What are the latest trends in automotive startups and AI technology?'\n📊 **Found 5 relevant chunks** across 2 document types\n\n## 📋 Summary by Document Type\n🔍 **Tech Report** (3 chunks)\n   • Best match: mckinsey_tech_trends_2025.txt (score: 0.398)\n   • Sample: multistep workflows. Although \nquantitative measures of interest and \nequity investment levels are as yet \nrelatively low compared with more \nestablis...\n\n📄 **Research Paper** (2 chunks)\n   • Best match: Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt (score: 0.379)\n   • Sample: This paper aims to explore the impact of generative AI\non the automotive industry, focusing on its applications,\nbenefits, and potential challenges. T...\n\n## 💡 Key Insights\n1. 🔍 **From mckinsey_tech_trends_2025.txt:**\n   multistep workflows. Although \nquantitative measures of interest and \nequity investment levels are as yet \nrelatively low compared with more \nestablished trends, agentic AI is among \nthe fastest growi...\n   *Relevance score: 0.398*\n\n2. 🔍 **From mckinsey_tech_trends_2025.txt:**\n   Because these agents use language that \nhumans can read, they can describe what \nthey’re doing and be guided via feedback on \ntheir work plan.\nThe potential of agentic AI has persuaded many \nindustrie...\n   *Relevance score: 0.390*\n\n3. 🔍 **From mckinsey_tech_trends_2025.txt:**\n   equity investment, and talent that underpin \neach of the 13 trends and explore the underlying \ntechnologies, uncertainties, and questions around \nthem. (For more about our research, please see \nthe si...\n   *Relevance score: 0.388*\n\n## 🔎 Recommended Next Steps\n• Explore these source files: Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt, automotive-software-and-electronics-2030-full-report.txt, mckinsey_tech_trends_2025.txt\n• Consider querying specific document types for focused results\n• Use the source snippets below for detailed investigation",
+  "sources": [
+    {
+      "source_file": "mckinsey_tech_trends_2025.txt",
+      "doc_type": "tech_report",
+      "relevance_score": 0.39770254701227803,
+      "content_snippet": "multistep workflows. Although \nquantitative measures of interest and \nequity investment levels are as yet \nrelatively low compared with more \nestablished trends, agentic AI is among \nthe fastest growi..."
+    },
+    {
+      "source_file": "mckinsey_tech_trends_2025.txt",
+      "doc_type": "tech_report",
+      "relevance_score": 0.3896851295029774,
+      "content_snippet": "Because these agents use language that \nhumans can read, they can describe what \nthey’re doing and be guided via feedback on \ntheir work plan.\nThe potential of agentic AI has persuaded many \nindustrie..."
+    },
+    {
+      "source_file": "mckinsey_tech_trends_2025.txt",
+      "doc_type": "tech_report",
+      "relevance_score": 0.3876582875338823,
+      "content_snippet": "equity investment, and talent that underpin \neach of the 13 trends and explore the underlying \ntechnologies, uncertainties, and questions around \nthem. (For more about our research, please see \nthe si..."
+    },
+    {
+      "source_file": "Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.37895121635834006,
+      "content_snippet": "This paper aims to explore the impact of generative AI\non the automotive industry, focusing on its applications,\nbenefits, and potential challenges. The objectives are to\nprovide a comprehensive under..."
+    },
+    {
+      "source_file": "automotive-software-and-electronics-2030-full-report.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.37728021206048795,
+      "content_snippet": "### TECHNOLOGY DEFINITION ###\n —What are the specific trends and drivers of the automotive sector’s SW and E/E growth \ndynamics and the changing landscape towards 2030? \n —How are these drivers going ..."
+    }
+  ],
+  "context_used": {
+    "total_chunks_used": 5,
+    "unique_documents": [
+      "Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt",
+      "automotive-software-and-electronics-2030-full-report.txt",
+      "mckinsey_tech_trends_2025.txt"
+    ],
+    "document_types_used": [
+      "tech_report",
+      "research_paper"
+    ],
+    "top_sources": [
+      "mckinsey_tech_trends_2025.txt",
+      "mckinsey_tech_trends_2025.txt",
+      "mckinsey_tech_trends_2025.txt"
+    ]
+  },
+  "retrieval_metrics": {
+    "average_score": 0.3862554784935931,
+    "max_score": 0.39770254701227803,
+    "min_score": 0.37728021206048795
+  }
+}

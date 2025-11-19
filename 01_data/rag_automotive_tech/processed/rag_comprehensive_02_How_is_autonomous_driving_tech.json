@@ -1,0 +1,56 @@
+{
+  "question": "How is autonomous driving technology evolving?",
+  "answer": "🔍 **Answer for:** 'How is autonomous driving technology evolving?'\n📊 **Found 5 relevant chunks** across 1 document types\n\n## 📋 Summary by Document Type\n📄 **Research Paper** (5 chunks)\n   • Best match: Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt (score: 0.667)\n   • Sample: you like me to find a\ncoffee shop closer to\nyour meeting location?”\nIt can also check for\nother relevant factors,\nlike “The weather is\nnice today. Sho...\n\n## 💡 Key Insights\n1. 📄 **From Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt:**\n   you like me to find a\ncoffee shop closer to\nyour meeting location?”\nIt can also check for\nother relevant factors,\nlike “The weather is\nnice today. Should I\nfind a caf ´e with outdoor\nseating?”\nTABLE X...\n   *Relevance score: 0.667*\n\n2. 📄 **From generative_AI_for_autonomous_driving_a_review.txt:**\n   arXiv:2406.08481.\n[158] Y . Zhang, S. Gong, K. Xiong, et al. , “BEVWorld: A Mul-\ntimodal World Model for Autonomous Driving via Unified\nBEV Latent Space,” 2024, arXiv:2407.05679.\n[159] D. Bogdoll, Y ....\n   *Relevance score: 0.576*\n\n3. 📄 **From Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt:**\n   al. (2024) [59]presents the ability to simulate difficult driving\nscenarios. The work demonstrates how such simulations\ncould help polish and test the autonomous driving systems\nunder varied condition...\n   *Relevance score: 0.564*\n\n## 🔎 Recommended Next Steps\n• Explore these source files: Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt, generative_AI_for_autonomous_driving_a_review.txt\n• Use the source snippets below for detailed investigation",
+  "sources": [
+    {
+      "source_file": "Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.6669723100162055,
+      "content_snippet": "you like me to find a\ncoffee shop closer to\nyour meeting location?”\nIt can also check for\nother relevant factors,\nlike “The weather is\nnice today. Should I\nfind a caf ´e with outdoor\nseating?”\nTABLE X..."
+    },
+    {
+      "source_file": "generative_AI_for_autonomous_driving_a_review.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.5758576196773029,
+      "content_snippet": "arXiv:2406.08481.\n[158] Y . Zhang, S. Gong, K. Xiong, et al. , “BEVWorld: A Mul-\ntimodal World Model for Autonomous Driving via Unified\nBEV Latent Space,” 2024, arXiv:2407.05679.\n[159] D. Bogdoll, Y ...."
+    },
+    {
+      "source_file": "Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.564060592013133,
+      "content_snippet": "al. (2024) [59]presents the ability to simulate difficult driving\nscenarios. The work demonstrates how such simulations\ncould help polish and test the autonomous driving systems\nunder varied condition..."
+    },
+    {
+      "source_file": "generative_AI_for_autonomous_driving_a_review.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.5370987733035819,
+      "content_snippet": "“LLM-A*: Large Language Model Enhanced Incremental\nHeuristic Search on Path Planning,” in Conf. on Empir.\nMethods Nat. Lang. Process. , 2024.\n[235] J. Levinson, J. Askeland, J. Becker, et al. , “Towar..."
+    },
+    {
+      "source_file": "generative_AI_for_autonomous_driving_a_review.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.535236460560522,
+      "content_snippet": "[236] S. Behere and M. Törngren, “A functional reference archi-\ntecture for autonomous driving,” Inf. Softw. Technol. , 2016.\n[237] F. Munir, S. Azam, M. I. Hussain, A. M. Sheri, and M.\nJeon, “Autonom..."
+    }
+  ],
+  "context_used": {
+    "total_chunks_used": 5,
+    "unique_documents": [
+      "Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt",
+      "generative_AI_for_autonomous_driving_a_review.txt"
+    ],
+    "document_types_used": [
+      "research_paper"
+    ],
+    "top_sources": [
+      "Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt",
+      "generative_AI_for_autonomous_driving_a_review.txt",
+      "Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt"
+    ]
+  },
+  "retrieval_metrics": {
+    "average_score": 0.575845151114149,
+    "max_score": 0.6669723100162055,
+    "min_score": 0.535236460560522
+  }
+}

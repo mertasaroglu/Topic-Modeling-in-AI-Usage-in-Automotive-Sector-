@@ -1,0 +1,31 @@
+{
+  "question": "How is computer vision used in autonomous driving?",
+  "answer": "Based on the retrieved documents, here's information relevant to 'How is computer vision used in autonomous driving?'. The system found 4 relevant document chunks addressing this topic. Please check the source attributions for detailed information.",
+  "sources": [
+    {
+      "source_file": "enhanced_drift_aware_computer_vision_achitecture_for_autonomous_driving.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.6213245633705682,
+      "content_snippet": "### REFERENCES ###\nREFERENCES\n[1] L.-H. Wen and K.-H. Jo, \u201cDeep learning-based perception systems\nfor autonomous driving: A comprehensive survey,\u201d Neu..."
+    },
+    {
+      "source_file": "enhanced_drift_aware_computer_vision_achitecture_for_autonomous_driving.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.5283397622659232,
+      "content_snippet": "analysis of autonomous vehicles using computer vision and neural\nnetworks,\u201d Vehicles , vol. 3, no. 3, pp. 595\u2013617, 2021.\n[3] S. Chuprov, P. Belyaev, R..."
+    },
+    {
+      "source_file": "startups_processed.txt",
+      "doc_type": "startups_data",
+      "relevance_score": 0.4982831495986121,
+      "content_snippet": "STARTUP #26030:\n  Name: Razuna\n  Location: N/A\n  Tagline: Better Media Management and Distribution\n  Description: eos and Audios can be individually ...."
+    }
+  ],
+  "context_used": {
+    "total_chunks_used": 3,
+    "unique_documents": [
+      "startups_processed.txt",
+      "enhanced_drift_aware_computer_vision_achitecture_for_autonomous_driving.txt"
+    ]
+  }
+}

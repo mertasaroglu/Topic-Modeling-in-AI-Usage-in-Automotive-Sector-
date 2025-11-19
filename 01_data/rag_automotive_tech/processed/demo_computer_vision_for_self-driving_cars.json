@@ -1,0 +1,39 @@
+{
+  "question": "computer vision for self-driving cars",
+  "top_k": 2,
+  "retrieved_documents": [
+    {
+      "content": "STARTUP #26030:\n  Name: Razuna\n  Location: N/A\n  Tagline: Better Media Management and Distribution\n  Description: eos and Audios can be individually ...\n--------------------------------------------------\n\nSTARTUP #26031:\n  Name: Reputation Institute\n  Location: N/A\n  Tagline: \n  Description: \n--------------------------------------------------\n\nSTARTUP #26032:\n  Name: Ogmento\n  Location: N/A\n  Tagline: Mobile Computer Vision\n  Description: We are building products around unique computer vision technology.\n--------------------------------------------------",
+      "source_file": "startups_processed.txt",
+      "doc_type": "startups_data",
+      "similarity_score": 0.48116432542757087,
+      "full_metadata": {
+        "source": "startups_processed.txt",
+        "doc_type": "startups_data",
+        "file_path": "../01_data/rag_automotive_tech/processed/startups_processed.txt"
+      }
+    },
+    {
+      "content": "D: large cars\nE: executive cars\nF: luxury cars\nJ: sport utility cars (including off-road vehicles)\nM: multi-purpose cars (including pickups)\nS: sports cars  \n1 Source: SAE International J3016\n2 Regulation (EEC) No 4064/89 – Merger Procedure\nAutomotive software and electronics 2030\nImportant notice",
+      "source_file": "automotive-software-and-electronics-2030-full-report.txt",
+      "doc_type": "research_paper",
+      "similarity_score": 0.4311335067113557,
+      "full_metadata": {
+        "source": "automotive-software-and-electronics-2030-full-report.txt",
+        "doc_type": "research_paper",
+        "file_path": "../01_data/rag_automotive_tech/processed/automotive_papers/automotive-software-and-electronics-2030-full-report.txt"
+      }
+    }
+  ],
+  "summary": {
+    "total_documents_found": 2,
+    "unique_sources": [
+      "startups_processed.txt",
+      "automotive-software-and-electronics-2030-full-report.txt"
+    ],
+    "document_types": [
+      "research_paper",
+      "startups_data"
+    ]
+  }
+}

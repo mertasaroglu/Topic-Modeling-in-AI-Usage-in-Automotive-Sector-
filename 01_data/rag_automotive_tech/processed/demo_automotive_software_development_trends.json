@@ -1,0 +1,39 @@
+{
+  "question": "automotive software development trends",
+  "top_k": 2,
+  "retrieved_documents": [
+    {
+      "content": "Automating Automotive Software Development:\nA Synergy of Generative AI and Formal Methods\nFengjunjie Pan, Yinglei Song, Long Wen, Nenad Petrovic, Krzysztof Lebioda and Alois Knoll\nAbstract — As the automotive industry shifts its focus toward\nsoftware-defined vehicles, the need for faster and reliable\nsoftware development continues to grow. However, traditional\nmethods show their limitations. The rise of Generative Artificial\nIntelligence (GenAI), particularly Large Language Models\n(LLMs), introduces new opportunities to automate automotive\nsoftware development tasks such as requirement analysis and\ncode generation. However, due to the complexity of automotive\nsystems, where software components must interact with each\nother seamlessly, challenges remain in software integration and\nsystem-level validation. In this paper, we propose to combine\nGenAI with model-driven engineering to automate automotive\nsoftware development. Our approach uses LLMs to convert",
+      "source_file": "automating_automative_software_development_a_synergy_of_generative_AI_and_formal_methods.txt",
+      "doc_type": "research_paper",
+      "similarity_score": 0.6117029194668373,
+      "full_metadata": {
+        "source": "automating_automative_software_development_a_synergy_of_generative_AI_and_formal_methods.txt",
+        "doc_type": "research_paper",
+        "file_path": "../01_data/rag_automotive_tech/processed/automotive_papers/automating_automative_software_development_a_synergy_of_generative_AI_and_formal_methods.txt"
+      }
+    },
+    {
+      "content": "STARTUP #38995:\n  Name: fliiSolutions\n  Location: N/A\n  Tagline: Personalized Rehab Program Development and Remote Patient Management\n  Description: ...\n--------------------------------------------------\n\nSTARTUP #38996:\n  Name: Apex Inspection Solutions\n  Location: N/A\n  Tagline: Software development for OEM Automotive\n  Description: Apex Inspection Solutions provides vehicle inspections throughout Canada. Coupled with designing and implementing automotive minded software developments, our products and services are geared towards both retail and wholesale consumers. By providing a superior ...\n--------------------------------------------------",
+      "source_file": "startups_processed.txt",
+      "doc_type": "startups_data",
+      "similarity_score": 0.5063262787951293,
+      "full_metadata": {
+        "source": "startups_processed.txt",
+        "doc_type": "startups_data",
+        "file_path": "../01_data/rag_automotive_tech/processed/startups_processed.txt"
+      }
+    }
+  ],
+  "summary": {
+    "total_documents_found": 2,
+    "unique_sources": [
+      "startups_processed.txt",
+      "automating_automative_software_development_a_synergy_of_generative_AI_and_formal_methods.txt"
+    ],
+    "document_types": [
+      "research_paper",
+      "startups_data"
+    ]
+  }
+}

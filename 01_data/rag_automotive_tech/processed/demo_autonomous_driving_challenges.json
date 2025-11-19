@@ -1,0 +1,38 @@
+{
+  "question": "autonomous driving challenges",
+  "top_k": 2,
+  "retrieved_documents": [
+    {
+      "content": "you like me to find a\ncoffee shop closer to\nyour meeting location?”\nIt can also check for\nother relevant factors,\nlike “The weather is\nnice today. Should I\nfind a caf ´e with outdoor\nseating?”\nTABLE X: Scenario 5: Asking for next Autonomous Driving\nManeuver,Voice Command: “How are you going to handle\nthe upcoming scenario with pedestrians on both sides of the\nroad?”\nSystem Ford SYNC (2007) MBUX (LLM-based) Advanced In-Vehicle\nVoice Assistants (In\nResearch)\nInput\nRequirementLimited or\nUnsupported:\nFord SYNC from\n2007 would\nnot support\nsuch advanced\ninquiries related\nto autonomous\ndriving.Natural Language\nUnderstanding:The\nsystem can interpret\nthe question due to its\nLLM-based foundation,\nunderstanding the\ncontext of autonomous\ndriving.Highly Flexible\nUnderstanding:\nThe assistant can\nfully comprehend the\ninquiry, recognizing\nthe complexity of\nthe scenario and the\nrelevance to autonomous\ndriving.\nSystem\nOutputNo Response or\nError:The system\nmight respond with\n“Command not\nrecognized,” or",
+      "source_file": "Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt",
+      "doc_type": "research_paper",
+      "similarity_score": 0.5924963912416155,
+      "full_metadata": {
+        "source": "Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt",
+        "doc_type": "research_paper",
+        "file_path": "../01_data/rag_automotive_tech/processed/automotive_papers/Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt"
+      }
+    },
+    {
+      "content": "arXiv:2406.08481.\n[158] Y . Zhang, S. Gong, K. Xiong, et al. , “BEVWorld: A Mul-\ntimodal World Model for Autonomous Driving via Unified\nBEV Latent Space,” 2024, arXiv:2407.05679.\n[159] D. Bogdoll, Y . Yang, T. Joseph, and J. M. Zöllner, “MUVO:\nA Multimodal World Model with Spatial Representations for\nAutonomous Driving,” 2024, arXiv:2311.11762.\n[160] Y . Yang, J. Mei, Y . Ma, et al. , “Driving in the Occupancy\nWorld: Vision-Centric 4D Occupancy Forecasting and Plan-\nning via World Models for Autonomous Driving,” 2025,\narXiv:2408.14197.\n[161] H. Caesar, V . Bankiti, A. H. Lang, et al. , “nuScenes:\nA Multimodal Dataset for Autonomous Driving,” in 2020\nIEEE/CVF Conf. on Comput. Vis. Pattern Recognit. , 2020.\n[162] J. Wei, S. Yuan, P. Li, Q. Hu, Z. Gan, and W.\nDing, “OccLLaMA: An Occupancy-Language-Action Gen-\nerative World Model for Autonomous Driving,” 2024,\narXiv:2409.03272.\n[163] N. Nayakanti, R. Al-Rfou, A. Zhou, K. Goel, K. S. Refaat,",
+      "source_file": "generative_AI_for_autonomous_driving_a_review.txt",
+      "doc_type": "research_paper",
+      "similarity_score": 0.5115558118439709,
+      "full_metadata": {
+        "source": "generative_AI_for_autonomous_driving_a_review.txt",
+        "doc_type": "research_paper",
+        "file_path": "../01_data/rag_automotive_tech/processed/automotive_papers/generative_AI_for_autonomous_driving_a_review.txt"
+      }
+    }
+  ],
+  "summary": {
+    "total_documents_found": 2,
+    "unique_sources": [
+      "Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt",
+      "generative_AI_for_autonomous_driving_a_review.txt"
+    ],
+    "document_types": [
+      "research_paper"
+    ]
+  }
+}
