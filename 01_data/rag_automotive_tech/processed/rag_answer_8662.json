@@ -1,0 +1,32 @@
+{
+  "question": "What trends are shaping automotive software development?",
+  "answer": "Based on the retrieved documents, here's information relevant to 'What trends are shaping automotive software development?'. The system found 4 relevant document chunks addressing this topic. Please check the source attributions for detailed information.",
+  "sources": [
+    {
+      "source_file": "automating_automative_software_development_a_synergy_of_generative_AI_and_formal_methods.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.6117029194668373,
+      "content_snippet": "Automating Automotive Software Development:\nA Synergy of Generative AI and Formal Methods\nFengjunjie Pan, Yinglei Song, Long Wen, Nenad Petrovic, Krzy..."
+    },
+    {
+      "source_file": "startups_processed.txt",
+      "doc_type": "startups_data",
+      "relevance_score": 0.5063262787951293,
+      "content_snippet": "STARTUP #38995:\n  Name: fliiSolutions\n  Location: N/A\n  Tagline: Personalized Rehab Program Development and Remote Patient Management\n  Description: ...."
+    },
+    {
+      "source_file": "automotive-software-and-electronics-2030-full-report.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.46552854498860063,
+      "content_snippet": "### TECHNOLOGY DEFINITION ###\n \u2014What are the specific trends and drivers of the automotive sector\u2019s SW and E/E growth \ndynamics and the changing lands..."
+    }
+  ],
+  "context_used": {
+    "total_chunks_used": 3,
+    "unique_documents": [
+      "startups_processed.txt",
+      "automotive-software-and-electronics-2030-full-report.txt",
+      "automating_automative_software_development_a_synergy_of_generative_AI_and_formal_methods.txt"
+    ]
+  }
+}

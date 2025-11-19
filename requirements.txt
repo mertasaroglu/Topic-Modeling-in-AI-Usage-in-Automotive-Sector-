@@ -1,0 +1,5 @@
+requirement file pip install pandas, langchain etc -> check!!!!
+
+install langchain-community
+
+install sentence-transformers

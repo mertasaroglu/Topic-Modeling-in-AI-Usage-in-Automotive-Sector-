@@ -1,0 +1,60 @@
+{
+  "question": "What challenges are automotive companies facing with electric vehicles?",
+  "answer": "🔍 **Answer for:** 'What challenges are automotive companies facing with electric vehicles?'\n📊 **Found 5 relevant chunks** across 3 document types\n\n## 📋 Summary by Document Type\n🚀 **Startups Data** (2 chunks)\n   • Best match: startups_processed.txt (score: 0.533)\n   • Sample: STARTUP #739:\n  Name: JuiceCar\n  Location: N/A\n  Tagline: On-Site Electric Carsharing\n  Description:  Electric Carsharing\n\n---------------------------...\n\n🔍 **Tech Report** (1 chunks)\n   • Best match: mckinsey_tech_trends_2025.txt (score: 0.497)\n   • Sample: implementation? \n —Where do cobots create real value—and where \ndo they get in the way? \n —What new ethical and regulatory challenges \nwill emerge wit...\n\n📄 **Research Paper** (2 chunks)\n   • Best match: automotive-software-and-electronics-2030-full-report.txt (score: 0.440)\n   • Sample: with higher SAE AV levels and electric drive vehicles (xEVs). The production numbers of cars \nequipped with SAE AV Level 3 are expected to grow from s...\n\n## 💡 Key Insights\n1. 🚀 **From startups_processed.txt:**\n   STARTUP #739:\n  Name: JuiceCar\n  Location: N/A\n  Tagline: On-Site Electric Carsharing\n  Description:  Electric Carsharing\n\n--------------------------------------------------\n\nSTARTUP #740:\n  Name: 2 M...\n   *Relevance score: 0.533*\n\n2. 🔍 **From mckinsey_tech_trends_2025.txt:**\n   implementation? \n —Where do cobots create real value—and where \ndo they get in the way? \n —What new ethical and regulatory challenges \nwill emerge with the rapid advancement of AI \nin robotics? \n —Wha...\n   *Relevance score: 0.497*\n\n3. 📄 **From automotive-software-and-electronics-2030-full-report.txt:**\n   with higher SAE AV levels and electric drive vehicles (xEVs). The production numbers of cars \nequipped with SAE AV Level 3 are expected to grow from somewhere on the order of 100,000 \nvehicles in 2020...\n   *Relevance score: 0.440*\n\n## 🔎 Recommended Next Steps\n• Explore these source files: startups_processed.txt, automotive-software-and-electronics-2030-full-report.txt, Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt, mckinsey_tech_trends_2025.txt\n• Consider querying specific document types for focused results\n• Use the source snippets below for detailed investigation",
+  "sources": [
+    {
+      "source_file": "startups_processed.txt",
+      "doc_type": "startups_data",
+      "relevance_score": 0.5325164107372584,
+      "content_snippet": "STARTUP #739:\n  Name: JuiceCar\n  Location: N/A\n  Tagline: On-Site Electric Carsharing\n  Description:  Electric Carsharing\n\n--------------------------------------------------\n\nSTARTUP #740:\n  Name: 2 M..."
+    },
+    {
+      "source_file": "mckinsey_tech_trends_2025.txt",
+      "doc_type": "tech_report",
+      "relevance_score": 0.49660693294414077,
+      "content_snippet": "implementation? \n —Where do cobots create real value—and where \ndo they get in the way? \n —What new ethical and regulatory challenges \nwill emerge with the rapid advancement of AI \nin robotics? \n —Wha..."
+    },
+    {
+      "source_file": "automotive-software-and-electronics-2030-full-report.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.4398585300144908,
+      "content_snippet": "with higher SAE AV levels and electric drive vehicles (xEVs). The production numbers of cars \nequipped with SAE AV Level 3 are expected to grow from somewhere on the order of 100,000 \nvehicles in 2020..."
+    },
+    {
+      "source_file": "startups_processed.txt",
+      "doc_type": "startups_data",
+      "relevance_score": 0.41284147454098996,
+      "content_snippet": "STARTUP #16415:\n  Name: Pages LA\n  Location: N/A\n  Tagline: Pages LA City Guide promotes multiculturalism through business\n  Description: Pages LA took the concept of the local ethnic phonebooks to th..."
+    },
+    {
+      "source_file": "Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.3983080128440497,
+      "content_snippet": "4)Challenges and Future Directions: Discussion of the\nchallenges in implementing generative AI and potential\nfuture developments in this space.\n5)Conclusion: A summary of key findings and the\npotentia..."
+    }
+  ],
+  "context_used": {
+    "total_chunks_used": 5,
+    "unique_documents": [
+      "startups_processed.txt",
+      "automotive-software-and-electronics-2030-full-report.txt",
+      "Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt",
+      "mckinsey_tech_trends_2025.txt"
+    ],
+    "document_types_used": [
+      "tech_report",
+      "research_paper",
+      "startups_data"
+    ],
+    "top_sources": [
+      "startups_processed.txt",
+      "mckinsey_tech_trends_2025.txt",
+      "automotive-software-and-electronics-2030-full-report.txt"
+    ]
+  },
+  "retrieval_metrics": {
+    "average_score": 0.4560262722161859,
+    "max_score": 0.5325164107372584,
+    "min_score": 0.3983080128440497
+  }
+}

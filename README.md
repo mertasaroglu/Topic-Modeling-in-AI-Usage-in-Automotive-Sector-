@@ -40,6 +40,8 @@ LangChain - FAISS - Sentence Transformers - Llama 3 (via Groq API) - Python - St
 - Large embeddings/index files (>100 MB).  
 
 Use `.gitignore`:
+.DS_Store
+*.DS_Store
 data/rag_automotive_tech/raw_sources
 data/rag_automotive_tech/processed/*.pdf
 models/vector_index/

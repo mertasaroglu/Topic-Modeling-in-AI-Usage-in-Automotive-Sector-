@@ -1,0 +1,30 @@
+{
+  "question": "What are the challenges of generative AI in automotive applications?",
+  "answer": "Based on the retrieved documents, here's information relevant to 'What are the challenges of generative AI in automotive applications?'. The system found 4 relevant document chunks addressing this topic. Please check the source attributions for detailed information.",
+  "sources": [
+    {
+      "source_file": "Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.8263126841095569,
+      "content_snippet": "This paper aims to explore the impact of generative AI\non the automotive industry, focusing on its applications,\nbenefits, and potential challenges. T..."
+    },
+    {
+      "source_file": "Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.7379160073218498,
+      "content_snippet": "4)Challenges and Future Directions: Discussion of the\nchallenges in implementing generative AI and potential\nfuture developments in this space.\n5)Conc..."
+    },
+    {
+      "source_file": "Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt",
+      "doc_type": "research_paper",
+      "relevance_score": 0.5821768824237469,
+      "content_snippet": "are profound, particularly as these systems become more\nautonomous. A failure or breach in these AI-driven systems\ncould result in catastrophic outcom..."
+    }
+  ],
+  "context_used": {
+    "total_chunks_used": 3,
+    "unique_documents": [
+      "Gen_AI_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt"
+    ]
+  }
+}
