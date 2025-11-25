@@ -25,6 +25,7 @@ torch
 accelerate
 
 # Utilities
+groq
 python-dotenv
 joblib
 chardet  # For encoding detection

@@ -33,11 +33,16 @@ source .venv/bin/activate
 ### 3. Install Dependencies
 pip install -r requirements.txt
 
-### 4. Run the System
+### 4. Configure API Keys
+Copy .env.example to .env
+Add your Groq API key: GROQ_API_KEY=your_key_here
+Get free API key at: https://console.groq.com
+
+### 5. Run the System
 
 #### CLI Interface (Testing & Development)
 jupyter notebook
-# Open and run 03_notebooks/04_interface_rag.ipynb
+# Open and run 03_notebooks/
 
 #### Web Interface (Demo)
 cd 05_app
