@@ -9,8 +9,8 @@ This capstone project explores how AI/ML can accelerate insight generation for R
 Developed as a Data Science + AI Bootcamp capstone project (2025).
 
 ## Features 
-- Query and summarize automotive technology documents (19,000+ chunks)
-- Retrieve insights on specific innovation topics from research papers, tech reports, startups and patent data  
+- Query and summarize automotive technology documents (30,000+ chunks)
+- Retrieve insights on specific innovation topics from research papers, tech reports, startups and patent data (2025) 
 - Source attribution with relevance scoring
 - Template-based answer generation with full transparency
 - Semi-supervised TRL classifier (Fraunhofer ISI-inspired).
