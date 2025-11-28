@@ -124,12 +124,19 @@
     }
   ],
   
-  "startups_dataset": {
-    "source": "Startups Worldwide (Kaggle)",
-    "dataset_url": "https://www.kaggle.com/datasets/pashupatigupta/startups-worldwide",
-    "total_startups": 42038,
-    "key_fields": ["name", "city", "tagline", "description"],
-    "coverage": "Global startups across all industries",
-    "purpose": "Real-world validation of technology trends and innovation mapping"
-  }
-}
+  "startups": [
+  {
+      "id": "autotechinsight_startups_automotive", 
+      "publisher": "S&P Global",
+      "title": "Latest assets for Automotive Startup Profiles & Tracker",
+      "key_focus": "Automotive tech startups",
+      "best_for": "Database lists 500+ automotive-tech startups across 50+ specializations. You can filter by domain, country, tech area, and more."
+  }, 
+
+  {
+      "id": "seedtable_automotive_startups_in_2025", 
+      "publisher": "Seedtable LLC",
+      "title": "69 Best Automotive Industry Startups to Watch in 2025",
+      "key_focus": "Automotive tech startups",
+      "best_for": "Automotive Industry Startups to Watch” list covers many startups with aggregate funding of billions USD — giving a sense of who’s active and growing."
+  ]
