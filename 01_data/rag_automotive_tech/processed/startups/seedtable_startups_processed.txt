@@ -1,0 +1,464 @@
+SEEDTABLE AUTOMOTIVE STARTUPS 2025
+==================================================
+
+1. Luminar Technologies
+Funding Rounds: 9
+Money Raised: $995.5M
+Description: Developer of lidar and sensing technologies for autonomous vehicles.
+Industries: Laser, Autonomous Vehicles, Mobility Technology
+Location: Colorado Springs, Detroit, Munich
+
+2. Mobius Motors
+Funding Rounds: 3
+Money Raised: N/A
+Description: Automotive manufacturer building affordable vehicles for the African mass market.
+Industries: Automotive Industry
+Location: Nairobi
+
+3. PolyAI
+Funding Rounds: 4
+Money Raised: $68.4M
+Description: Enterprise conversational AI voice assistant platform.
+Industries: Voice Assistant, Technology, Deep Learning
+Location: London
+
+4. Helm.ai
+Funding Rounds: 3
+Money Raised: $70.0M
+Description: Autonomous driving and robotics software developer.
+Industries: Robotics, Autonomous Vehicle Software, Software
+Location: Menlo Park, California
+
+5. Metawave Corporation
+Funding Rounds: 3
+Money Raised: $17.0M
+Description: Developer of metamaterial-based radar systems for autonomous driving.
+Industries: Mobility Tech, AI, Metamaterials
+Location: Carlsbad, California
+
+6. ZeroAvia
+Funding Rounds: 3
+Money Raised: $80.7M
+Description: Developer of hydrogen-electric aviation powertrains.
+Industries: Aerospace, Manufacturing
+Location: London
+
+7. GoMechanic
+Funding Rounds: 5
+Money Raised: $60.6M
+Description: Online vehicle repair and maintenance booking platform.
+Industries: Automotive, Location-Based Services, Digital Marketing
+Location: Gurgaon, India
+
+8. Northvolt
+Funding Rounds: 12
+Money Raised: $6.9B
+Description: Developer of sustainable lithium-ion batteries and recycling infrastructure.
+Industries: Battery Manufacturing, Automotive, Sustainable Transport
+Location: Stockholm
+
+9. Horizon Robotics
+Funding Rounds: 10
+Money Raised: $4.1B
+Description: Energy-efficient automotive AI computing solutions.
+Industries: Automotive, Technology
+Location: Beijing, China
+
+10. Pony.ai
+Funding Rounds: 9
+Money Raised: $1.2B
+Description: Developer of AI-based autonomous driving technologies.
+Industries: Mobility Tech, Autonomous Systems
+Location: Fremont, California
+
+11. Getaround
+Funding Rounds: 5
+Money Raised: $502.3M
+Description: Peer-to-peer car sharing platform with proprietary hardware.
+Industries: Car Rental, Social Commerce
+Location: San Francisco
+
+12. WayRay
+Funding Rounds: 3
+Money Raised: $108.0M
+Description: Developer of holographic AR displays for automotive navigation.
+Industries: AR, Navigation, Infrastructure
+Location: Moscow
+
+13. CY Vision
+Funding Rounds: 2
+Money Raised: $12.0M
+Description: Developer of computational holography systems for vehicles.
+Industries: Mobility Tech, Consumer Electronics
+Location: San Jose, California
+
+14. SpinCar
+Funding Rounds: 4
+Money Raised: $130.0M
+Description: Developer of 360° automotive imaging & merchandising platform.
+Industries: Mobile Advertising, SaaS, Automotive
+Location: New York / Syracuse
+
+15. Stratio
+Funding Rounds: 2
+Money Raised: $15.4M
+Description: AI-powered automation platform for transport operations.
+Industries: Machine Learning, AI, Technology
+Location: Singapore / Coimbra / Lisbon
+
+16. Gogoro
+Funding Rounds: 1
+Money Raised: $300.0M
+Description: Developer of electric scooters & battery-swapping infrastructure.
+Industries: Micromobility, Energy
+Location: Taiwan
+
+17. VeriTX Corp.
+Funding Rounds: 4
+Money Raised: $12.8M
+Description: Digital supply chain platform using blockchain for parts traceability.
+Industries: Blockchain, 3D Printing, Manufacturing
+Location: East Aurora, New York
+
+18. Voyage Auto
+Funding Rounds: 2
+Money Raised: $46.0M
+Description: Developer of autonomous vehicle technology enabling self-driving operations.
+Industries: Machine Learning, Robotics, Automotive
+Location: Santa Clara / Palo Alto
+
+19. YourMechanic
+Funding Rounds: 2
+Money Raised: $12.0M
+Description: Online marketplace for on-demand car repair services.
+Industries: E-commerce, Automotive
+Location: Mountain View, California
+
+20. Ouster
+Funding Rounds: 5
+Money Raised: $232.0M
+Description: Manufacturer of high-resolution lidar sensors.
+Industries: Autonomous Systems, Security, Automotive
+Location: San Francisco, California
+
+21. Metromile
+Funding Rounds: 5
+Money Raised: $385.5M
+Description: Car-insurance company offering pay-per-mile insurance.
+Industries: InsurTech, Automotive Industry, Insurance
+Location: San Francisco / Tempe, Arizona
+
+22. DeepMap
+Funding Rounds: 3
+Money Raised: $92.0M
+Description: AI-based mapping technology for autonomous vehicles.
+Industries: Computer Vision, Mapping, Service Provider
+Location: Palo Alto, California
+
+23. Phantom AI
+Funding Rounds: 2
+Money Raised: $58.5M
+Description: Developer of ADAS and autonomous-driving vision systems.
+Industries: Computer Vision, ADAS, Technology
+Location: Mountain View, California
+
+24. Vogo Rentals
+Funding Rounds: 7
+Money Raised: $81.5M
+Description: Shared electric moped rental platform.
+Industries: Automotive, Rental, Mobility
+Location: Bangalore, India
+
+25. Mapillary
+Funding Rounds: 3
+Money Raised: $24.5M
+Description: Crowdsourced street-level imagery using computer vision for map correction.
+Industries: Crowdsourcing, Machine Learning, Automotive
+Location: Malmö, Sweden
+
+26. Snapsheet
+Funding Rounds: 4
+Money Raised: $73.0M
+Description: Platform for digital insurance claims and automation.
+Industries: InsurTech, Insurance, Automotive
+Location: Chicago, Illinois
+
+27. Carvana
+Funding Rounds: 1
+Money Raised: $160.0M
+Description: Online used-car marketplace with integrated financing.
+Industries: FinTech, Automotive, E-commerce
+Location: Tempe, Arizona
+
+28. German Autolabs
+Funding Rounds: 6
+Money Raised: $18.3M
+Description: Developer of AI-powered automotive voice assistants and safety solutions.
+Industries: Automotive, AI, Consumer Electronics
+Location: Berlin, Germany
+
+29. Teraki
+Funding Rounds: 35
+Money Raised: N/A
+Description: Data-processing platform enabling edge AI for automotive applications.
+Industries: Connected Car, Edge Computing, Automotive
+Location: Berlin, Germany
+
+30. Coreshell Technologies
+Funding Rounds: 3
+Money Raised: $27.8M
+Description: Developer of nanolayer coatings for lithium-ion batteries.
+Industries: EV, Renewable Energy, Battery
+Location: Berkeley / Oakland, California
+
+31. CARS24
+Funding Rounds: 5
+Money Raised: $533.6M
+Description: Marketplace for selling used cars.
+Industries: E-commerce, Automotive
+Location: Gurgaon, India
+
+32. Beepi
+Funding Rounds: 1
+Money Raised: $1.3M
+Description: Online car-dealership marketplace.
+Industries: Automotive, E-commerce
+Location: California
+
+33. Mojio
+Funding Rounds: 10
+Money Raised: $138.6M
+Description: Open platform for connecting cars to apps & services with real-time telematics.
+Industries: Big Data, SaaS, Mobility
+Location: Vancouver, Canada
+
+34. Proterra, Inc.
+Funding Rounds: 17
+Money Raised: $1.5B
+Description: Manufacturer of electric buses and EV energy-storage systems.
+Industries: Electric Vehicles, Public Transport
+Location: Burlingame, California
+
+35. CoverHound
+Funding Rounds: 3
+Money Raised: $66.9M
+Description: Consumer platform for auto insurance comparison and purchase.
+Industries: Finance, Automotive, Software
+Location: San Francisco
+
+36. Netradyne
+Funding Rounds: 6
+Money Raised: $308.2M
+Description: Fleet-safety technology using computer vision and analytics.
+Industries: Transportation, Automotive
+Location: San Diego County, California
+
+37. Faraday Bicycles
+Funding Rounds: 7
+Money Raised: $3.2M
+Description: Manufacturer of electric bicycles.
+Industries: EV manufacturing, E-bikes
+Location: San Francisco
+
+38. Root Insurance
+Funding Rounds: 4
+Money Raised: $851.0M
+Description: Auto-insurance provider using telematics and driver behavior analytics.
+Industries: InsurTech, Insurance
+Location: Columbus, Ohio
+
+39. Candela
+Funding Rounds: 3
+Money Raised: $42.0M
+Description: Manufacturer of hydrofoil electric boats.
+Industries: EV, Clean Tech, Boating
+Location: Stockholm
+
+40. Pure Watercraft
+Funding Rounds: 4
+Money Raised: $217.5M
+Description: Developer of electric boats and marine motors.
+Industries: Boating, EV, Automotive
+Location: Seattle
+
+41. Owl Autonomous Imaging
+Funding Rounds: 4
+Money Raised: $15.0M
+Description: Developer of 3D thermal imaging for automotive perception.
+Industries: Computer Vision, Automotive
+Location: Pleasanton, CA / Fairport, NY
+
+42. Whill
+Funding Rounds: 2
+Money Raised: $46.7M
+Description: Personal mobility devices and assistive hardware.
+Industries: Healthcare, Hardware, D2C
+Location: USA / Japan
+
+43. LotLinx
+Funding Rounds: 1
+Money Raised: $2.5M
+Description: VIN-specific digital marketing platform for dealerships.
+Industries: Marketing, Automotive
+Location: Chicago
+
+44. Applied Intuition
+Funding Rounds: 5
+Money Raised: $951.5M
+Description: Infrastructure and simulation stack for autonomous-vehicle development.
+Industries: Simulation, Analytics, Automotive
+Location: Sunnyvale, California
+
+45. Car IQ
+Funding Rounds: 4
+Money Raised: $29.0M
+Description: Platform enabling vehicles to autonomously transact (payments, tolls).
+Industries: Machine Learning, Connected Car
+Location: San Francisco / Oakland
+
+46. Mighty AI
+Funding Rounds: 3
+Money Raised: $27.3M
+Description: Computer-vision training data for autonomous vehicles.
+Industries: Computer Vision, AI, Automotive
+Location: Seattle / Boston
+
+47. Heart Aerospace
+Funding Rounds: 7
+Money Raised: $194.6M
+Description: Manufacturer of electric regional aircraft (ES-19).
+Industries: Electric Aircraft, EV
+Location: Gothenburg, Sweden
+
+48. Monarch Tractor
+Funding Rounds: 2
+Money Raised: $81.0M
+Description: Autonomous electric tractors for agriculture.
+Industries: EV, Agriculture, Sustainable Transport
+Location: Livermore, California
+
+49. MX Global
+Funding Rounds: 1
+Money Raised: N/A
+Description: Malaysian cryptocurrency exchange.
+Industries: Blockchain, Crypto
+Location: Petaling Jaya, Malaysia
+
+50. Mozio
+Funding Rounds: 3
+Money Raised: $3.3M
+Description: Travel-search and ground-transportation mobility platform.
+Industries: Mobility Tech, Transportation
+Location: San Francisco
+
+51. Ampaire (Commercial Electric Airliner)
+Funding Rounds: 3
+Money Raised: N/A
+Description: Developer of hybrid-electric aircraft for commercial aviation.
+Industries: Aerospace, EV
+Location: Los Angeles / Albany, New York
+
+52. Neurala
+Funding Rounds: 6
+Money Raised: $32.1M
+Description: AI platform for industrial visual inspection.
+Industries: Drones, Edge Computing, Software
+Location: Boston
+
+53. Invision AI
+Funding Rounds: 1
+Money Raised: $1.1M
+Description: Vision analytics & motion detection for IoT and automotive.
+Industries: IoT, Surveillance, Automotive
+Location: Toronto, Canada
+
+54. Halo Car
+Funding Rounds: 1
+Money Raised: $5.0M
+Description: Tele-operated driverless electric car-rental service.
+Industries: IoT, Transportation, Automotive
+Location: Las Vegas
+
+55. Superpedestrian
+Funding Rounds: 6
+Money Raised: $117.6M
+Description: Manufacturer of lightweight electric micromobility vehicles.
+Industries: Micromobility, EV
+Location: Cambridge, Massachusetts
+
+56. Populus
+Funding Rounds: 2
+Money Raised: $8.1M
+Description: Urban mobility analytics platform using transportation data.
+Industries: Automotive, AI, Mobility Tech
+Location: San Francisco
+
+57. Skytree
+Funding Rounds: 1
+Money Raised: $20.0K
+Description: Direct-air-capture technology extracting CO₂ from air.
+Industries: Carbon Capture, Clean Tech
+Location: Amsterdam, Netherlands
+
+58. Nikola Motor Company
+Funding Rounds: 5
+Money Raised: $2.7B
+Description: Hydrogen-powered truck and EV manufacturer.
+Industries: Automotive, Hydrogen, Energy Storage
+Location: Phoenix, Arizona
+
+59. Ola Electric
+Funding Rounds: 7
+Money Raised: $760.4M
+Description: EV mobility company with electric scooters and multi-modal platforms.
+Industries: EV, Aviation (eVTOL), Sustainable Transport
+Location: Bangalore, India / China
+
+60. Quest Software
+Funding Rounds: 2
+Money Raised: $11.0M
+Description: Enterprise software company, formerly part of Dell; also active in automotive design software.
+Industries: Enterprise Software, Automotive Design
+Location: Aliso Viejo, California
+
+61. Scoot Networks
+Funding Rounds: 1
+Money Raised: $550.0K
+Description: Shared electric vehicle service (scooters, mopeds).
+Industries: Micromobility, EV, Sustainable Transport
+Location: San Francisco
+
+62. Divergent 3D
+Funding Rounds: 4
+Money Raised: $378.0M
+Description: 3D printing and batch-production platform for automotive parts.
+Industries: 3D Printing, Automotive
+Location: Los Angeles / Torrance, California
+
+63. ReCharge
+Funding Rounds: 2
+Money Raised: $279.3M
+Description: E-commerce payments platform used in EV-related retail.
+Industries: Payment Systems, EV, Automotive
+Location: Santa Monica / Los Angeles
+
+64. Brighter AI
+Funding Rounds: 6
+Money Raised: $557.5K
+Description: AI-based anonymization software (face/plate blurring) used in automotive data.
+Industries: Security, AI, Automotive
+Location: Berlin, Germany
+
+65. Ather Energy
+Funding Rounds: 8
+Money Raised: $196.9M
+Description: Manufacturer of smart electric scooters and charging infrastructure.
+Industries: EV, Battery, Connected Car
+Location: Bangalore, India
+
+66. StoreDot
+Funding Rounds: 7
+Money Raised: $226.5M
+Description: Developer of ultra-fast-charging battery technologies.
+Industries: Battery, EV
+Location: Tel Aviv, Israel
