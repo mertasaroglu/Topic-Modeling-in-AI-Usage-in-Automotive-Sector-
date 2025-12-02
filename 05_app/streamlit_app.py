@@ -325,42 +325,70 @@ def main():
     if 'question_input' not in st.session_state:
         st.session_state.question_input = ""
     
-    # Query input
-    question = st.text_input(
-        "💬 Your question:",
-        value=st.session_state.question_input,
-        placeholder="e.g., Which startups work on AI for automotive?",
-        key="question_input"
-    )
+    # Check for button clicks BEFORE creating the text input
+    # This must happen BEFORE the text_input widget is created
     
-    # Pre-defined query buttons
-    st.subheader("📋 Example Questions")
-    col1, col2 = st.columns(2)
+    # Check each button and update session state if clicked
+    if 'latest_research_clicked' in st.session_state and st.session_state.latest_research_clicked:
+        st.session_state.question_input = "Summarize the latest research on AI and autonomous driving."
+        st.session_state.latest_research_clicked = False
+    elif 'patents_clicked' in st.session_state and st.session_state.patents_clicked:
+        st.session_state.question_input = "What are the key patents in automotive AI with US jurisdiction?"
+        st.session_state.patents_clicked = False
+    elif 'startups_clicked' in st.session_state and st.session_state.startups_clicked:
+        st.session_state.question_input = "Which startups work on AI for automotive?"
+        st.session_state.startups_clicked = False
+    elif 'trends_clicked' in st.session_state and st.session_state.trends_clicked:
+        st.session_state.question_input = "Show me recent reports on technology trends."
+        st.session_state.trends_clicked = False
+    elif 'agents_clicked' in st.session_state and st.session_state.agents_clicked:
+        st.session_state.question_input = "Summarize latest tech trends in development of AI agents"
+        st.session_state.agents_clicked = False
+    elif 'maturity_clicked' in st.session_state and st.session_state.maturity_clicked:
+        st.session_state.question_input = "Which automotive technologies are moving from academy to application?"
+        st.session_state.maturity_clicked = False
     
-    with col1:
-        if st.button("🔬 Latest AI Research", use_container_width=True, key="research_btn"):
-            st.session_state.question_input = "Summarize the latest research on AI and autonomous driving."
-            st.rerun()
-        if st.button("📜 Automotive Patents", use_container_width=True, key="patents_btn"):
-            st.session_state.question_input = "What are the key patents in automotive AI with US jurisdiction?"
-            st.rerun()
-        if st.button("🚀 Startups in AI Automotive", use_container_width=True, key="startups_btn"):
-            st.session_state.question_input = "Which startups work on AI for automotive?"
-            st.rerun()
+    # Create a form for the query to prevent immediate execution
+    with st.form(key='query_form'):
+        # Query input - NOW this comes AFTER button checks
+        question = st.text_input(
+            "💬 Your question:",
+            value=st.session_state.question_input,
+            placeholder="e.g., Which startups work on AI for automotive?",
+            key="question_input"
+        )
+        
+        # Pre-defined query buttons INSIDE THE FORM
+        st.subheader("📋 Example Questions")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            if st.form_submit_button("Latest AI Research", use_container_width=True):
+                st.session_state.latest_research_clicked = True
+                st.rerun()
+            if st.form_submit_button("Automotive Patents", use_container_width=True):
+                st.session_state.patents_clicked = True
+                st.rerun()
+            if st.form_submit_button("Startups in AI Automotive", use_container_width=True):
+                st.session_state.startups_clicked = True
+                st.rerun()
+        
+        with col2:
+            if st.form_submit_button("Tech Trends", use_container_width=True):
+                st.session_state.trends_clicked = True
+                st.rerun()
+            if st.form_submit_button("AI Agents Development", use_container_width=True):
+                st.session_state.agents_clicked = True
+                st.rerun()
+            if st.form_submit_button("Tech Maturity", use_container_width=True):
+                st.session_state.maturity_clicked = True
+                st.rerun()
+        
+        # Submit button for the question
+        submit_button = st.form_submit_button("🔍 Get Answer", use_container_width=True)
     
-    with col2:
-        if st.button("📈 Tech Trends", use_container_width=True, key="trends_btn"):
-            st.session_state.question_input = "Show me recent reports on technology trends."
-            st.rerun()
-        if st.button("🤖 AI Agents Development", use_container_width=True, key="agents_btn"):
-            st.session_state.question_input = "Summarize latest tech trends in development of AI agents"
-            st.rerun()
-        if st.button("🎯 Tech Maturity", use_container_width=True, key="maturity_btn"):
-            st.session_state.question_input = "Which automotive technologies are moving from academy to application?"
-            st.rerun()
-    
-    # Process question
-    if question:
+    # Process question if submitted
+    if submit_button and question:
         with st.spinner("🔍 Searching documents and generating answer..."):
             result = ask_question(question, st.session_state.retriever, st.session_state.groq_client)
         
