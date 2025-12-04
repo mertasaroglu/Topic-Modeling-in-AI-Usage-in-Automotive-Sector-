@@ -1,15 +1,12 @@
 # AUTOMOTIVE TECH INTELLIGENCE - STREAMLIT APP
 # Complete RAG interface with Query Expansion
-# UPDATED FOR FAISS RETRIEVER
+# UPDATED FOR FAISS RETRIEVER WITH HYBRID SEARCH
 
 import streamlit as st
 import sys
 import os
 import importlib.util
-
-# Removed unused imports that were causing numpy version conflicts
-# import spacy  # NOT USED
-# from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS  # NOT USED
+import re  # Added for regex matching
 
 def get_correct_paths():
     """Get absolute paths based on your exact folder structure"""
@@ -142,21 +139,15 @@ PATENT DOCUMENT INTERPRETATION:
         startup_section = """
 CRITICAL INSTRUCTIONS FOR STARTUP QUERIES:
 1. **EXTRACT ALL SPECIFIC STARTUP/COMPANY NAMES** mentioned in the context
-2. **FOCUS ON STARTUP DATABASES**: Pay special attention to sections from "Automotive Startup Profiles & Tracker" and "Automotive Industry Startups to Watch in 2025"
+2. **FOCUS ON STARTUP DATABASES**: Pay special attention to sections from "Seedtable Best Automotive Industry Startups to Watch in 2025" and "AutoTechInsights Automotive Startup Profiles & Tracker"
 3. **FOR EACH STARTUP FOUND**:
    * State the company name clearly and prominently
    * Describe their primary technology or business focus
    * Include location information if available
    * Mention any funding details (rounds raised, investors)
    * Note their automotive/AI specialization
-4. **REQUIRED ANSWER STRUCTURE**:
-   - Start with a summary of findings
-   - Then provide a CLEAR, NUMBERED LIST of startups
-   - Format: "1. **Company Name**: [description] [Source: filename]"
-   - Cite the specific source file for each piece of information
-5. **IF STARTUPS EXIST IN CONTEXT BUT AREN'T EXPLICITLY MENTIONED**, still extract them
-6. **IF NO STARTUPS ARE FOUND**, clearly state: "No specific startup companies were found in the available documents."
-7. **PRIORITIZE INFORMATION FROM STARTUP DATABASES** over general reports when answering startup questions
+4. **IF NO STARTUPS ARE FOUND**, clearly state: "No specific startup companies were found in the available documents."
+5. **PRIORITIZE INFORMATION FROM 'autotechinsight_startups_processed.txt' and 'seedtable_startups_processed.txt'** over general reports when answering startup questions
 
 EXAMPLE FORMAT:
 "Based on the startup databases, I found these automotive AI companies:
@@ -227,12 +218,13 @@ def format_source_name(source_file):
         'wef_emerging_tech_2025.txt': 'WEF: Emerging Technologies 2025',
         
         # New Processed Files (UPDATED)
-        'autotechinsight_startups_processed.txt': 'Automotive Startup Profiles & Tracker',
-        'seedtable_startups_processed.txt': 'Automotive Industry Startups to Watch in 2025',
+        'autotechinsight_startups_processed.txt': 'AutoTechInsight Automotive Startup Profiles & Tracker',
+        'seedtable_startups_processed.txt': 'Seedtable Best Automotive Industry Startups to Watch in 2025',
         'automotive_papers_processed.txt': 'Automotive Research Papers Database',
         'automotive_patents_processed.txt': 'Automotive Technology Patents Database',
     }
     return name_mapping.get(source_file, source_file.replace('.txt', '').replace('_', ' ').title())
+
 
 # Initialize components with lazy loading
 @st.cache_resource
@@ -288,35 +280,143 @@ def initialize_rag_system():
     except Exception as e:
         return None, None, None, f"Error initializing FAISS retriever: {str(e)}"
 
-def retrieve_with_expansion(question, retriever, query_expander=None, k=3):
-    """Enhanced retrieval with query expansion"""
-    all_results = []
+def extract_keywords_for_hybrid_search(question):
+    """Extract keywords from question for hybrid search"""
+    question_lower = question.lower()
     
-    # Generate query variations if expander is available
+    keywords = []
+    
+    # Basic question words
+    keywords.extend(['what', 'which', 'who', 'how', 'where', 'when', 'why'])
+    
+    # Startup-related keywords
+    if any(word in question_lower for word in ['startup', 'company', 'venture', 'business']):
+        keywords.extend(['startup', 'company', 'firm', 'inc', 'ltd', 'corp', 'corporation', 
+                        'venture', 'business', 'enterprise', 'funding', 'investment', 'series'])
+    
+    # AI-related keywords
+    if any(word in question_lower for word in ['ai', 'artificial intelligence', 'machine learning']):
+        keywords.extend(['ai', 'artificial intelligence', 'machine learning', 'deep learning', 
+                        'neural network', 'algorithm', 'model'])
+    
+    # Automotive-related keywords
+    if any(word in question_lower for word in ['automotive', 'vehicle', 'car', 'autonomous', 'electric']):
+        keywords.extend(['automotive', 'vehicle', 'car', 'truck', 'autonomous', 'self-driving',
+                        'electric', 'ev', 'battery', 'charging', 'mobility'])
+    
+    # Remove duplicates and return
+    return list(set(keywords))
+
+def hybrid_retrieval(question, retriever, query_expander=None, k=3):
+    """
+    🚀 HYBRID RETRIEVAL: Combines semantic search with keyword matching
+    This ensures startup files are retrieved even if they're not semantically similar
+    """
+    all_results = []
+    question_lower = question.lower()
+    
+    # Determine if this is a startup/company query
+    is_startup_query = any(keyword in question_lower for keyword in 
+                          ['startup', 'company', 'companies', 'which company', 'list of companies'])
+    
+    # PHASE 1: SEMANTIC SEARCH (Your existing approach)
+    # Use query expansion for better semantic search
     if query_expander:
         try:
-            expanded_queries = query_expander.expand_query(question, use_llm=True)
-            
-            # Retrieve for each query variation with LOWER THRESHOLD
-            for query_variant in expanded_queries:
-                try:
-                    results = retriever.retrieve_with_sources(query_variant, k=2, threshold=0.3)  # Lower threshold!
-                    all_results.extend(results)
-                except Exception as e:
-                    print(f"Error retrieving for variant '{query_variant}': {e}")
-                    continue
-        except Exception as e:
-            print(f"Query expansion failed: {e}")
-            # Fallback to regular retrieval with lower threshold
-            results = retriever.retrieve_with_sources(question, k=k, threshold=0.3)
-            all_results.extend(results)
+            expanded_queries = query_expander.expand_query(question, use_llm=False)
+            if not expanded_queries:
+                expanded_queries = [question]
+        except:
+            expanded_queries = [question]
     else:
-        # No expansion available - use regular retrieval with lower threshold
-        results = retriever.retrieve_with_sources(question, k=k, threshold=0.3)
-        all_results.extend(results)
+        expanded_queries = [question]
     
-    if not all_results:
-        return []
+    # Semantic search with very low threshold for startup queries
+    semantic_threshold = 0.15 if is_startup_query else 0.3
+    
+    for query in expanded_queries[:2]:  # Use first 2 expanded queries
+        try:
+            semantic_results = retriever.retrieve_with_sources(
+                query, 
+                k=k, 
+                threshold=semantic_threshold
+            )
+            all_results.extend(semantic_results)
+        except Exception as e:
+            continue
+    
+    # PHASE 2: KEYWORD SEARCH (NEW - for startup queries)
+    if is_startup_query:
+        # Define keyword queries specifically for startups
+        keyword_queries = [
+            "automotive startup",
+            "AI company automotive",
+            "autonomous vehicle company",
+            "electric vehicle startup",
+            "mobility tech company",
+            "car technology startup",
+            "vehicle AI startup"
+        ]
+        
+        # Also extract keywords from the question itself
+        extracted_keywords = extract_keywords_for_hybrid_search(question)
+        # Add the most relevant keywords
+        if 'startup' in extracted_keywords:
+            keyword_queries.append("startup automotive AI")
+        if 'company' in extracted_keywords:
+            keyword_queries.append("company automotive technology")
+        
+        # Search with each keyword query (very low threshold)
+        for keyword_query in keyword_queries[:4]:  # Use first 4 keyword queries
+            try:
+                keyword_results = retriever.retrieve_with_sources(
+                    keyword_query,
+                    k=2,  # Get fewer results per keyword
+                    threshold=0.1  # VERY low threshold for keyword matching
+                )
+                
+                # Filter to keep only startup files
+                for result in keyword_results:
+                    source_file = result.get('source_file', '').lower()
+                    # Check if this looks like a startup file
+                    if any(keyword in source_file for keyword in ['startup', 'seedtable', 'autotech']):
+                        all_results.append(result)
+            except Exception as e:
+                continue
+    
+    # PHASE 3: FORCE INCLUDE STARTUP FILES (if still missing)
+    if is_startup_query:
+        # Check if we have any startup files in results
+        has_startup_files = False
+        for item in all_results:
+            source_file = item.get('source_file', '').lower()
+            if any(keyword in source_file for keyword in ['startup', 'seedtable', 'autotech']):
+                has_startup_files = True
+                break
+        
+        # If no startup files found, force search for them
+        if not has_startup_files:
+            # Direct search for startup file names
+            startup_file_patterns = ['startup', 'seedtable', 'autotech']
+            
+            for pattern in startup_file_patterns:
+                try:
+                    # Search with pattern (extremely low threshold)
+                    pattern_results = retriever.retrieve_with_sources(
+                        pattern,
+                        k=1,
+                        threshold=0.05  # Extremely low
+                    )
+                    
+                    # Check if results are actually startup files
+                    for result in pattern_results:
+                        content = result.get('text', result.get('content', ''))
+                        # Look for company names in content
+                        if any(name_indicator in content.lower() for name_indicator in 
+                              ['company', 'inc.', 'ltd', 'corp', 'startup']):
+                            all_results.append(result)
+                except:
+                    continue
     
     # Remove duplicates while preserving order
     unique_results = []
@@ -324,7 +424,7 @@ def retrieve_with_expansion(question, retriever, query_expander=None, k=3):
     
     for result in all_results:
         content = result.get('text', result.get('content', ''))
-        content_start = content[:150]
+        content_start = content[:200]  # Use first 200 chars for deduplication
         source = result.get('source_file', 'unknown')
         signature = f"{source}:{content_start}"
         
@@ -332,90 +432,31 @@ def retrieve_with_expansion(question, retriever, query_expander=None, k=3):
             seen_content.add(signature)
             unique_results.append(result)
     
-    # Sort by similarity score and return top k
-    unique_results.sort(key=lambda x: x.get('similarity_score', 0), reverse=True)
+    # Sort by similarity score and prioritize startup files
+    unique_results.sort(key=lambda x: (
+        # Priority 1: Startup files first
+        0 if any(keyword in x.get('source_file', '').lower() for keyword in ['startup', 'seedtable', 'autotech']) else 1,
+        # Priority 2: Higher similarity scores
+        -x.get('similarity_score', 0)
+    ))
+    
+    # Return top k results
     return unique_results[:k]
 
-def retrieve_with_forced_startups(question, retriever, query_expander=None, k=3):
-    """🚀 FIXED: FORCE-INCLUDE startup files with query expansion - UPDATED FOR FAISS"""
-    question_lower = question.lower()
-    startup_keywords = ['startup', 'company', 'venture', 'business', 'firm', 'enterprise', 'companies', 'startups']
-    
-    is_startup_query = any(keyword in question_lower for keyword in startup_keywords)
-    
-    # Get initial results with query expansion
-    initial_results = retrieve_with_expansion(question, retriever, query_expander, k=k)
-    
-    # If it's a startup query, check and force-add startup files
-    if is_startup_query:
-        # Check if we already have startup files in results
-        has_startup_files = False
-        for item in initial_results:
-            source_file = item.get('source_file', '')
-            # More flexible matching
-            if any(keyword in source_file.lower() for keyword in ['startup', 'seedtable', 'autotech']):
-                has_startup_files = True
-                break
-        
-        # If no startup files found, force add them
-        if not has_startup_files:
-            # Try specific startup-related queries
-            startup_specific_queries = [
-                "automotive startup",
-                "AI automotive companies",
-                "autonomous vehicle companies",
-                "electric vehicle startups"
-            ]
-            
-            startup_items = []
-            for startup_query in startup_specific_queries:
-                try:
-                    startup_results = retriever.retrieve_with_sources(startup_query, k=1, threshold=0.2)
-                    
-                    for item in startup_results:
-                        source_file = item.get('source_file', '')
-                        # Check if this is a startup file
-                        if any(keyword in source_file.lower() for keyword in ['startup', 'seedtable', 'autotech']):
-                            # Check for duplicates with existing results
-                            is_duplicate = False
-                            for existing in initial_results:
-                                # Compare using available fields
-                                existing_content = existing.get('text', existing.get('content', ''))
-                                item_content = item.get('text', item.get('content', ''))
-                                if existing_content[:100] == item_content[:100]:
-                                    is_duplicate = True
-                                    break
-                            
-                            if not is_duplicate:
-                                startup_items.append(item)
-                                if len(startup_items) >= 2:  # Get at most 2 startup items
-                                    break
-                    
-                    if len(startup_items) >= 2:
-                        break
-                except Exception as e:
-                    continue
-            
-            # Add startup items to results
-            if startup_items:
-                # Combine and re-sort
-                combined_results = startup_items + initial_results
-                combined_results.sort(key=lambda x: x.get('similarity_score', 0), reverse=True)
-                return combined_results[:k]
-        
-        # If we already have startup files or couldn't find any, return initial results
-        return initial_results[:k] if initial_results else []
-    else:
-        # Non-startup query, just return initial results
-        return initial_results[:k] if initial_results else []
+def retrieve_with_expansion(question, retriever, query_expander=None, k=3):
+    """
+    Main retrieval function - uses hybrid approach for better results
+    """
+    # Use hybrid retrieval for better startup results
+    return hybrid_retrieval(question, retriever, query_expander, k)
 
 def ask_question(question, retriever, groq_client, query_expander=None):
-    """UPDATED RAG pipeline with query expansion - COMPATIBLE WITH FAISS"""
+    """UPDATED RAG pipeline with hybrid retrieval"""
     try:
         k = determine_source_count(question)
         
-        # Use enhanced retrieval with query expansion
-        retrieved_data = retrieve_with_forced_startups(
+        # Use hybrid retrieval
+        retrieved_data = retrieve_with_expansion(
             question, 
             retriever, 
             query_expander=query_expander, 

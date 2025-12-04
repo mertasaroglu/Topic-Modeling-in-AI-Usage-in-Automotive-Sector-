@@ -21,7 +21,7 @@ class QueryExpander:
             "vehicle": ["car", "automobile", "truck", "transport", "EV", "electric vehicle"],
             "AI": ["artificial intelligence", "machine learning", "ML", "deep learning", "neural network"],
             "sensor": ["lidar", "radar", "camera", "ultrasonic", "perception"],
-            "startup": ["company", "venture", "business", "firm", "enterprise", "scale-up"],
+            "startup": ["company", "venture", "business", "firm", "enterprise", "scale-up", "name"],
             "patent": ["intellectual property", "IP", "invention", "technology protection"],
             "trend": ["development", "advancement", "progress", "innovation", "emerging"]
         }
