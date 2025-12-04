@@ -289,7 +289,7 @@ def initialize_rag_system():
         return None, None, None, f"Error initializing FAISS retriever: {str(e)}"
 
 def retrieve_with_expansion(question, retriever, query_expander=None, k=3):
-    """Enhanced retrieval with query expansion (NO VISUAL DISPLAY)"""
+    """Enhanced retrieval with query expansion"""
     all_results = []
     
     # Generate query variations if expander is available
@@ -297,26 +297,22 @@ def retrieve_with_expansion(question, retriever, query_expander=None, k=3):
         try:
             expanded_queries = query_expander.expand_query(question, use_llm=True)
             
-            # ⚠️ REMOVED: Do NOT display search variations to user
-            # Just use them silently in the background
-            
-            # Retrieve for each query variation
+            # Retrieve for each query variation with LOWER THRESHOLD
             for query_variant in expanded_queries:
                 try:
-                    # FAISS retriever uses retrieve_with_sources method
-                    results = retriever.retrieve_with_sources(query_variant, k=2)
+                    results = retriever.retrieve_with_sources(query_variant, k=2, threshold=0.3)  # Lower threshold!
                     all_results.extend(results)
                 except Exception as e:
                     print(f"Error retrieving for variant '{query_variant}': {e}")
                     continue
         except Exception as e:
             print(f"Query expansion failed: {e}")
-            # Fallback to regular retrieval
-            results = retriever.retrieve_with_sources(question, k=k)
+            # Fallback to regular retrieval with lower threshold
+            results = retriever.retrieve_with_sources(question, k=k, threshold=0.3)
             all_results.extend(results)
     else:
-        # No expansion available - use regular retrieval
-        results = retriever.retrieve_with_sources(question, k=k)
+        # No expansion available - use regular retrieval with lower threshold
+        results = retriever.retrieve_with_sources(question, k=k, threshold=0.3)
         all_results.extend(results)
     
     if not all_results:
@@ -327,9 +323,8 @@ def retrieve_with_expansion(question, retriever, query_expander=None, k=3):
     seen_content = set()
     
     for result in all_results:
-        # FAISS results have 'text' field instead of 'content'
         content = result.get('text', result.get('content', ''))
-        content_start = content[:150]  # First 150 chars
+        content_start = content[:150]
         source = result.get('source_file', 'unknown')
         signature = f"{source}:{content_start}"
         
@@ -342,7 +337,7 @@ def retrieve_with_expansion(question, retriever, query_expander=None, k=3):
     return unique_results[:k]
 
 def retrieve_with_forced_startups(question, retriever, query_expander=None, k=3):
-    """🚀 FIXED: FORCE-INCLUDE startup files with query expansion"""
+    """🚀 FIXED: FORCE-INCLUDE startup files with query expansion - UPDATED FOR FAISS"""
     question_lower = question.lower()
     startup_keywords = ['startup', 'company', 'venture', 'business', 'firm', 'enterprise', 'companies', 'startups']
     
@@ -357,8 +352,8 @@ def retrieve_with_forced_startups(question, retriever, query_expander=None, k=3)
         has_startup_files = False
         for item in initial_results:
             source_file = item.get('source_file', '')
-            if any(startup_file in source_file 
-                   for startup_file in ['autotechinsight_startups_processed.txt', 'seedtable_startups_processed.txt']):
+            # More flexible matching
+            if any(keyword in source_file.lower() for keyword in ['startup', 'seedtable', 'autotech']):
                 has_startup_files = True
                 break
         
@@ -366,34 +361,36 @@ def retrieve_with_forced_startups(question, retriever, query_expander=None, k=3)
         if not has_startup_files:
             # Try specific startup-related queries
             startup_specific_queries = [
-                "automotive startup AI technology",
-                "AI automotive companies startups",
-                "autonomous vehicle startup companies",
-                "automotive tech ventures",
-                "electric vehicle AI startups"
+                "automotive startup",
+                "AI automotive companies",
+                "autonomous vehicle companies",
+                "electric vehicle startups"
             ]
             
             startup_items = []
             for startup_query in startup_specific_queries:
                 try:
-                    startup_results = retriever.retrieve_with_sources(startup_query, k=1)
+                    startup_results = retriever.retrieve_with_sources(startup_query, k=1, threshold=0.2)
+                    
                     for item in startup_results:
-                        # Only take items from startup files
                         source_file = item.get('source_file', '')
-                        if any(startup_file in source_file 
-                              for startup_file in ['autotechinsight_startups_processed.txt', 'seedtable_startups_processed.txt']):
+                        # Check if this is a startup file
+                        if any(keyword in source_file.lower() for keyword in ['startup', 'seedtable', 'autotech']):
                             # Check for duplicates with existing results
                             is_duplicate = False
                             for existing in initial_results:
+                                # Compare using available fields
                                 existing_content = existing.get('text', existing.get('content', ''))
                                 item_content = item.get('text', item.get('content', ''))
-                                if item_content[:100] == existing_content[:100]:
+                                if existing_content[:100] == item_content[:100]:
                                     is_duplicate = True
                                     break
+                            
                             if not is_duplicate:
                                 startup_items.append(item)
                                 if len(startup_items) >= 2:  # Get at most 2 startup items
                                     break
+                    
                     if len(startup_items) >= 2:
                         break
                 except Exception as e:
@@ -433,13 +430,17 @@ def ask_question(question, retriever, groq_client, query_expander=None):
                 'source_count': k
             }
         
-        # Build context from retrieved data
+        # Build context from retrieved data - HANDLE BOTH FIELD NAMES
         context_parts = []
         for item in retrieved_data:
-            # FAISS uses 'text' field, old retriever uses 'content'
+            # Handle both 'text' (FAISS) and 'content' (old) field names
             content = item.get('text', item.get('content', ''))
             source_file = item.get('source_file', 'unknown')
+            
+            # Get doc_type with fallbacks
             doc_type = item.get('doc_type', 'document')
+            if doc_type == 'document' and 'metadata' in item:
+                doc_type = item['metadata'].get('doc_type', item['metadata'].get('type', 'document'))
             
             readable_name = format_source_name(source_file)
             context_parts.append(f"Source: {readable_name} | Type: {doc_type}\nContent: {content}")
@@ -662,8 +663,8 @@ def main():
             st.session_state.maturity_clicked = True
             st.rerun()
     
-    # Process question if submitted
-    if submit_button and question:
+    # Process question
+    if question:
         with st.spinner("🔍 Searching documents and generating answer..."):
             result = ask_question(
                 question, 
@@ -684,9 +685,13 @@ def main():
                 similarity = source.get('similarity_score', 0)
                 
                 with st.expander(f"📄 {readable_name} (Relevance: {similarity:.3f})"):
-                    # FAISS uses 'text' field, old retriever uses 'content'
+                    # Handle both 'text' (FAISS) and 'content' (old) field names
                     content = source.get('text', source.get('content', ''))
                     st.write(content)
+                    
+                    # Show metadata if available
+                    if 'metadata' in source:
+                        st.caption(f"**Metadata:** {source['metadata']}")
         
         st.markdown("---")
         st.caption("Powered by FAISS RAG + Query Expansion + Groq/Llama | Innovation Intelligence Suite")

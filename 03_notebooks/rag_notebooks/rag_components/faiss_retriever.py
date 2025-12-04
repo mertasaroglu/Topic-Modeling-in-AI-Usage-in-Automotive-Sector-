@@ -1,6 +1,4 @@
-"""
-FAISS Retriever - Reliable vector search without database corruption issues.
-"""
+# rag_components/faiss_retriever.py - UPDATED WITH CORRECT METHODS
 
 import os
 import pickle
@@ -128,29 +126,26 @@ class FAISSRetriever:
             print(f"❌ Retrieval failed for query '{query}': {e}")
             return []
     
-    def retrieve_with_sources(self, query: str, k: int = 5, threshold: float = 0.6) -> List[Dict[str, Any]]:
+    # Change this in retrieve_with_sources method:
+    def retrieve_with_sources(self, query: str, k: int = 5, threshold: float = 0.3):  # Changed from 0.6 to 0.3
         """
-        Retrieve results with source information (compatibility method).
-        
-        Args:
-            query: Search query
-            k: Number of results (alias for top_k)
-            threshold: Similarity threshold
-            
-        Returns:
-            List of results with source information
+        Retrieve results with source information.
+        Using lower threshold to ensure startup queries return results.
         """
         results = self.retrieve(query, top_k=k, similarity_threshold=threshold)
         
-        # Format for compatibility with existing code
+        # Format results
         formatted_results = []
         for result in results:
+            metadata = result['metadata']
+            
             formatted_results.append({
                 'text': result['text'],
+                'content': result['text'],  # Add 'content' for compatibility
                 'similarity_score': result['similarity'],
-                'source_file': result['metadata'].get('source', 'unknown'),
-                'doc_type': result['metadata'].get('doc_type', 'document'),
-                'metadata': result['metadata']
+                'source_file': metadata.get('source', 'unknown.txt'),
+                'doc_type': metadata.get('doc_type', 'document'),
+                'metadata': metadata
             })
         
         return formatted_results
@@ -163,7 +158,7 @@ class FAISSRetriever:
         """Count documents by type."""
         counts = {}
         for metadata in self.metadatas:
-            doc_type = metadata.get('doc_type', 'unknown')
+            doc_type = metadata.get('doc_type', metadata.get('type', 'unknown'))
             counts[doc_type] = counts.get(doc_type, 0) + 1
         return counts
     
