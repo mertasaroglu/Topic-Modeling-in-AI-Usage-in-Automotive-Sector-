@@ -1,0 +1,73 @@
+{
+  "query_id": 2,
+  "question": "Show me recent patents on AI for automotive vehicles.",
+  "answer": "**Recent Patents on AI for Automotive Vehicles**\n\nBased on the provided context, there are no recent patents on AI for automotive vehicles mentioned. However, I can guide you through the process of extracting patent details and analyzing jurisdictions.\n\n**PATENT QUERY GUIDANCE:**\n\n1. **EXTRACT PATENT DETAILS**: Unfortunately, no patent details are provided in the context. However, I can provide a general outline of how to extract patent details:\n\n* Patent numbers (e.g., **US1234567**, **EP1234567**, **WO1234567**)\n* Titles (e.g., \"AI-Powered Vehicle Navigation System\")\n* Inventors (e.g., \"John Doe, Jane Smith\")\n* Assignees (e.g., \"General Motors, LLC\")\n* Jurisdictions (e.g., \"European Patent Office\", \"United States Patent and Trademark Office\")\n\n2. **ANALYZE JURISDICTIONS**:\n   - **EP**: European Patent Office (covers multiple countries)\n   - **US**: United States Patent and Trademark Office\n   - **WO**: World Intellectual Property Organization (international applications)\n\n3. **IDENTIFY TECHNOLOGIES**: Specific automotive/AI technologies protected (e.g., computer vision, natural language processing, machine learning)\n\n4. **NOTE KEY DATES**: Filing dates, publication dates, grant dates when available\n\n5. **ORGANIZE BY TYPE**: Group by jurisdiction or technology area\n\n6. **SOURCE SPECIFICALLY**: Always cite patent database sources [Source: Automotive Technology Patents Database]\n\n**PATENT DATABASE SOURCES:**\n\nUnfortunately, no patent database sources are provided in the context. However, I can suggest some popular patent databases:\n\n* [Source: Google Patents]\n* [Source: PatentScope]\n* [Source: Espacenet]\n\n**IMPLICATIONS:**\n\nThe lack of patent details and database sources in the context limits the analysis. However, I can provide some general information on recent trends in AI for automotive vehicles.\n\n**RECENT TRENDS:**\n\n* AI-powered vehicle navigation systems\n* Computer vision-based driver assistance systems\n* Natural language processing-based voice assistants\n* Machine learning-based predictive maintenance systems\n\n**SUMMARY:**\n\nUnfortunately, no recent patents on AI for automotive vehicles are mentioned in the provided context. However, I can guide you through the process of extracting patent details and analyzing jurisdictions.",
+  "sources": [
+    {
+      "text": "RESEARCH PAPER #1662:\n  Title: The revolutionary impact of ai in the automotive industry\n  Year Published: 2025\n  Authors: Gaurav Gupta",
+      "content": "RESEARCH PAPER #1662:\n  Title: The revolutionary impact of ai in the automotive industry\n  Year Published: 2025\n  Authors: Gaurav Gupta",
+      "similarity_score": 0.647861123085022,
+      "source_file": "automotive_papers_processed.txt",
+      "doc_type": "research_paper",
+      "metadata": {
+        "source": "automotive_papers_processed.txt",
+        "doc_type": "research_paper",
+        "file_path": "../../01_data/rag_automotive_tech/processed/automotive_papers/automotive_papers_processed.txt"
+      }
+    },
+    {
+      "text": "and streamlining production. Industry examples such as Tesla, Toyota, and Volkswagen illustrate the real impact of AI in reducing costs, increasing speed of execution, and adapting to dynamic market demands. The paper concludes that AI, through nonconventional uses, opens up new perspectives for innovation in the development of vehicles and mechatronic systems.</jats:p>",
+      "content": "and streamlining production. Industry examples such as Tesla, Toyota, and Volkswagen illustrate the real impact of AI in reducing costs, increasing speed of execution, and adapting to dynamic market demands. The paper concludes that AI, through nonconventional uses, opens up new perspectives for innovation in the development of vehicles and mechatronic systems.</jats:p>",
+      "similarity_score": 0.6202362179756165,
+      "source_file": "automotive_papers_processed.txt",
+      "doc_type": "research_paper",
+      "metadata": {
+        "source": "automotive_papers_processed.txt",
+        "doc_type": "research_paper",
+        "file_path": "../../01_data/rag_automotive_tech/processed/automotive_papers/automotive_papers_processed.txt"
+      }
+    },
+    {
+      "text": "RESEARCH PAPER #510:\n  Title: Beyond Self-Driving: AI-Powered Innovations Shaping the Future of Automobiles\n  Year Published: 2025\n  Authors: Rashmi Rashmi; Shivam Gogia; Vivek Patel",
+      "content": "RESEARCH PAPER #510:\n  Title: Beyond Self-Driving: AI-Powered Innovations Shaping the Future of Automobiles\n  Year Published: 2025\n  Authors: Rashmi Rashmi; Shivam Gogia; Vivek Patel",
+      "similarity_score": 0.6169191598892212,
+      "source_file": "automotive_papers_processed.txt",
+      "doc_type": "research_paper",
+      "metadata": {
+        "source": "automotive_papers_processed.txt",
+        "doc_type": "research_paper",
+        "file_path": "../../01_data/rag_automotive_tech/processed/automotive_papers/automotive_papers_processed.txt"
+      }
+    },
+    {
+      "text": "RESEARCH PAPER #1435:\n  Title: Responsible AI System Development in Automotive Applications: A Framework\n  Year Published: 2025\n  Authors: Jody Nelson; Christopher Lin",
+      "content": "RESEARCH PAPER #1435:\n  Title: Responsible AI System Development in Automotive Applications: A Framework\n  Year Published: 2025\n  Authors: Jody Nelson; Christopher Lin",
+      "similarity_score": 0.6074475646018982,
+      "source_file": "automotive_papers_processed.txt",
+      "doc_type": "research_paper",
+      "metadata": {
+        "source": "automotive_papers_processed.txt",
+        "doc_type": "research_paper",
+        "file_path": "../../01_data/rag_automotive_tech/processed/automotive_papers/automotive_papers_processed.txt"
+      }
+    },
+    {
+      "text": "RESEARCH PAPER #884:\n  Title: Building an AI Portfolio: A Technical Guide for Automotive Engineering Careers\n  Year Published: 2025\n  Authors: Sree Ramya Yendluri -",
+      "content": "RESEARCH PAPER #884:\n  Title: Building an AI Portfolio: A Technical Guide for Automotive Engineering Careers\n  Year Published: 2025\n  Authors: Sree Ramya Yendluri -",
+      "similarity_score": 0.6060860753059387,
+      "source_file": "automotive_papers_processed.txt",
+      "doc_type": "research_paper",
+      "metadata": {
+        "source": "automotive_papers_processed.txt",
+        "doc_type": "research_paper",
+        "file_path": "../../01_data/rag_automotive_tech/processed/automotive_papers/automotive_papers_processed.txt"
+      }
+    }
+  ],
+  "retrieved_chunks": 5,
+  "source_count_used": 5,
+  "startup_boost_applied": false,
+  "patent_boost_applied": false,
+  "timestamp": "2025-12-05T15:49:30.193208",
+  "model_used": "llama-3.1-8b-instant"
+}
