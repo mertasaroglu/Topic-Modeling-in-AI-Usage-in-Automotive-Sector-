@@ -1,12 +1,11 @@
-# AUTOMOTIVE TECH INTELLIGENCE - STREAMLIT APP
-# Complete RAG interface with Query Expansion
-# UPDATED FOR FAISS RETRIEVER WITH UNIVERSAL HYBRID SEARCH
+# AUTOMOTIVE TECH INNOVATION INTELLIGENCE SUITE - STREAMLIT APP
+# Complete RAG interface 
 
 import streamlit as st
 import sys
 import os
 import importlib.util
-import re  # Added for regex matching
+import re
 
 def get_correct_paths():
     """Get absolute paths based on your exact folder structure"""
@@ -22,7 +21,7 @@ def import_your_components():
     """Import FAISS retriever with exact paths"""
     rag_components_path, _, _ = get_correct_paths()
     
-    # Updated for FAISS retriever
+    # FAISS retriever
     faiss_retriever_path = os.path.join(rag_components_path, 'faiss_retriever.py')
     
     if not os.path.exists(faiss_retriever_path):
@@ -40,91 +39,13 @@ def import_your_components():
         return None, f"Error importing FAISS retriever: {str(e)}"
 
 def import_query_expander():
-    """Import the query expander module"""
+    """Import the existing query expander module (if it exists)"""
     rag_components_path, _, _ = get_correct_paths()
     expander_path = os.path.join(rag_components_path, 'query_expander.py')
     
+    # Only import if file exists
     if not os.path.exists(expander_path):
-        # Create enhanced query expander
-        with open(expander_path, 'w') as f:
-            f.write('''
-class QueryExpander:
-    """Enhanced query expander for automotive domain."""
-    
-    def expand_query(self, query, use_llm=False):
-        """Expand query with domain-specific variations."""
-        variations = [query]
-        query_lower = query.lower()
-        
-        # AUTOMOTIVE DOMAIN EXPANSION
-        if any(word in query_lower for word in ['automotive', 'vehicle', 'car', 'truck']):
-            variations.extend([
-                'automobile',
-                'mobility',
-                'transportation',
-                'autonomous vehicles',
-                'connected cars'
-            ])
-        
-        # AI DOMAIN EXPANSION
-        if any(word in query_lower for word in ['ai', 'artificial intelligence', 'machine learning']):
-            variations.extend([
-                'machine learning',
-                'deep learning',
-                'neural networks',
-                'algorithm',
-                'intelligent systems'
-            ])
-        
-        # STARTUP SPECIFIC EXPANSION
-        if any(word in query_lower for word in ['startup', 'company', 'venture']):
-            variations.extend([
-                'emerging companies',
-                'new businesses',
-                'tech ventures',
-                'entrepreneurship',
-                'scale-up'
-            ])
-        
-        # PATENT SPECIFIC EXPANSION
-        if any(word in query_lower for word in ['patent', 'intellectual property', 'ip']):
-            variations.extend([
-                'intellectual property',
-                'patents',
-                'invention',
-                'innovation protection',
-                'IP rights'
-            ])
-        
-        # RESEARCH SPECIFIC EXPANSION
-        if any(word in query_lower for word in ['research', 'study', 'paper', 'academic']):
-            variations.extend([
-                'academic research',
-                'scientific study',
-                'scholarly article',
-                'technical paper'
-            ])
-        
-        # TREND SPECIFIC EXPANSION
-        if any(word in query_lower for word in ['trend', 'forecast', 'future', 'emerging']):
-            variations.extend([
-                'emerging trends',
-                'future developments',
-                'market trends',
-                'technological forecast'
-            ])
-        
-        # MATURITY SPECIFIC EXPANSION
-        if any(word in query_lower for word in ['trl', 'maturity', 'readiness', 'commercial']):
-            variations.extend([
-                'technology readiness',
-                'development stage',
-                'commercialization',
-                'technology adoption'
-            ])
-        
-        return list(set(variations))[:5]  # Return unique, max 5 variations
-''')
+        return None, None  # Returns None if no expander available
     
     try:
         if rag_components_path not in sys.path:
@@ -135,7 +56,8 @@ class QueryExpander:
         spec.loader.exec_module(expander_module)
         return expander_module, None
     except Exception as e:
-        return None, f"Error importing query expander: {str(e)}"
+        # Silent fail - system works without expander
+        return None, None
 
 def setup_groq_client():
     """Your exact client setup from notebook 03"""
@@ -156,10 +78,10 @@ def setup_groq_client():
         return None, f"Error setting up Groq client: {str(e)}"
 
 def build_smart_prompt(question, context):
-    """Enhanced prompt template with specific guidance for all query types"""
+    """Prompt template with specific guidance for all query types"""
     question_lower = question.lower()
     
-    # DETECT QUERY TYPE FOR TARGETED GUIDANCE
+    # Detect query type for targeted guidance
     is_startup_question = any(keyword in question_lower for keyword in 
                             ['startup', 'company', 'companies', 'venture', 'business', 'funding'])
     
@@ -178,10 +100,10 @@ def build_smart_prompt(question, context):
     is_technology_question = any(keyword in question_lower for keyword in 
                                ['technology', 'tech', 'system', 'solution', 'application', 'deployment', 'agent', 'agents'])
     
-    # BUILD TARGETED GUIDANCE SECTIONS
+    # Build targeted guidance sections
     guidance_sections = []
     
-    # PATENT GUIDANCE
+    # Patents
     if is_patent_question:
         guidance_sections.append("""
 🔍 **PATENT QUERY GUIDANCE:**
@@ -196,7 +118,7 @@ def build_smart_prompt(question, context):
 6. **SOURCE SPECIFICALLY**: Always cite patent database sources [Source: Automotive Technology Patents Database]
 """)
     
-    # STARTUP GUIDANCE
+    # Startups
     if is_startup_question:
         guidance_sections.append("""
 🚀 **STARTUP QUERY GUIDANCE:**
@@ -208,7 +130,7 @@ def build_smart_prompt(question, context):
 6. **CITE PROPERLY**: Always include source names
 """)
     
-    # RESEARCH GUIDANCE
+    # Research
     if is_research_question:
         guidance_sections.append("""
 📚 **RESEARCH QUERY GUIDANCE:**
@@ -220,7 +142,7 @@ def build_smart_prompt(question, context):
 6. **ORGANIZE BY THEME**: Group related research findings together
 """)
     
-    # TREND/GUIDANCE
+    # Trends
     if is_trend_question:
         guidance_sections.append("""
 📈 **TREND/CHALLENGE GUIDANCE:**
@@ -232,7 +154,7 @@ def build_smart_prompt(question, context):
 6. **COMPARE SOURCES**: Note consistency or variations across different reports
 """)
     
-    # MATURITY GUIDANCE
+    # Maturity
     if is_maturity_question:
         guidance_sections.append("""
 🎯 **TECHNOLOGY MATURITY GUIDANCE:**
@@ -244,7 +166,7 @@ def build_smart_prompt(question, context):
 6. **PROVIDE SPECIFIC EXAMPLES**: Specific technologies and their maturity levels
 """)
     
-    # TECHNOLOGY/GUIDANCE
+    # Technology
     if is_technology_question:
         guidance_sections.append("""
 ⚙️ **TECHNOLOGY QUERY GUIDANCE:**
@@ -256,7 +178,7 @@ def build_smart_prompt(question, context):
 6. **COMPARE ALTERNATIVES**: Different technology options mentioned
 """)
     
-    # GENERAL GUIDANCE FOR ALL QUERIES
+    # General guidance
     general_guidance = """
 📋 **GENERAL ANSWER GUIDELINES:**
 1. **BE SPECIFIC**: Use exact names, numbers, dates from context
@@ -267,7 +189,7 @@ def build_smart_prompt(question, context):
 6. **ACKNOWLEDGE LIMITATIONS**: If information is incomplete, state what's missing
 """
     
-    # COMBINE ALL GUIDANCE
+    # Combine all guidance
     targeted_guidance = "\n\n".join(guidance_sections)
     
     prompt = f"""
@@ -370,7 +292,7 @@ def initialize_rag_system():
     """Initialize all RAG components using exact paths - UPDATED FOR FAISS"""
     rag_components_path, vector_index_path, project_root = get_correct_paths()
     
-    # Check if vector index exists - updated check for FAISS files
+    # Check if FAISS vector index exists
     if not os.path.exists(vector_index_path):
         return None, None, None, f"Vector index not found at: {vector_index_path}"
     
@@ -471,7 +393,7 @@ def get_targeted_keyword_queries(question, question_type):
     question_lower = question.lower()
     keyword_queries = []
     
-    # STARTUP-RELATED KEYWORDS
+    # Startup related keywords
     if question_type['is_startup_query']:
         keyword_queries.extend([
             "automotive startup",
@@ -486,7 +408,7 @@ def get_targeted_keyword_queries(question, question_type):
             "emerging automotive companies"
         ])
     
-    # PATENT-RELATED KEYWORDS
+    # Patent related keywords
     if question_type['is_patent_query']:
         keyword_queries.extend([
             "automotive patent",
@@ -501,7 +423,7 @@ def get_targeted_keyword_queries(question, question_type):
             "autonomous driving patent"
         ])
     
-    # RESEARCH-RELATED KEYWORDS
+    # Research related keywords
     if question_type['is_research_query']:
         keyword_queries.extend([
             "automotive research",
@@ -516,7 +438,7 @@ def get_targeted_keyword_queries(question, question_type):
             "intelligent vehicle study"
         ])
     
-    # TREND/CHALLENGE-RELATED KEYWORDS
+    # Trend related keywords
     if question_type['is_trend_query']:
         keyword_queries.extend([
             "automotive trend",
@@ -535,7 +457,7 @@ def get_targeted_keyword_queries(question, question_type):
             "automotive adoption barrier"
         ])
     
-    # MATURITY-RELATED KEYWORDS
+    # Maturity related keywords
     if question_type['is_maturity_query']:
         keyword_queries.extend([
             "technology readiness automotive",
@@ -550,7 +472,7 @@ def get_targeted_keyword_queries(question, question_type):
             "deployment automotive AI"
         ])
     
-    # TECHNOLOGY/AGENT-RELATED KEYWORDS
+    # Technology/Agent related keywords
     if question_type['is_technology_query']:
         # Extract technology terms from question
         tech_terms = re.findall(r'\b[A-Z][a-z]+\b', question)
@@ -582,7 +504,7 @@ def get_targeted_keyword_queries(question, question_type):
             "electric vehicle technology"
         ])
     
-    # GENERAL AUTOMOTIVE/AI KEYWORDS (for all queries)
+    # General automative/AI keywords (for all queries)
     keyword_queries.extend([
         "automotive AI",
         "vehicle artificial intelligence",
@@ -610,10 +532,10 @@ def universal_hybrid_retrieval(question, retriever, query_expander=None, k=4):
     """
     all_results = []
     
-    # STEP 1: ANALYZE QUESTION TYPE
+    # Identify question type
     question_type, semantic_threshold, keyword_threshold, k_semantic, k_keyword = analyze_question_type(question)
     
-    # STEP 2: SEMANTIC SEARCH WITH QUERY EXPANSION
+    # 1. Semantic search with query expansion
     if query_expander:
         try:
             expanded_queries = query_expander.expand_query(question, use_llm=False)
@@ -624,7 +546,6 @@ def universal_hybrid_retrieval(question, retriever, query_expander=None, k=4):
     else:
         expanded_queries = [question]
     
-    # Semantic search with expanded queries
     for query in expanded_queries[:3]:  # Use first 3 expanded queries
         try:
             semantic_results = retriever.retrieve_with_sources(
@@ -636,7 +557,7 @@ def universal_hybrid_retrieval(question, retriever, query_expander=None, k=4):
         except Exception as e:
             continue
     
-    # STEP 3: TARGETED KEYWORD SEARCH
+    # 2. Targeted keyword search
     keyword_queries = get_targeted_keyword_queries(question, question_type)
     
     for keyword_query in keyword_queries[:5]:  # Use first 5 keyword queries
@@ -659,7 +580,6 @@ def universal_hybrid_retrieval(question, retriever, query_expander=None, k=4):
         except Exception as e:
             continue
     
-    # STEP 4: DOCUMENT TYPE ENSURANCE
     # Ensure relevant document types are included based on question type
     required_doc_types = []
     
@@ -693,7 +613,6 @@ def universal_hybrid_retrieval(question, retriever, query_expander=None, k=4):
             except:
                 pass
     
-    # STEP 5: DEDUPLICATION AND RANKING
     # Remove duplicates
     unique_results = []
     seen_content = set()
@@ -708,7 +627,7 @@ def universal_hybrid_retrieval(question, retriever, query_expander=None, k=4):
             seen_content.add(signature)
             unique_results.append(result)
     
-    # Enhanced ranking: prioritize by relevance to question type
+    # Enhance ranking: prioritize by relevance to question type
     def calculate_relevance_score(result, question_type):
         """Calculate enhanced relevance score based on question type"""
         base_score = result.get('similarity_score', 0)
@@ -811,7 +730,7 @@ def ask_question(question, retriever, groq_client, query_expander=None):
             'success': False
         }
 
-# STREAMLIT UI
+# Streamlit UI
 def main():
     st.set_page_config(
         page_title="INNOVATION INTELLIGENCE SUITE", 
@@ -887,9 +806,9 @@ def main():
             elif st.session_state.retriever and st.session_state.groq_client:
                 st.session_state.rag_initialized = True
                 if st.session_state.query_expander:
-                    st.success("System ready.")
+                    pass
                 else:
-                    st.success("✅ FAISS RAG system ready! (Query expansion not available)")
+                    pass
             else:
                 st.session_state.rag_initialized = False
                 st.error("❌ Failed to initialize RAG system")
@@ -929,7 +848,7 @@ def main():
         return
     
     # Query interface (only shown when system is ready)
-    st.success("System ready.")
+    # st.success("System ready.")
     
     # Initialize question input in session state if not exists
     if 'question_input' not in st.session_state:
@@ -972,7 +891,7 @@ def main():
     # Query input - NOW this comes AFTER button checks
     question = st.text_input(
         "💬 Your question:",
-        value=st.session_state.question_input,
+        # value=st.session_state.question_input,
         placeholder="e.g., Which startups work on AI for automotive?",
         key="question_input"
     )

@@ -1,4 +1,4 @@
-# rag_components/faiss_retriever.py - UPDATED WITH CORRECT METHODS
+# FAISS retriever
 
 import os
 import pickle
