@@ -1,6 +1,6 @@
 # AUTOMOTIVE TECH INTELLIGENCE - STREAMLIT APP
 # Complete RAG interface with Query Expansion
-# UPDATED FOR FAISS RETRIEVER WITH HYBRID SEARCH
+# UPDATED FOR FAISS RETRIEVER WITH UNIVERSAL HYBRID SEARCH
 
 import streamlit as st
 import sys
@@ -45,9 +45,86 @@ def import_query_expander():
     expander_path = os.path.join(rag_components_path, 'query_expander.py')
     
     if not os.path.exists(expander_path):
-        # Create the file if it doesn't exist
+        # Create enhanced query expander
         with open(expander_path, 'w') as f:
-            f.write('''# Query expander placeholder - will be created automatically''')
+            f.write('''
+class QueryExpander:
+    """Enhanced query expander for automotive domain."""
+    
+    def expand_query(self, query, use_llm=False):
+        """Expand query with domain-specific variations."""
+        variations = [query]
+        query_lower = query.lower()
+        
+        # AUTOMOTIVE DOMAIN EXPANSION
+        if any(word in query_lower for word in ['automotive', 'vehicle', 'car', 'truck']):
+            variations.extend([
+                'automobile',
+                'mobility',
+                'transportation',
+                'autonomous vehicles',
+                'connected cars'
+            ])
+        
+        # AI DOMAIN EXPANSION
+        if any(word in query_lower for word in ['ai', 'artificial intelligence', 'machine learning']):
+            variations.extend([
+                'machine learning',
+                'deep learning',
+                'neural networks',
+                'algorithm',
+                'intelligent systems'
+            ])
+        
+        # STARTUP SPECIFIC EXPANSION
+        if any(word in query_lower for word in ['startup', 'company', 'venture']):
+            variations.extend([
+                'emerging companies',
+                'new businesses',
+                'tech ventures',
+                'entrepreneurship',
+                'scale-up'
+            ])
+        
+        # PATENT SPECIFIC EXPANSION
+        if any(word in query_lower for word in ['patent', 'intellectual property', 'ip']):
+            variations.extend([
+                'intellectual property',
+                'patents',
+                'invention',
+                'innovation protection',
+                'IP rights'
+            ])
+        
+        # RESEARCH SPECIFIC EXPANSION
+        if any(word in query_lower for word in ['research', 'study', 'paper', 'academic']):
+            variations.extend([
+                'academic research',
+                'scientific study',
+                'scholarly article',
+                'technical paper'
+            ])
+        
+        # TREND SPECIFIC EXPANSION
+        if any(word in query_lower for word in ['trend', 'forecast', 'future', 'emerging']):
+            variations.extend([
+                'emerging trends',
+                'future developments',
+                'market trends',
+                'technological forecast'
+            ])
+        
+        # MATURITY SPECIFIC EXPANSION
+        if any(word in query_lower for word in ['trl', 'maturity', 'readiness', 'commercial']):
+            variations.extend([
+                'technology readiness',
+                'development stage',
+                'commercialization',
+                'technology adoption'
+            ])
+        
+        return list(set(variations))[:5]  # Return unique, max 5 variations
+''')
     
     try:
         if rag_components_path not in sys.path:
@@ -79,84 +156,119 @@ def setup_groq_client():
         return None, f"Error setting up Groq client: {str(e)}"
 
 def build_smart_prompt(question, context):
-    """UPDATED universal prompt template with patent AND startup definitions"""
-    # Detect if this is a technology maturity question
-    maturity_keywords = ['trl', 'mature', 'transition', 'academy to application', 
-                        'commercial', 'moving from academy', 'readiness', 'development stage']
-    
-    # Detect if this is a patent-related question
-    patent_keywords = ['patent', 'intellectual property', 'ip', 'jurisdiction', 'ep', 'us', 'wo',
-                      'kind', 'a1', 'b2', 'filing', 'protection', 'patent office', 'lens']
-    
-    # Detect if this is a startup-related question
-    startup_keywords = ['startup', 'startups', 'company', 'companies', 'venture', 'business', 
-                       'funding', 'investment', 'series a', 'series b', 'series c', 'backed']
-    
+    """Enhanced prompt template with specific guidance for all query types"""
     question_lower = question.lower()
-    is_maturity_question = any(keyword in question_lower for keyword in maturity_keywords)
-    is_patent_question = any(keyword in question_lower for keyword in patent_keywords)
-    is_startup_question = any(keyword in question_lower for keyword in startup_keywords)
     
-    # Include TRL section only for maturity questions
-    if is_maturity_question:
-        trl_section = """
-TECHNOLOGY MATURITY ASSESSMENT:
-- When discussing technology readiness, reference these stages:
-  * Research Phase (TRL 1-4): Basic research, lab validation
-  * Development Phase (TRL 5-6): Prototyping, testing  
-  * Commercialization Phase (TRL 7-9): Deployment, scaling
-- Assess current stage based on evidence in context
-- Identify transition indicators and timelines
-- Include a definition of TRL stages in the answer
-"""
-    else:
-        trl_section = ""
+    # DETECT QUERY TYPE FOR TARGETED GUIDANCE
+    is_startup_question = any(keyword in question_lower for keyword in 
+                            ['startup', 'company', 'companies', 'venture', 'business', 'funding'])
     
-    # Include patent definitions only for patent questions
+    is_patent_question = any(keyword in question_lower for keyword in 
+                           ['patent', 'intellectual property', 'ip', 'jurisdiction', 'ep', 'us', 'wo'])
+    
+    is_research_question = any(keyword in question_lower for keyword in 
+                             ['research', 'study', 'paper', 'academic', 'scientific', 'methodology'])
+    
+    is_trend_question = any(keyword in question_lower for keyword in 
+                          ['trend', 'forecast', 'future', 'emerging', 'development', 'innovation', 'pain point', 'challenge'])
+    
+    is_maturity_question = any(keyword in question_lower for keyword in 
+                             ['trl', 'maturity', 'readiness', 'commercial', 'transition', 'stage'])
+    
+    is_technology_question = any(keyword in question_lower for keyword in 
+                               ['technology', 'tech', 'system', 'solution', 'application', 'deployment', 'agent', 'agents'])
+    
+    # BUILD TARGETED GUIDANCE SECTIONS
+    guidance_sections = []
+    
+    # PATENT GUIDANCE
     if is_patent_question:
-        patent_section = """
-PATENT DOCUMENT INTERPRETATION:
-- JURISDICTION indicates geographic protection scope:
-  * EP: European Patent Office (multiple European countries)
-  * US: United States Patent and Trademark Office
-  * WO: World Intellectual Property Organization (PCT international applications)
-  
-- KIND CODES indicate document type and status:
-  * A1: Patent application with search report
-  * A2: Patent application without search report  
-  * A3: Search report published separately
-  * B1: Granted patent (examined and approved)
-  * B2: Amended/revised granted patent
-  
-- Consider jurisdiction for market focus and protection scope
-- Use kind codes to distinguish between applications (A) and granted patents (B)
-"""
-    else:
-        patent_section = ""
+        guidance_sections.append("""
+🔍 **PATENT QUERY GUIDANCE:**
+1. **EXTRACT PATENT DETAILS**: Patent numbers, titles, inventors, assignees, jurisdictions
+2. **ANALYZE JURISDICTIONS**: 
+   - EP: European Patent Office (covers multiple countries)
+   - US: United States Patent and Trademark Office
+   - WO: World Intellectual Property Organization (international applications)
+3. **IDENTIFY TECHNOLOGIES**: Specific automotive/AI technologies protected
+4. **NOTE KEY DATES**: Filing dates, publication dates, grant dates when available
+5. **ORGANIZE BY TYPE**: Group by jurisdiction or technology area
+6. **SOURCE SPECIFICALLY**: Always cite patent database sources [Source: Automotive Technology Patents Database]
+""")
     
-    # Include startup guidance only for startup questions
+    # STARTUP GUIDANCE
     if is_startup_question:
-        startup_section = """
-CRITICAL INSTRUCTIONS FOR STARTUP QUERIES:
-1. **EXTRACT ALL SPECIFIC STARTUP/COMPANY NAMES** mentioned in the context
-2. **FOCUS ON STARTUP DATABASES**: Pay special attention to sections from "Seedtable Best Automotive Industry Startups to Watch in 2025" and "AutoTechInsights Automotive Startup Profiles & Tracker"
-3. **FOR EACH STARTUP FOUND**:
-   * State the company name clearly and prominently
-   * Describe their primary technology or business focus
-   * Include location information if available
-   * Mention any funding details (rounds raised, investors)
-   * Note their automotive/AI specialization
-4. **IF NO STARTUPS ARE FOUND**, clearly state: "No specific startup companies were found in the available documents."
-5. **PRIORITIZE INFORMATION FROM 'autotechinsight_startups_processed.txt' and 'seedtable_startups_processed.txt'** over general reports when answering startup questions
-
-EXAMPLE FORMAT:
-"Based on the startup databases, I found these automotive AI companies:
-
-1. **Company X**: Develops AI perception systems for autonomous vehicles. Based in Berlin. [Source: Automotive Startup Profiles & Tracker]
-2. **Company Y**: Specializes in battery management AI for electric vehicles. Raised $20M Series A. [Source: Automotive Industry Startups to Watch in 2025]"
+        guidance_sections.append("""
+🚀 **STARTUP QUERY GUIDANCE:**
+1. **EXTRACT COMPANY NAMES**: All startup/company names mentioned
+2. **INCLUDE DETAILS**: Location, founding year, funding stage, key technologies
+3. **FOCUS ON DATABASES**: Prioritize information from startup-specific sources
+4. **ORGANIZE CLEARLY**: Create numbered lists with consistent formatting
+5. **HIGHLIGHT AI FOCUS**: Note AI applications in automotive context
+6. **CITE PROPERLY**: Always include source names
+""")
+    
+    # RESEARCH GUIDANCE
+    if is_research_question:
+        guidance_sections.append("""
+📚 **RESEARCH QUERY GUIDANCE:**
+1. **EXTRACT KEY FINDINGS**: Main conclusions, methodologies, results
+2. **IDENTIFY AUTHORS & INSTITUTIONS**: Research teams and affiliations
+3. **NOTE TECHNICAL DETAILS**: Specific algorithms, models, datasets used
+4. **ASSESS NOVELTY**: Unique contributions or innovations mentioned
+5. **CONNECT TO APPLICATIONS**: Practical automotive applications discussed
+6. **ORGANIZE BY THEME**: Group related research findings together
+""")
+    
+    # TREND/GUIDANCE
+    if is_trend_question:
+        guidance_sections.append("""
+📈 **TREND/CHALLENGE GUIDANCE:**
+1. **IDENTIFY KEY TRENDS/PAIN POINTS**: Major developments, challenges, or patterns
+2. **EXTRACT VELOCITY INDICATORS**: Growth rates, adoption curves, investment trends
+3. **NOTE DRIVERS & BARRIERS**: Factors enabling or hindering adoption
+4. **HIGHLIGHT KEY PLAYERS**: Companies, institutions mentioned
+5. **PROVIDE EXAMPLES**: Specific technologies or cases mentioned
+6. **COMPARE SOURCES**: Note consistency or variations across different reports
+""")
+    
+    # MATURITY GUIDANCE
+    if is_maturity_question:
+        guidance_sections.append("""
+🎯 **TECHNOLOGY MATURITY GUIDANCE:**
+1. **ASSESS TRL LEVELS**: Technology Readiness Levels 1-9 when mentioned
+2. **IDENTIFY STAGE**: Research (TRL 1-4), Development (TRL 5-6), Commercial (TRL 7-9)
+3. **NOTE TRANSITION POINTS**: Key milestones for advancement
+4. **EXTRACT EVIDENCE**: Prototypes, pilots, deployments mentioned
+5. **ANALYZE TIMELINES**: Expected development or adoption timelines
+6. **PROVIDE SPECIFIC EXAMPLES**: Specific technologies and their maturity levels
+""")
+    
+    # TECHNOLOGY/GUIDANCE
+    if is_technology_question:
+        guidance_sections.append("""
+⚙️ **TECHNOLOGY QUERY GUIDANCE:**
+1. **EXTRACT SPECIFICS**: Technology names, versions, capabilities
+2. **IDENTIFY APPLICATIONS**: How technologies are used in automotive context
+3. **NOTE PERFORMANCE METRICS**: Speed, accuracy, efficiency improvements
+4. **ASSESS INTEGRATION**: How technologies work together or integrate
+5. **HIGHLIGHT INNOVATIONS**: Novel approaches or breakthroughs
+6. **COMPARE ALTERNATIVES**: Different technology options mentioned
+""")
+    
+    # GENERAL GUIDANCE FOR ALL QUERIES
+    general_guidance = """
+📋 **GENERAL ANSWER GUIDELINES:**
+1. **BE SPECIFIC**: Use exact names, numbers, dates from context
+2. **BE COMPREHENSIVE**: Cover all relevant aspects of the question
+3. **BE STRUCTURED**: Use clear organization (numbered lists, sections)
+4. **BE ACCURATE**: Only use information from the provided context
+5. **CITE SOURCES**: For each key point, include [Source: Name]
+6. **ACKNOWLEDGE LIMITATIONS**: If information is incomplete, state what's missing
 """
-    else:
-        startup_section = ""
+    
+    # COMBINE ALL GUIDANCE
+    targeted_guidance = "\n\n".join(guidance_sections)
     
     prompt = f"""
 CONTEXT:
@@ -166,65 +278,91 @@ USER QUESTION:
 {question}
 
 ANALYSIS INSTRUCTIONS:
-1. Provide a comprehensive answer based strictly on the context provided
-2. Cite specific sources for each key point
-3. If the context is insufficient, acknowledge what cannot be answered
+You are an automotive technology intelligence analyst. Your task is to provide detailed, accurate answers based strictly on the context provided.
 
-{trl_section}
-{patent_section}
-{startup_section}
+{targeted_guidance}
 
-ADDITIONAL GUIDELINES:
-- For technology maturity questions: assess development stage and transition evidence
-- For patent questions: consider jurisdiction and document type implications
-- For trend questions: identify velocity, drivers, and key players  
-- For descriptive questions: provide specific examples and entities
+{general_guidance}
+
+FORMAT REQUIREMENTS:
+- Use **bold** for company names, technology names, patent numbers
+- Use numbered lists for multiple items (e.g., 1., 2., 3.)
+- Use bullet points for sub-items within descriptions
+- Include specific metrics (percentages, amounts, dates) when available
+- Group related information together (e.g., by technology, by company, by region)
+
+ANSWER STRUCTURE:
+1. Direct answer to the main question
+2. Supporting details with specific examples
+3. Source citations for each key point
+4. Summary or implications if relevant
 
 ANSWER:
 """
     return prompt
 
 def determine_source_count(question):
-    """YOUR dynamic source counting from notebook 03"""
+    """Dynamic source counting based on question type"""
     question_lower = question.lower()
     
-    if any(keyword in question_lower for keyword in ['summarize', 'trends', 'overview', 'comprehensive']):
+    # Complex questions need more sources
+    if any(keyword in question_lower for keyword in ['summarize', 'comprehensive', 'overall', 'complete', 'latest']):
         return 5
-    elif any(keyword in question_lower for keyword in ['which', 'list', 'show me']):
-        return 4
-    elif any(keyword in question_lower for keyword in ['specific', 'exact', 'precise']):
-        return 2
-    else:
+    # List questions need more sources for coverage
+    elif any(keyword in question_lower for keyword in ['list', 'which', 'what are', 'show all', 'show me']):
+        return 5
+    # Specific questions can use fewer sources
+    elif any(keyword in question_lower for keyword in ['specific', 'exact', 'precise', 'detailed']):
         return 3
+    # Default for most questions
+    else:
+        return 4
 
 def format_source_name(source_file):
-    """UPDATED file name formatting with new data sources"""
+    """Enhanced file name formatting with icons"""
     name_mapping = {
         # Automotive Papers
-        'a_benchmark_framework_for_AL_models_in_automotive_aerodynamics.txt': 'Benchmark Framework for AI Models in Automotive Aerodynamics',
-        'AL_agents_in_engineering_design_a_multiagent_framework_for_aesthetic_and_aerodynamic_car_design.txt': 'AI Agents in Engineering Design',
-        'automating_automotive_software_development_a_synergy_of_generative_AL_and_formal_methods.txt': 'Automating Automotive Software Development',
-        'automotive-software-and-electronics-2030-full-report.txt': 'Automotive Software and Electronics 2030 Report',
-        'drive_disfluency-rich_synthetic_dialog_data_generation_framework_for_intelligent_vehicle_environments.txt': 'DRIVE Framework for Intelligent Vehicles',
-        'Embedded_acoustic_intelligence_for_automotive_systems.txt': 'Embedded Acoustic Intelligence',
-        'enhanced_drift_aware_computer_vision_achitecture_for_autonomous_driving.txt': 'Enhanced Computer Vision for Autonomous Driving',
-        'Gen_AL_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt': 'Generative AI in Automotive',
-        'generative_AL_for_autonomous_driving_a_review.txt': 'Generative AI for Autonomous Driving',
-        'leveraging_vision_language_models_for_visual_grounding_and_analysis_of_automative_UI.txt': 'Vision-Language Models for Automotive UI',
+        'a_benchmark_framework_for_AL_models_in_automotive_aerodynamics.txt': '📊 AI in Automotive Aerodynamics Research',
+        'AL_agents_in_engineering_design_a_multiagent_framework_for_aesthetic_and_aerodynamic_car_design.txt': '🤖 AI Agents in Car Design Research',
+        'automating_automotive_software_development_a_synergy_of_generative_AL_and_formal_methods.txt': '⚙️ AI for Automotive Software Development',
+        'automotive-software-and-electronics-2030-full-report.txt': '📈 Automotive Software 2030 Report',
+        'drive_disfluency-rich_synthetic_dialog_data_generation_framework_for_intelligent_vehicle_environments.txt': '🗣️ AI Dialogue Systems for Vehicles',
+        'Embedded_acoustic_intelligence_for_automotive_systems.txt': '🔊 Acoustic AI for Automotive Systems',
+        'enhanced_drift_aware_computer_vision_achitecture_for_autonomous_driving.txt': '👁️ Computer Vision for Autonomous Driving',
+        'Gen_AL_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt': '🎨 Generative AI in Automotive Applications',
+        'generative_AL_for_autonomous_driving_a_review.txt': '📚 Generative AI for Autonomous Driving Review',
+        'leveraging_vision_language_models_for_visual_grounding_and_analysis_of_automative_UI.txt': '👁️🗣️ Vision-Language Models for Automotive UI',
         
         # Tech Reports
-        'bog_ai_value_2025.txt': 'BCG: AI Value Creation 2025',
-        'mckinsey_tech_trends_2025.txt': 'McKinsey Technology Trends 2025',
-        'wef_emerging_tech_2025.txt': 'WEF: Emerging Technologies 2025',
+        'bog_ai_value_2025.txt': '🏢 BCG: AI Value Creation 2025',
+        'mckinsey_tech_trends_2025.txt': '📊 McKinsey Technology Trends 2025',
+        'wef_emerging_tech_2025.txt': '🌍 WEF: Emerging Technologies 2025',
         
-        # New Processed Files (UPDATED)
-        'autotechinsight_startups_processed.txt': 'AutoTechInsight Automotive Startup Profiles & Tracker',
-        'seedtable_startups_processed.txt': 'Seedtable Best Automotive Industry Startups to Watch in 2025',
-        'automotive_papers_processed.txt': 'Automotive Research Papers Database',
-        'automotive_patents_processed.txt': 'Automotive Technology Patents Database',
+        # Processed Files
+        'autotechinsight_startups_processed.txt': '🚀 AutoTechInsight Automotive Startup Profiles & Tracker',
+        'seedtable_startups_processed.txt': '📈 Seedtable Best Automotive Industry Startups to Watch in 2025',
+        'automotive_papers_processed.txt': '📚 Automotive Research Papers Database',
+        'automotive_patents_processed.txt': '📜 Automotive Technology Patents Database',
+        
+        # Generic fallbacks
+        'startup': '🚀 Startup Database',
+        'patent': '📜 Patent Database',
+        'paper': '📚 Research Database',
+        'report': '📊 Industry Report',
     }
-    return name_mapping.get(source_file, source_file.replace('.txt', '').replace('_', ' ').title())
-
+    
+    # Try exact match first
+    if source_file in name_mapping:
+        return name_mapping[source_file]
+    
+    # Try partial matching
+    source_lower = source_file.lower()
+    for key, value in name_mapping.items():
+        if key in source_lower:
+            return value
+    
+    # Default formatting
+    return source_file.replace('.txt', '').replace('_', ' ').title()
 
 # Initialize components with lazy loading
 @st.cache_resource
@@ -270,7 +408,7 @@ def initialize_rag_system():
         if expander_module and not expander_error:
             try:
                 query_expander = expander_module.QueryExpander()
-                print("✅ Query expander initialized")
+                print("✅ Enhanced query expander initialized")
             except Exception as e:
                 print(f"⚠️ Query expander init warning: {e}")
                 query_expander = None
@@ -280,47 +418,202 @@ def initialize_rag_system():
     except Exception as e:
         return None, None, None, f"Error initializing FAISS retriever: {str(e)}"
 
-def extract_keywords_for_hybrid_search(question):
-    """Extract keywords from question for hybrid search"""
+def analyze_question_type(question):
+    """Analyze question to determine optimal retrieval strategy"""
     question_lower = question.lower()
     
-    keywords = []
+    # Define question type characteristics
+    question_type = {
+        'is_startup_query': any(keyword in question_lower for keyword in 
+                               ['startup', 'company', 'companies', 'venture', 'business', 'funding']),
+        'is_patent_query': any(keyword in question_lower for keyword in 
+                              ['patent', 'intellectual property', 'ip', 'jurisdiction', 'ep', 'us', 'wo']),
+        'is_research_query': any(keyword in question_lower for keyword in 
+                                ['research', 'study', 'paper', 'academic', 'method', 'experiment']),
+        'is_trend_query': any(keyword in question_lower for keyword in 
+                             ['trend', 'forecast', 'future', 'emerging', 'development', 'innovation', 'pain point', 'challenge']),
+        'is_maturity_query': any(keyword in question_lower for keyword in 
+                                ['trl', 'maturity', 'readiness', 'commercial', 'stage', 'transition']),
+        'is_technology_query': any(keyword in question_lower for keyword in 
+                                  ['technology', 'tech', 'system', 'solution', 'application', 'algorithm', 'agent', 'agents']),
+        'is_list_query': any(keyword in question_lower for keyword in 
+                            ['list', 'which', 'what are', 'name', 'show me']),
+        'is_summary_query': any(keyword in question_lower for keyword in 
+                               ['summarize', 'overview', 'explain', 'describe', 'what is']),
+    }
     
-    # Basic question words
-    keywords.extend(['what', 'which', 'who', 'how', 'where', 'when', 'why'])
+    # Determine optimal thresholds based on question type
+    if question_type['is_startup_query'] or question_type['is_list_query']:
+        semantic_threshold = 0.15  # Lower for broad coverage
+        keyword_threshold = 0.1    # Very low for keyword matching
+        k_semantic = 4             # More semantic results
+        k_keyword = 2              # Fewer keyword results
+    elif question_type['is_patent_query']:
+        semantic_threshold = 0.25  # Moderate for technical queries
+        keyword_threshold = 0.15   # Low for technical terms
+        k_semantic = 4
+        k_keyword = 2
+    elif question_type['is_research_query']:
+        semantic_threshold = 0.3   # Standard for academic content
+        keyword_threshold = 0.2    # Standard keyword matching
+        k_semantic = 3
+        k_keyword = 2
+    else:
+        semantic_threshold = 0.25  # Balanced for general queries
+        keyword_threshold = 0.15   # Standard keyword matching
+        k_semantic = 3
+        k_keyword = 2
     
-    # Startup-related keywords
-    if any(word in question_lower for word in ['startup', 'company', 'venture', 'business']):
-        keywords.extend(['startup', 'company', 'firm', 'inc', 'ltd', 'corp', 'corporation', 
-                        'venture', 'business', 'enterprise', 'funding', 'investment', 'series'])
-    
-    # AI-related keywords
-    if any(word in question_lower for word in ['ai', 'artificial intelligence', 'machine learning']):
-        keywords.extend(['ai', 'artificial intelligence', 'machine learning', 'deep learning', 
-                        'neural network', 'algorithm', 'model'])
-    
-    # Automotive-related keywords
-    if any(word in question_lower for word in ['automotive', 'vehicle', 'car', 'autonomous', 'electric']):
-        keywords.extend(['automotive', 'vehicle', 'car', 'truck', 'autonomous', 'self-driving',
-                        'electric', 'ev', 'battery', 'charging', 'mobility'])
-    
-    # Remove duplicates and return
-    return list(set(keywords))
+    return question_type, semantic_threshold, keyword_threshold, k_semantic, k_keyword
 
-def hybrid_retrieval(question, retriever, query_expander=None, k=3):
+def get_targeted_keyword_queries(question, question_type):
+    """Generate targeted keyword queries based on question type"""
+    question_lower = question.lower()
+    keyword_queries = []
+    
+    # STARTUP-RELATED KEYWORDS
+    if question_type['is_startup_query']:
+        keyword_queries.extend([
+            "automotive startup",
+            "AI company automotive",
+            "autonomous vehicle company",
+            "electric vehicle startup",
+            "mobility tech company",
+            "car technology startup",
+            "vehicle AI startup",
+            "automotive venture capital",
+            "tech startup funding",
+            "emerging automotive companies"
+        ])
+    
+    # PATENT-RELATED KEYWORDS
+    if question_type['is_patent_query']:
+        keyword_queries.extend([
+            "automotive patent",
+            "AI patent automotive",
+            "vehicle technology patent",
+            "intellectual property automotive",
+            "patent EP automotive",
+            "patent US automotive",
+            "patent WO automotive",
+            "automotive invention",
+            "vehicle innovation patent",
+            "autonomous driving patent"
+        ])
+    
+    # RESEARCH-RELATED KEYWORDS
+    if question_type['is_research_query']:
+        keyword_queries.extend([
+            "automotive research",
+            "AI study automotive",
+            "vehicle technology research",
+            "autonomous driving study",
+            "electric vehicle research",
+            "automotive AI paper",
+            "vehicle system research",
+            "mobility technology study",
+            "automotive engineering research",
+            "intelligent vehicle study"
+        ])
+    
+    # TREND/CHALLENGE-RELATED KEYWORDS
+    if question_type['is_trend_query']:
+        keyword_queries.extend([
+            "automotive trend",
+            "AI trend automotive",
+            "vehicle technology trend",
+            "emerging automotive technology",
+            "future of automotive",
+            "automotive innovation trend",
+            "mobility future trend",
+            "vehicle market trend",
+            "automotive industry trend",
+            "tech trend automotive",
+            "automotive challenge",
+            "AI challenge automotive",
+            "vehicle technology barrier",
+            "automotive adoption barrier"
+        ])
+    
+    # MATURITY-RELATED KEYWORDS
+    if question_type['is_maturity_query']:
+        keyword_queries.extend([
+            "technology readiness automotive",
+            "TRL automotive",
+            "maturity automotive technology",
+            "commercialization automotive",
+            "development stage automotive",
+            "automotive technology adoption",
+            "vehicle tech readiness",
+            "automotive innovation maturity",
+            "scaling automotive technology",
+            "deployment automotive AI"
+        ])
+    
+    # TECHNOLOGY/AGENT-RELATED KEYWORDS
+    if question_type['is_technology_query']:
+        # Extract technology terms from question
+        tech_terms = re.findall(r'\b[A-Z][a-z]+\b', question)
+        for term in tech_terms[:3]:  # Use first 3 capitalized terms
+            if len(term) > 3 and term.lower() not in ['ai', 'automotive', 'vehicle', 'car']:  # Avoid common words
+                keyword_queries.append(f"{term} automotive")
+                keyword_queries.append(f"{term} vehicle")
+        
+        # Special handling for AI agents
+        if 'agent' in question_lower or 'agents' in question_lower:
+            keyword_queries.extend([
+                "AI agent automotive",
+                "intelligent agent vehicle",
+                "autonomous agent system",
+                "multi-agent system automotive",
+                "agent-based automotive"
+            ])
+        
+        keyword_queries.extend([
+            "automotive technology",
+            "vehicle system",
+            "car technology",
+            "automotive solution",
+            "vehicle application",
+            "automotive AI system",
+            "intelligent vehicle technology",
+            "connected car technology",
+            "autonomous driving system",
+            "electric vehicle technology"
+        ])
+    
+    # GENERAL AUTOMOTIVE/AI KEYWORDS (for all queries)
+    keyword_queries.extend([
+        "automotive AI",
+        "vehicle artificial intelligence",
+        "car machine learning",
+        "autonomous vehicle",
+        "electric vehicle",
+        "connected car",
+        "smart mobility",
+        "intelligent transportation"
+    ])
+    
+    # Remove duplicates and limit
+    return list(set(keyword_queries))[:8]  # Max 8 keyword queries
+
+def universal_hybrid_retrieval(question, retriever, query_expander=None, k=4):
     """
-    🚀 HYBRID RETRIEVAL: Combines semantic search with keyword matching
-    This ensures startup files are retrieved even if they're not semantically similar
+    🚀 UNIVERSAL HYBRID RETRIEVAL: Optimized for all query types
+    
+    This approach:
+    1. Analyzes question type
+    2. Uses targeted semantic search with query expansion
+    3. Adds keyword searches optimized for the question type
+    4. Ensures relevant document types are included
+    5. Removes duplicates and optimizes ranking
     """
     all_results = []
-    question_lower = question.lower()
     
-    # Determine if this is a startup/company query
-    is_startup_query = any(keyword in question_lower for keyword in 
-                          ['startup', 'company', 'companies', 'which company', 'list of companies'])
+    # STEP 1: ANALYZE QUESTION TYPE
+    question_type, semantic_threshold, keyword_threshold, k_semantic, k_keyword = analyze_question_type(question)
     
-    # PHASE 1: SEMANTIC SEARCH (Your existing approach)
-    # Use query expansion for better semantic search
+    # STEP 2: SEMANTIC SEARCH WITH QUERY EXPANSION
     if query_expander:
         try:
             expanded_queries = query_expander.expand_query(question, use_llm=False)
@@ -331,100 +624,83 @@ def hybrid_retrieval(question, retriever, query_expander=None, k=3):
     else:
         expanded_queries = [question]
     
-    # Semantic search with very low threshold for startup queries
-    semantic_threshold = 0.15 if is_startup_query else 0.3
-    
-    for query in expanded_queries[:2]:  # Use first 2 expanded queries
+    # Semantic search with expanded queries
+    for query in expanded_queries[:3]:  # Use first 3 expanded queries
         try:
             semantic_results = retriever.retrieve_with_sources(
                 query, 
-                k=k, 
+                k=k_semantic, 
                 threshold=semantic_threshold
             )
             all_results.extend(semantic_results)
         except Exception as e:
             continue
     
-    # PHASE 2: KEYWORD SEARCH (NEW - for startup queries)
-    if is_startup_query:
-        # Define keyword queries specifically for startups
-        keyword_queries = [
-            "automotive startup",
-            "AI company automotive",
-            "autonomous vehicle company",
-            "electric vehicle startup",
-            "mobility tech company",
-            "car technology startup",
-            "vehicle AI startup"
-        ]
-        
-        # Also extract keywords from the question itself
-        extracted_keywords = extract_keywords_for_hybrid_search(question)
-        # Add the most relevant keywords
-        if 'startup' in extracted_keywords:
-            keyword_queries.append("startup automotive AI")
-        if 'company' in extracted_keywords:
-            keyword_queries.append("company automotive technology")
-        
-        # Search with each keyword query (very low threshold)
-        for keyword_query in keyword_queries[:4]:  # Use first 4 keyword queries
-            try:
-                keyword_results = retriever.retrieve_with_sources(
-                    keyword_query,
-                    k=2,  # Get fewer results per keyword
-                    threshold=0.1  # VERY low threshold for keyword matching
-                )
-                
-                # Filter to keep only startup files
-                for result in keyword_results:
-                    source_file = result.get('source_file', '').lower()
-                    # Check if this looks like a startup file
-                    if any(keyword in source_file for keyword in ['startup', 'seedtable', 'autotech']):
-                        all_results.append(result)
-            except Exception as e:
-                continue
+    # STEP 3: TARGETED KEYWORD SEARCH
+    keyword_queries = get_targeted_keyword_queries(question, question_type)
     
-    # PHASE 3: FORCE INCLUDE STARTUP FILES (if still missing)
-    if is_startup_query:
-        # Check if we have any startup files in results
-        has_startup_files = False
-        for item in all_results:
-            source_file = item.get('source_file', '').lower()
-            if any(keyword in source_file for keyword in ['startup', 'seedtable', 'autotech']):
-                has_startup_files = True
+    for keyword_query in keyword_queries[:5]:  # Use first 5 keyword queries
+        try:
+            keyword_results = retriever.retrieve_with_sources(
+                keyword_query,
+                k=k_keyword,
+                threshold=keyword_threshold
+            )
+            
+            # Filter to ensure relevance
+            filtered_results = []
+            for result in keyword_results:
+                content = result.get('text', result.get('content', '')).lower()
+                # Check if result contains relevant terms
+                if any(term in content for term in keyword_query.split()[:2]):
+                    filtered_results.append(result)
+            
+            all_results.extend(filtered_results)
+        except Exception as e:
+            continue
+    
+    # STEP 4: DOCUMENT TYPE ENSURANCE
+    # Ensure relevant document types are included based on question type
+    required_doc_types = []
+    
+    if question_type['is_startup_query']:
+        required_doc_types.extend(['startup', 'seedtable', 'autotech'])
+    
+    if question_type['is_patent_query']:
+        required_doc_types.extend(['patent', 'lens'])
+    
+    if question_type['is_research_query']:
+        required_doc_types.extend(['paper', 'research', 'study', 'academic'])
+    
+    # Check if we have required document types
+    for doc_type in required_doc_types[:2]:  # Check first 2 required types
+        has_type = False
+        for result in all_results:
+            source_file = result.get('source_file', '').lower()
+            if doc_type in source_file:
+                has_type = True
                 break
         
-        # If no startup files found, force search for them
-        if not has_startup_files:
-            # Direct search for startup file names
-            startup_file_patterns = ['startup', 'seedtable', 'autotech']
-            
-            for pattern in startup_file_patterns:
-                try:
-                    # Search with pattern (extremely low threshold)
-                    pattern_results = retriever.retrieve_with_sources(
-                        pattern,
-                        k=1,
-                        threshold=0.05  # Extremely low
-                    )
-                    
-                    # Check if results are actually startup files
-                    for result in pattern_results:
-                        content = result.get('text', result.get('content', ''))
-                        # Look for company names in content
-                        if any(name_indicator in content.lower() for name_indicator in 
-                              ['company', 'inc.', 'ltd', 'corp', 'startup']):
-                            all_results.append(result)
-                except:
-                    continue
+        # If missing, try to find documents of this type
+        if not has_type:
+            try:
+                type_results = retriever.retrieve_with_sources(
+                    doc_type,
+                    k=1,
+                    threshold=0.05  # Extremely low threshold
+                )
+                all_results.extend(type_results)
+            except:
+                pass
     
-    # Remove duplicates while preserving order
+    # STEP 5: DEDUPLICATION AND RANKING
+    # Remove duplicates
     unique_results = []
     seen_content = set()
     
     for result in all_results:
         content = result.get('text', result.get('content', ''))
-        content_start = content[:200]  # Use first 200 chars for deduplication
+        content_start = content[:250]  # Use first 250 chars for deduplication
         source = result.get('source_file', 'unknown')
         signature = f"{source}:{content_start}"
         
@@ -432,30 +708,44 @@ def hybrid_retrieval(question, retriever, query_expander=None, k=3):
             seen_content.add(signature)
             unique_results.append(result)
     
-    # Sort by similarity score and prioritize startup files
-    unique_results.sort(key=lambda x: (
-        # Priority 1: Startup files first
-        0 if any(keyword in x.get('source_file', '').lower() for keyword in ['startup', 'seedtable', 'autotech']) else 1,
-        # Priority 2: Higher similarity scores
-        -x.get('similarity_score', 0)
-    ))
+    # Enhanced ranking: prioritize by relevance to question type
+    def calculate_relevance_score(result, question_type):
+        """Calculate enhanced relevance score based on question type"""
+        base_score = result.get('similarity_score', 0)
+        source_file = result.get('source_file', '').lower()
+        
+        # Type matching bonus
+        type_bonus = 0
+        
+        if question_type['is_startup_query'] and any(keyword in source_file for keyword in ['startup', 'seedtable', 'autotech']):
+            type_bonus += 0.3
+        
+        if question_type['is_patent_query'] and any(keyword in source_file for keyword in ['patent', 'lens']):
+            type_bonus += 0.3
+        
+        if question_type['is_research_query'] and any(keyword in source_file for keyword in ['paper', 'research', 'study']):
+            type_bonus += 0.2
+        
+        return base_score + type_bonus
+    
+    # Sort by enhanced relevance score
+    unique_results.sort(key=lambda x: calculate_relevance_score(x, question_type), reverse=True)
     
     # Return top k results
     return unique_results[:k]
 
-def retrieve_with_expansion(question, retriever, query_expander=None, k=3):
+def retrieve_with_expansion(question, retriever, query_expander=None, k=4):
     """
-    Main retrieval function - uses hybrid approach for better results
+    Main retrieval function - uses universal hybrid approach
     """
-    # Use hybrid retrieval for better startup results
-    return hybrid_retrieval(question, retriever, query_expander, k)
+    return universal_hybrid_retrieval(question, retriever, query_expander, k)
 
 def ask_question(question, retriever, groq_client, query_expander=None):
-    """UPDATED RAG pipeline with hybrid retrieval"""
+    """Enhanced RAG pipeline with universal hybrid retrieval"""
     try:
         k = determine_source_count(question)
         
-        # Use hybrid retrieval
+        # Use universal hybrid retrieval
         retrieved_data = retrieve_with_expansion(
             question, 
             retriever, 
@@ -465,16 +755,15 @@ def ask_question(question, retriever, groq_client, query_expander=None):
         
         if not retrieved_data:
             return {
-                'answer': "I couldn't find relevant information in our knowledge base for this specific question. Try asking about automotive AI, tech trends, startup innovations, or patents.",
+                'answer': "I couldn't find relevant information in our knowledge base for this specific question. Try asking about:\n\n• Automotive AI startups and companies\n• Automotive technology patents and IP\n• AI research in autonomous driving\n• Technology trends and challenges in the automotive industry\n• Technology maturity and readiness levels",
                 'sources': [],
                 'success': True,
                 'source_count': k
             }
         
-        # Build context from retrieved data - HANDLE BOTH FIELD NAMES
+        # Build enhanced context with source information
         context_parts = []
-        for item in retrieved_data:
-            # Handle both 'text' (FAISS) and 'content' (old) field names
+        for i, item in enumerate(retrieved_data):
             content = item.get('text', item.get('content', ''))
             source_file = item.get('source_file', 'unknown')
             
@@ -484,15 +773,25 @@ def ask_question(question, retriever, groq_client, query_expander=None):
                 doc_type = item['metadata'].get('doc_type', item['metadata'].get('type', 'document'))
             
             readable_name = format_source_name(source_file)
-            context_parts.append(f"Source: {readable_name} | Type: {doc_type}\nContent: {content}")
+            similarity = item.get('similarity_score', 0)
+            
+            context_parts.append(f"--- DOCUMENT {i+1} ---")
+            context_parts.append(f"Source: {readable_name}")
+            context_parts.append(f"Type: {doc_type}")
+            context_parts.append(f"Relevance Score: {similarity:.3f}")
+            context_parts.append(f"Content:\n{content}")
+            context_parts.append("")  # Empty line for separation
         
-        context = "\n\n".join(context_parts)
+        context = "\n".join(context_parts)
         prompt = build_smart_prompt(question, context)
+        
+        # Adjust tokens based on context length
+        max_tokens = 800 if len(context) > 3000 else 600
         
         response = groq_client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=500,
+            max_tokens=max_tokens,
             temperature=0.3
         )
         
@@ -588,7 +887,7 @@ def main():
             elif st.session_state.retriever and st.session_state.groq_client:
                 st.session_state.rag_initialized = True
                 if st.session_state.query_expander:
-                    st.success("✅ FAISS RAG system ready with query expansion!")
+                    st.success("System ready.")
                 else:
                     st.success("✅ FAISS RAG system ready! (Query expansion not available)")
             else:
@@ -612,7 +911,7 @@ def main():
             if os.path.exists(vector_path):
                 faiss_files = ['faiss_index.bin', 'texts.pkl', 'metadata.pkl']
                 for file in faiss_files:
-                    file_path = os.path.join(vector_path, file)
+                    file_path = os.path.join(vector_index_path, file)
                     st.write(f"**{file} exists:** {os.path.exists(file_path)}")
             
             st.write(f"**query_expander.py exists:** {os.path.exists(os.path.join(rag_path, 'query_expander.py'))}")
@@ -630,7 +929,7 @@ def main():
         return
     
     # Query interface (only shown when system is ready)
-    st.success("🎉 FAISS system ready! Ask your question below.")
+    st.success("System ready.")
     
     # Initialize question input in session state if not exists
     if 'question_input' not in st.session_state:
@@ -652,22 +951,22 @@ def main():
     
     # Check for button clicks BEFORE creating the text input
     if st.session_state.research_clicked:
-        st.session_state.question_input = "Summarize the latest research on AI and autonomous driving."
+        st.session_state.question_input = "Summarize the latest AI research on autonomous driving vehicles."
         st.session_state.research_clicked = False
     elif st.session_state.patents_clicked:
-        st.session_state.question_input = "What are the key patents in automotive AI with US jurisdiction?"
+        st.session_state.question_input = "Show me recent patents on AI for automotive vehicles."
         st.session_state.patents_clicked = False
     elif st.session_state.startups_clicked:
-        st.session_state.question_input = "Which startups work on AI for automotive?"
+        st.session_state.question_input = "Which startups work on automotive and autonomous driving?"
         st.session_state.startups_clicked = False
     elif st.session_state.trends_clicked:
-        st.session_state.question_input = "Show me recent reports on technology trends."
+        st.session_state.question_input = "What are the key challenges and pain points in automotive AI adoption?"
         st.session_state.trends_clicked = False
     elif st.session_state.agents_clicked:
-        st.session_state.question_input = "Summarize latest tech trends in development of AI agents"
+        st.session_state.question_input = "Summarize latest tech trends in development of AI agents."
         st.session_state.agents_clicked = False
     elif st.session_state.maturity_clicked:
-        st.session_state.question_input = "Which automotive technologies are moving from academy to application?"
+        st.session_state.question_input = "Which automotive technologies are reaching commercial maturity in the next 12 months?"
         st.session_state.maturity_clicked = False
     
     # Query input - NOW this comes AFTER button checks
@@ -694,7 +993,7 @@ def main():
             st.rerun()
     
     with col2:
-        if st.button("📈 Tech Trends", use_container_width=True, key="trends_btn"):
+        if st.button("📈 Industry Pain Points", use_container_width=True, key="trends_btn"):
             st.session_state.trends_clicked = True
             st.rerun()
         if st.button("🤖 AI Agents Development", use_container_width=True, key="agents_btn"):
@@ -735,7 +1034,7 @@ def main():
                         st.caption(f"**Metadata:** {source['metadata']}")
         
         st.markdown("---")
-        st.caption("Powered by FAISS RAG + Query Expansion + Groq/Llama | Innovation Intelligence Suite")
+        st.caption("Powered by FAISS RAG + Universal Hybrid Search + Groq/Llama | Innovation Intelligence Suite")
 
 if __name__ == "__main__":
     main()
