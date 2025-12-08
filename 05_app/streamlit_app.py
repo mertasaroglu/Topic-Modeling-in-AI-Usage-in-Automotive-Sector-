@@ -156,14 +156,40 @@ def build_smart_prompt(question, context):
     
     # Maturity
     if is_maturity_question:
-        guidance_sections.append("""
-🎯 **TECHNOLOGY MATURITY GUIDANCE:**
-1. **ASSESS TRL LEVELS**: Technology Readiness Levels 1-9 when mentioned
-2. **IDENTIFY STAGE**: Research (TRL 1-4), Development (TRL 5-6), Commercial (TRL 7-9)
-3. **NOTE TRANSITION POINTS**: Key milestones for advancement
-4. **EXTRACT EVIDENCE**: Prototypes, pilots, deployments mentioned
-5. **ANALYZE TIMELINES**: Expected development or adoption timelines
-6. **PROVIDE SPECIFIC EXAMPLES**: Specific technologies and their maturity levels
+        guidance_sections.append("""        
+🎯 **TECHNOLOGY MATURITY & HYPE CYCLE GUIDANCE:**
+
+**FRAMEWORK FOR ASSESSMENT:**
+1. **HYPE CYCLE PHASES** (Use when mentioned or implied):
+   - 📈 **Innovation Trigger**: Early research, proof-of-concept, initial patents
+   - 🚀 **Peak of Inflated Expectations**: Media hype, startup boom, high funding
+   - 🛑 **Trough of Disillusionment**: Implementation failures, skepticism, consolidation
+   - 📚 **Slope of Enlightenment**: Practical applications, standards, pilot projects
+   - 🏭 **Plateau of Productivity**: Mainstream adoption, price competition, services market
+
+2. **TECHNOLOGY READINESS LEVELS (TRL)** (When specifically mentioned):
+   - TRL 1-4: Basic research, lab validation (Academic focus)
+   - TRL 5-6: Prototyping, testing (University-industry collaboration)
+   - TRL 7-9: Deployment, scaling (Industry dominant)
+
+3. **ACADEMIC TO INDUSTRY TRANSFER INDICATORS**:
+   - Academic papers → Industry patents
+   - Research grants → Venture funding
+   - University labs → Startup formations
+   - Conference talks → Product demonstrations
+
+**ANALYSIS REQUIREMENTS:**
+1. **IDENTIFY CURRENT STAGE**: Based on evidence in context
+2. **EXTRACT TRANSITION EVIDENCE**: Patents, funding, partnerships, deployments
+3. **ASSESS TIMELINES**: When technology moved/might move between stages
+4. **PROVIDE SPECIFIC EXAMPLES**: Companies, products, projects mentioned
+5. **CITE SOURCES**: For each stage assessment
+
+**OUTPUT FORMAT:**
+- Start with overall maturity assessment
+- List specific technologies and their stages
+- Include evidence for each classification
+- Note gaps in information if present
 """)
     
     # Technology
@@ -355,7 +381,14 @@ def analyze_question_type(question):
         'is_trend_query': any(keyword in question_lower for keyword in 
                              ['trend', 'forecast', 'future', 'emerging', 'development', 'innovation', 'pain point', 'challenge']),
         'is_maturity_query': any(keyword in question_lower for keyword in 
-                                ['trl', 'maturity', 'readiness', 'commercial', 'stage', 'transition']),
+                                ['trl', 'maturity', 'readiness', 'commercial', 'stage', 'transition',
+                                 'hype cycle', 'adoption', 'development stage', 'technology readiness',
+                                 'commercialization', 'scaling', 'deployment', 'market readiness',
+                                 'innovation trigger', 'peak of expectations', 'trough of disillusionment',
+                                 'slope of enlightenment', 'plateau of productivity', 'hype',
+                                 'academy to application', 'research to market', 'lab to market',
+                                 'technology transfer', 'industrialization', 'productization',
+                                 'market adoption', 'industry adoption', 'mainstream adoption']),
         'is_technology_query': any(keyword in question_lower for keyword in 
                                   ['technology', 'tech', 'system', 'solution', 'application', 'algorithm', 'agent', 'agents']),
         'is_list_query': any(keyword in question_lower for keyword in 
@@ -460,6 +493,7 @@ def get_targeted_keyword_queries(question, question_type):
     # Maturity related keywords
     if question_type['is_maturity_query']:
         keyword_queries.extend([
+           # TRL & Readiness Keywords
             "technology readiness automotive",
             "TRL automotive",
             "maturity automotive technology",
@@ -469,7 +503,34 @@ def get_targeted_keyword_queries(question, question_type):
             "vehicle tech readiness",
             "automotive innovation maturity",
             "scaling automotive technology",
-            "deployment automotive AI"
+            "deployment automotive AI",
+            
+            # Hype Cycle Keywords
+            "hype cycle automotive",
+            "innovation trigger automotive",
+            "peak of expectations automotive",
+            "trough of disillusionment automotive",
+            "slope of enlightenment automotive",
+            "plateau of productivity automotive",
+            "technology adoption curve automotive",
+            "market adoption automotive",
+            
+            # Academic-Industry Transition Keywords
+            "academic to industry automotive",
+            "research to market automotive",
+            "university to industry transfer",
+            "lab to market automotive",
+            "technology transfer automotive",
+            "industrialization automotive technology",
+            "productization automotive AI",
+            
+            # Market Readiness Keywords
+            "market readiness automotive",
+            "industry adoption automotive",
+            "mainstream adoption automotive",
+            "commercial deployment automotive",
+            "production ready automotive",
+            "enterprise adoption automotive"
         ])
     
     # Technology/Agent related keywords
