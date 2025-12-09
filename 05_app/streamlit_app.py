@@ -268,7 +268,7 @@ def determine_question_category(question):
     # Default: RAG-Only Questions
     else:
         return 'rag_only'
-     
+
 def format_predictive_results(results_df, category):
     """Format predictive model results for display with technology definitions - ROBUST VERSION"""
     # Check if results_df is None or empty
@@ -281,7 +281,7 @@ def format_predictive_results(results_df, category):
     try:
         # GROWTH QUERY FORMAT
         if category == 'predictive_growth':
-            formatted = "**Fastest Growing Automotive Technologies:**\n\n"
+            formatted = "**Fastest Growing Automotive Technologies**\n\n"
             
             # Check if we have the required columns
             required_cols = ['auto_tech_cluster', 'auto_focus_area', 'growth_slope_n_total']
@@ -290,39 +290,43 @@ def format_predictive_results(results_df, category):
             if missing_cols:
                 return f"Error: Missing required columns in growth data: {missing_cols}\nAvailable columns: {list(results_df.columns)}"
             
-            # Create a table-like format
-            for idx, row in results_df.head(10).iterrows():
-                tech = row['auto_tech_cluster']
+            # Create formatted output for each technology
+            for idx, row in enumerate(results_df.head(10).itertuples(), 1):
+                tech = row.auto_tech_cluster
                 tech_display = tech.replace('_', ' ') if isinstance(tech, str) else str(tech)
                 
-                area = row['auto_focus_area']
+                area = row.auto_focus_area
                 area_display = area.replace('_', ' ') if isinstance(area, str) else str(area)
                 
-                growth = row.get('growth_slope_n_total', 0)
+                growth = getattr(row, 'growth_slope_n_total', 0)
                 
                 # Get definition
-                definition = ""
+                definition = "N/A"
                 area_key = area_display.replace(' ', '_')
                 if area_key in AUTO_TOP_SEEDS and tech in AUTO_TOP_SEEDS[area_key]:
                     definition = AUTO_TOP_SEEDS[area_key][tech]
+                    # Capitalize first letter if definition exists
+                    if definition and len(definition) > 0:
+                        definition = definition[0].upper() + definition[1:]
                 
-                # Format
-                formatted += f"{idx+1}. **{tech_display}**\n"
-                formatted += f"   Area: {area_display}\n"
-                if definition:
-                    formatted += f"   Definition: {definition}\n"
+                # Format as requested - each item on separate line with explicit line breaks
+                formatted += f"**{idx}. {tech_display}**\n\n"
+                formatted += f"**Definition:** {definition}\n\n"
+                formatted += f"**Area:** {area_display}\n\n"
                 
                 if isinstance(growth, (int, float)):
-                    formatted += f"   Growth Rate: {growth:.3f}\n"
+                    # Convert growth rate to percentage
+                    growth_pct = growth * 100
+                    formatted += f"**Growth Rate:** {growth_pct:.1f}%\n\n"
                 else:
-                    formatted += f"   Growth Rate: {growth}\n"
+                    formatted += f"**Growth Rate:** {growth}\n\n"
                 
-                recent_activity = row.get('n_total_last', row.get('recent_activity', 0))
-                formatted += f"   Recent Activity: {int(recent_activity)} documents\n\n"
+                recent_activity = getattr(row, 'n_total_last', getattr(row, 'recent_activity', 0))
+                formatted += f"**Recent Activity:** {int(recent_activity)} documents\n\n"
         
         # MATURITY QUERY FORMAT  
         elif category == 'predictive_maturity':
-            formatted = "**Technologies Likely to Mature in Coming Year:**\n\n"
+            formatted = "**Technologies Likely to Mature in Coming Year**\n\n"
             
             # Check if we have the required columns
             required_cols = ['auto_tech_cluster', 'auto_focus_area', 'last_share_patent', 'forecast_share_patent_mean', 'delta_share_patent']
@@ -331,35 +335,38 @@ def format_predictive_results(results_df, category):
             if missing_cols:
                 return f"Error: Missing required columns in maturity data: {missing_cols}\nAvailable columns: {list(results_df.columns)}"
             
-            # Create numbered list with exact format
-            for idx, row in results_df.head(15).iterrows():
-                tech = row['auto_tech_cluster']
+            # Create formatted output for each technology
+            for idx, row in enumerate(results_df.head(15).itertuples(), 1):
+                tech = row.auto_tech_cluster
                 tech_display = tech.replace('_', ' ') if isinstance(tech, str) else str(tech)
                 
-                area = row['auto_focus_area']
+                area = row.auto_focus_area
                 area_display = area.replace('_', ' ') if isinstance(area, str) else str(area)
                 
                 # Get patent percentages
-                current_pct = row.get('last_share_patent', 0) * 100
-                forecast_pct = row.get('forecast_share_patent_mean', 0) * 100
-                growth_pct = row.get('delta_share_patent', 0) * 100
+                current_pct = getattr(row, 'last_share_patent', 0) * 100
+                forecast_pct = getattr(row, 'forecast_share_patent_mean', 0) * 100
+                growth_pct = getattr(row, 'delta_share_patent', 0) * 100
                 
                 # Get definition
-                definition = ""
+                definition = "N/A"
                 area_key = area_display.replace(' ', '_')
                 if area_key in AUTO_TOP_SEEDS and tech in AUTO_TOP_SEEDS[area_key]:
                     definition = AUTO_TOP_SEEDS[area_key][tech]
+                    # Capitalize first letter if definition exists
+                    if definition and len(definition) > 0:
+                        definition = definition[0].upper() + definition[1:]
                 
-                # Format exactly as requested
-                line = f"{idx+36}. **{tech_display}** Area: {area_display}"
-                if definition:
-                    line += f" Definition: {definition}"
-                line += f" Current: {current_pct:.1f}% patents Forecast: {forecast_pct:.1f}% patents Growth: +{growth_pct:.1f}%"
-                
-                formatted += line + "\n"
+                # Format exactly as requested - each item on separate line with explicit line breaks
+                formatted += f"**{idx}. {tech_display}**\n\n"
+                formatted += f"**Definition:** {definition}\n\n"
+                formatted += f"**Area:** {area_display}\n\n"
+                formatted += f"**Current:** {current_pct:.1f}% patents\n\n"
+                formatted += f"**Forecast:** {forecast_pct:.1f}% patents\n\n"
+                formatted += f"**Growth:** +{growth_pct:.1f}%\n\n"
         
         else:
-            formatted = f"**Predictive Insights:**\n\n"
+            formatted = f"**Predictive Insights**\n\n"
             if hasattr(results_df, 'head'):
                 formatted += results_df.head(10).to_markdown()
             else:
@@ -371,6 +378,7 @@ def format_predictive_results(results_df, category):
         import traceback
         error_details = traceback.format_exc()
         return f"Error formatting predictive results: {str(e)}\n\nDebug info:\n{error_details}"
+    
 
 def build_smart_prompt(question, context, predictive_insights=None):
     """Your existing prompt template - UNCHANGED"""
@@ -962,7 +970,6 @@ def process_predictive_query(question, predictive_functions):
             'success': True,
             'source_count': 0,
             'predictive_used': False,
-            'graphs': []  # ADDED: Empty graphs list
         }
     
     try:
@@ -975,37 +982,116 @@ def process_predictive_query(question, predictive_functions):
         # Route to appropriate function
         if category == 'predictive_growth':
             results = predictive_functions['get_fastest_growing_topics'](ts_data, top_n=15)
-            insights = format_predictive_results(results, 'predictive_growth')
-            graphs = []  # No graphs for growth query yet
+            
+            # Generate formatted text and graphs for EACH technology
+            technology_items = []
+            if not results.empty:
+                for idx, row in enumerate(results.head(10).itertuples(), 1):
+                    tech = row.auto_tech_cluster
+                    tech_display = tech.replace('_', ' ') if isinstance(tech, str) else str(tech)
+                    
+                    area = row.auto_focus_area
+                    area_display = area.replace('_', ' ') if isinstance(area, str) else str(area)
+                    
+                    growth = getattr(row, 'growth_slope_n_total', 0)
+                    
+                    # Get definition
+                    definition = "N/A"
+                    area_key = area_display.replace(' ', '_')
+                    if area_key in AUTO_TOP_SEEDS and tech in AUTO_TOP_SEEDS[area_key]:
+                        definition = AUTO_TOP_SEEDS[area_key][tech]
+                        # Capitalize first letter if definition exists
+                        if definition and len(definition) > 0:
+                            definition = definition[0].upper() + definition[1:]
+                    
+                    # Convert growth rate to percentage
+                    growth_pct = growth * 100 if isinstance(growth, (int, float)) else growth
+                    
+                    recent_activity = getattr(row, 'n_total_last', getattr(row, 'recent_activity', 0))
+                    
+                    # Format technology text
+                    tech_text = f"**{idx}. {tech_display}**\n\n"
+                    tech_text += f"**Definition:** {definition}\n\n"
+                    tech_text += f"**Area:** {area_display}\n\n"
+                    tech_text += f"**Growth Rate:** {growth_pct:.1f}%\n\n"
+                    tech_text += f"**Recent Activity:** {int(recent_activity)} documents\n\n"
+                    
+                    # Generate graph for this technology
+                    graph_fig = None
+                    if 'plot_simple_timeseries' in predictive_functions:
+                        try:
+                            fig = predictive_functions['plot_simple_timeseries'](
+                                ts_data, 
+                                area=area, 
+                                tech=tech,
+                                value_col="n_total"
+                            )
+                            
+                            # Make graph smaller
+                            if hasattr(fig, 'set_size_inches'):
+                                fig.set_size_inches(6, 3)  # Smaller size
+                            if hasattr(fig, 'tight_layout'):
+                                fig.tight_layout()
+                            
+                            graph_fig = fig
+                        except Exception as e:
+                            print(f"Warning: Could not generate graph for {tech}: {e}")
+                            graph_fig = None
+                    
+                    # Add to list
+                    technology_items.append({
+                        'text': tech_text,
+                        'figure': graph_fig,
+                        'tech_display': tech_display,
+                        'area_display': area_display,
+                        'growth_rate': growth_pct
+                    })
+            
+            # Don't include methodology note here - will add it at the end
+            insights = "##### Fastest Growing Automotive Technologies\n\n"
             
         elif category == 'predictive_maturity':
             results = predictive_functions['get_likely_to_mature_next_year'](ts_data)
-            insights = format_predictive_results(results, 'predictive_maturity')
             
-            # ADDED: Generate graphs for top technologies
-            graphs = []
-            if not results.empty and 'plot_simple_timeseries' in predictive_functions:
-                # Get top 3 technologies for visualization
-                top_techs = results.head(3)
-                for idx, row in top_techs.iterrows():
-                    try:
-                        area = row['auto_focus_area']
-                        tech = row['auto_tech_cluster']
-                        fig = predictive_functions['plot_simple_timeseries'](
-                            ts_data, 
-                            area=area, 
-                            tech=tech,
-                            value_col="n_total"
-                        )
-                        graphs.append({
-                            'figure': fig,
-                            'title': f"{tech} - Growth Trend",
-                            'area': area,
-                            'tech': tech
-                        })
-                    except Exception as e:
-                        print(f"Warning: Could not generate graph for {row['auto_tech_cluster']}: {e}")
-                        continue
+            # Generate formatted text WITHOUT graphs for maturity, but WITH separators
+            formatted_text = "##### Technologies Likely to Mature in Coming Year\n\n"
+            
+            if not results.empty:
+                for idx, row in enumerate(results.head(15).itertuples(), 1):
+                    tech = row.auto_tech_cluster
+                    tech_display = tech.replace('_', ' ') if isinstance(tech, str) else str(tech)
+                    
+                    area = row.auto_focus_area
+                    area_display = area.replace('_', ' ') if isinstance(area, str) else str(area)
+                    
+                    # Get patent percentages
+                    current_pct = getattr(row, 'last_share_patent', 0) * 100
+                    forecast_pct = getattr(row, 'forecast_share_patent_mean', 0) * 100
+                    growth_pct = getattr(row, 'delta_share_patent', 0) * 100
+                    
+                    # Get definition
+                    definition = "N/A"
+                    area_key = area_display.replace(' ', '_')
+                    if area_key in AUTO_TOP_SEEDS and tech in AUTO_TOP_SEEDS[area_key]:
+                        definition = AUTO_TOP_SEEDS[area_key][tech]
+                        # Capitalize first letter if definition exists
+                        if definition and len(definition) > 0:
+                            definition = definition[0].upper() + definition[1:]
+                    
+                    # Format technology text WITH separator
+                    formatted_text += f"**{idx}. {tech_display}**\n\n"
+                    formatted_text += f"**Definition:** {definition}\n\n"
+                    formatted_text += f"**Area:** {area_display}\n\n"
+                    formatted_text += f"**Current:** {current_pct:.1f}% patents\n\n"
+                    formatted_text += f"**Forecast:** {forecast_pct:.1f}% patents\n\n"
+                    formatted_text += f"**Growth:** +{growth_pct:.1f}%\n\n"
+                    
+                    # Add separator after each technology (except the last one)
+                    if idx < min(15, len(results)):
+                        formatted_text += "---\n\n"
+            
+            insights = formatted_text
+            technology_items = []  # No graphs for maturity
             
         else:
             return {
@@ -1014,15 +1100,13 @@ def process_predictive_query(question, predictive_functions):
                 'success': True,
                 'source_count': 0,
                 'predictive_used': False,
-                'graphs': []
             }
         
         # Format final answer
         answer = f"""
 
 {insights}
-
-**Methodology Note:**
+**Methodology Note**
 - Based on time-series analysis of automotive technology publications and patents
 - Forecasts derived from historical growth patterns
 - Updated with the latest available data
@@ -1035,7 +1119,7 @@ def process_predictive_query(question, predictive_functions):
             'source_count': 0,
             'predictive_used': True,
             'predictive_results': results.to_dict('records') if hasattr(results, 'to_dict') else [],
-            'graphs': graphs  # ADDED: Include graphs in response
+            'technology_items': technology_items if category == 'predictive_growth' else []  # Store technology items for growth only
         }
         
     except Exception as e:
@@ -1044,8 +1128,9 @@ def process_predictive_query(question, predictive_functions):
             'sources': [],
             'success': False,
             'predictive_used': True,
-            'graphs': []
+            'technology_items': []
         }
+    
 
 def process_rag_query(question, retriever, groq_client, query_expander=None):
     """Handle RAG-based questions"""
@@ -1135,7 +1220,7 @@ def ask_question(question, retriever, groq_client, predictive_functions=None, qu
         # Everything else goes to RAG
         return process_rag_query(question, retriever, groq_client, query_expander)
 
-# Streamlit UI
+
 def main():
     st.set_page_config(
         page_title="INNOVATION INTELLIGENCE SUITE", 
@@ -1144,7 +1229,7 @@ def main():
     )
     
     st.title("Uncover What's Next in Auto Tech")
-    st.markdown("Developed as a Data Science + AI Bootcamp capstone project (2025)")
+    st.markdown("Developed as a Data Science + AI Bootcamp capstone project")
     
     # Initialize RAG system
     if 'rag_initialized' not in st.session_state:
@@ -1210,10 +1295,6 @@ def main():
                     
             elif st.session_state.retriever and st.session_state.groq_client:
                 st.session_state.rag_initialized = True
-                if st.session_state.query_expander:
-                    st.success("✅ RAG system ready with query expansion!")
-                else:
-                    st.success("✅ RAG system ready!")
             else:
                 st.session_state.rag_initialized = False
                 st.error("❌ Failed to initialize RAG system")
@@ -1224,7 +1305,6 @@ def main():
             st.session_state.predictive_functions = initialize_predictive_system()
             if st.session_state.predictive_functions:
                 st.session_state.predictive_initialized = True
-                st.success("✅ Predictive model ready!")
             else:
                 st.session_state.predictive_initialized = False
                 st.warning("⚠️ Predictive model not available - using RAG only")
@@ -1232,13 +1312,10 @@ def main():
     # Only show query interface if RAG system is initialized
     if not st.session_state.get('rag_initialized', False):
         st.warning("Please fix the initialization issues above to use the system.")
+        # Show footer even if system not initialized
+        st.markdown("---")
+        st.caption(f"Powered by Innovation Intelligence Suite (2025)")
         return
-    
-    # Query interface (only shown when system is ready)
-    if st.session_state.get('predictive_initialized', False):
-        st.success("System ready with RAG + Predictive Analytics!")
-    else:
-        st.success("System ready.")
     
     # Initialize question input in session state if not exists
     if 'question_input' not in st.session_state:
@@ -1270,7 +1347,6 @@ def main():
     # Query input - NOW this comes AFTER button checks
     question = st.text_input(
         "💬 Your question:",
-        value=st.session_state.question_input,
         placeholder="e.g., Which startups work on AI for automotive?",
         key="question_input"
     )
@@ -1331,35 +1407,67 @@ def main():
         # Display results with appropriate header
         st.subheader("📝 **Answer**")
         
-        st.write(result['answer'])
-        
-        # Show source badge
-        if result.get('predictive_used', False):
-            st.caption("*Based on Time-Series Predictive Model*")
-        elif result['sources']:
-            st.caption(f"*Based on {len(result['sources'])} documents*")
-        
-        # ADDED: Display graphs if available (for predictive maturity queries)
-        if result.get('predictive_used', False) and 'graphs' in result and result['graphs']:
-            st.subheader("📈 **Growth Trends**")
+        if result.get('predictive_used', False) and 'technology_items' in result and result['technology_items']:
+            # For growth queries: Show each technology with its graph
+            st.markdown("##### Fastest Growing Automotive Technologies")
             
-            # Create columns for graphs
-            num_graphs = len(result['graphs'])
-            if num_graphs == 1:
-                cols = [st]
-            elif num_graphs == 2:
-                cols = st.columns(2)
-            else:
-                cols = st.columns(3)
+            # Display each technology with its graph
+            for item in result['technology_items']:
+                # Create container for this technology
+                tech_container = st.container()
+                
+                with tech_container:
+                    # Create columns for layout: left for text, right for graph
+                    col1, col2 = st.columns([2, 1])  # 2:1 ratio for text:graph
+                    
+                    with col1:
+                        # Display technology information
+                        st.markdown(item['text'])
+                    
+                    with col2:
+                        # Display graph if available
+                        if item['figure']:
+                            # Add centered heading above the graph
+                            st.markdown(f"<div style='text-align: center;'><b>{item['tech_display']} - Growth Trend</b></div>", unsafe_allow_html=True)
+                            st.pyplot(item['figure'], use_container_width=True)
+                
+                st.markdown("---")  # Separator between technologies
             
-            for idx, graph_info in enumerate(result['graphs']):
-                if idx < len(cols):
-                    with cols[idx]:
-                        st.markdown(f"**{graph_info['title']}**")
-                        st.markdown(f"*Area: {graph_info['area']}*")
-                        st.pyplot(graph_info['figure'])
+            # Add methodology note at the bottom
+            st.markdown("**Methodology Note**")
+            st.markdown("- Based on time-series analysis of automotive technology publications and patents")
+            st.markdown("- Forecasts derived from historical growth patterns")
+            st.markdown("- Updated with the latest available data")
+            
+            st.caption("*Based on Time-Series Predictive Modelling*")
+            
+        elif result.get('predictive_used', False):
+            # For maturity queries: Show as text only (no graphs)
+            # The answer already includes separators from the formatting function
+            st.markdown(result['answer'])
+            st.caption("*Based on Time-Series Predictive Modelling*")
+            
+        else:
+            # For RAG queries
+            # Remove colon from the first line if present and format as smaller heading
+            answer_lines = result['answer'].split('\n')
+            if len(answer_lines) > 0:
+                # Process first line
+                first_line = answer_lines[0].strip()
+                # Remove colon if present
+                first_line = first_line.replace(':', '')
+                # Remove bold markers if present
+                first_line = first_line.replace('**', '')
+                # Format as smaller heading
+                answer_lines[0] = f"##### {first_line}"
+                result['answer'] = '\n'.join(answer_lines)
+            
+            st.markdown(result['answer'])
+            
+            if result['sources']:
+                st.caption(f"*Based on {len(result['sources'])} documents*")
         
-        # Display sources if available
+        # Display sources if available (for RAG queries)
         if result['sources']:
             with st.expander(f"📚 Source Documents ({len(result['sources'])})"):
                 for i, source in enumerate(result['sources']):
@@ -1370,10 +1478,10 @@ def main():
                     content = source.get('text', source.get('content', ''))
                     st.text(content[:500] + "..." if len(content) > 500 else content)
                     st.markdown("---")
-        
-        # Footer
-        st.markdown("---")
-        st.caption(f"Powered by Innovation Intelligence Suite (2025)")
+    
+    # Footer - ALWAYS SHOWN (moved outside the if question: block)
+    st.markdown("---")
+    st.caption(f"Powered by Innovation Intelligence Suite (2025)")
 
 if __name__ == "__main__":
     main()
