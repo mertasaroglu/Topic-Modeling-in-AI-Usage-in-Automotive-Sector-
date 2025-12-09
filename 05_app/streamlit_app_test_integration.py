@@ -58,7 +58,6 @@ def import_predictive_components():
         predictive_functions = {
             "load_area_tech_ts": predictive_analytics.load_area_tech_ts,
             "get_fastest_growing_topics": predictive_analytics.get_fastest_growing_topics,
-            "get_transitioning_technologies": predictive_analytics.get_transitioning_technologies,
             "get_likely_to_mature_next_year": predictive_analytics.get_likely_to_mature_next_year,
         }
 
@@ -68,8 +67,6 @@ def import_predictive_components():
         return None, f"Error importing analytics module: {e}"
     except Exception as e:
         return None, f"Error in import_predictive_components: {e}"
-
-
 
 def import_query_expander():
     """Import the existing query expander module (if it exists)"""
@@ -126,15 +123,10 @@ def analyze_question_type(question):
                              ['trend', 'forecast', 'future', 'emerging', 'development', 'innovation', 
                               'pain point', 'challenge', 'barrier', 'obstacle']),
         
-        # PREDICTIVE MODEL QUERIES - Enhanced detection
+        # PREDICTIVE MODEL QUERIES - Simplified detection
         'is_growth_query': any(keyword in question_lower for keyword in 
                               ['fastest growing', 'growth rate', 'increasing', 'growing technology',
                                'accelerating', 'expanding', 'growth trend', 'rapid growth']),
-        
-        'is_transition_query': any(keyword in question_lower for keyword in 
-                                  ['transitioning', 'moving from research', 'academic to application',
-                                   'lab to market', 'research to commercial', 'transferring',
-                                   'research to industry', 'academic to industry']),
         
         'is_maturity_query': any(keyword in question_lower for keyword in 
                                 ['maturity', 'readiness', 'trl', 'commercial', 'stage', 'transition',
@@ -184,25 +176,13 @@ def determine_question_category(question):
     """Determine which system should handle the question - SIMPLIFIED"""
     question_type, _, _, _, _ = analyze_question_type(question)
     
-    # Priority 1: Predictive Model Questions
+    # Priority: Predictive Model Questions
     if question_type['is_growth_query']:
         return 'predictive_growth'
-    elif question_type['is_transition_query']:
-        return 'predictive_transition'
-    elif question_type['is_maturity_query'] and any(word in question.lower() for word in ['next', 'future', 'coming', 'likely', 'forecast', 'prediction']):
+    elif question_type['is_maturity_query'] and any(word in question.lower() for word in ['next', 'future', 'coming', 'likely', 'forecast', 'prediction', '12 months']):
         return 'predictive_maturity'
     
-    # Priority 2: RAG-Only Questions
-    elif (question_type['is_startup_query'] or 
-          question_type['is_patent_query'] or 
-          question_type['is_research_query']):
-        return 'rag_only'
-    
-    # Priority 3: Hybrid (can use both)
-    elif question_type['is_trend_query'] or question_type['is_maturity_query']:
-        return 'hybrid'
-    
-    # Default: RAG
+    # Default: RAG-Only Questions
     else:
         return 'rag_only'
 
@@ -214,24 +194,14 @@ def format_predictive_results(results_df, category):
     try:
         # Different formatting based on category
         if category == 'predictive_growth':
-            formatted = "🚀 **Fastest Growing Automotive Technologies:**\n\n"
+            formatted = "**Fastest Growing Automotive Technologies:**\n\n"
             for idx, row in results_df.head(10).iterrows():
                 formatted += f"{idx+1}. **{row['auto_tech_cluster']}** (Area: {row['auto_focus_area']})\n"
                 formatted += f"   Growth Rate: {row.get('growth_slope_n_total', 'N/A'):.3f}\n"
                 formatted += f"   Recent Activity: {int(row.get('n_total_last', 0))} documents\n\n"
         
-        elif category == 'predictive_transition':
-            formatted = "🔄 **Technologies Transitioning from Research to Application:**\n\n"
-            for idx, row in results_df.head(10).iterrows():
-                current_pct = row.get('last_share_patent', 0) * 100
-                forecast_pct = row.get('forecast_share_patent_mean', 0) * 100
-                formatted += f"{idx+1}. **{row['auto_tech_cluster']}** (Area: {row['auto_focus_area']})\n"
-                formatted += f"   Current Patent Share: {current_pct:.1f}%\n"
-                formatted += f"   Forecasted Share: {forecast_pct:.1f}%\n"
-                formatted += f"   Stage: {row.get('tech_stage', 'N/A')}\n\n"
-        
         elif category == 'predictive_maturity':
-            formatted = "🎯 **Technologies Likely to Mature in Coming Year:**\n\n"
+            formatted = "**Technologies Likely to Mature in Coming Year:**\n\n"
             for idx, row in results_df.head(10).iterrows():
                 current_pct = row.get('last_share_patent', 0) * 100
                 forecast_pct = row.get('forecast_share_patent_mean', 0) * 100
@@ -358,8 +328,8 @@ def build_smart_prompt(question, context, predictive_insights=None):
 5. **CITE SOURCES**: For each stage assessment
 
 **OUTPUT FORMAT:**
-- Start with overall maturity assessment
-- List specific technologies and their stages
+- Start with overall maturity assessment                               
+- List specific technologies and their stages (auto_tech_cluster column)
 - Include evidence for each classification
 - Note gaps in information if present
 """)
@@ -552,7 +522,7 @@ def initialize_predictive_system():
         return None
 
 def get_targeted_keyword_queries(question, question_type):
-    """Generate targeted keyword queries based on question type - UNCHANGED"""
+    """Generate targeted keyword queries based on question type - SIMPLIFIED"""
     question_lower = question.lower()
     keyword_queries = []
     
@@ -644,15 +614,6 @@ def get_targeted_keyword_queries(question, question_type):
             "plateau of productivity automotive",
             "technology adoption curve automotive",
             "market adoption automotive",
-            
-            # Academic-Industry Transition Keywords
-            "academic to industry automotive",
-            "research to market automotive",
-            "university to industry transfer",
-            "lab to market automotive",
-            "technology transfer automotive",
-            "industrialization automotive technology",
-            "productization automotive AI",
             
             # Market Readiness Keywords
             "market readiness automotive",
@@ -862,10 +823,6 @@ def process_predictive_query(question, predictive_functions):
             results = predictive_functions['get_fastest_growing_topics'](ts_data, top_n=15)
             insights = format_predictive_results(results, 'predictive_growth')
             
-        elif category == 'predictive_transition':
-            results = predictive_functions['get_transitioning_technologies'](ts_data)
-            insights = format_predictive_results(results, 'predictive_transition')
-            
         elif category == 'predictive_maturity':
             results = predictive_functions['get_likely_to_mature_next_year'](ts_data)
             insights = format_predictive_results(results, 'predictive_maturity')
@@ -880,7 +837,7 @@ def process_predictive_query(question, predictive_functions):
             }
         
         # Format final answer
-        answer = f"""📊 **Predictive Analysis Results**
+        answer = f"""
 
 {insights}
 
@@ -975,143 +932,21 @@ def process_rag_query(question, retriever, groq_client, query_expander=None):
             'predictive_used': False
         }
 
-def process_hybrid_query(question, retriever, groq_client, predictive_functions, query_expander=None):
-    """Handle questions that benefit from both RAG and predictive model"""
-    # First get predictive insights
-    predictive_result = process_predictive_query(question, predictive_functions)
-    
-    if not predictive_result['success'] or not predictive_result['predictive_used']:
-        # Fall back to RAG only
-        return process_rag_query(question, retriever, groq_client, query_expander)
-    
-    # Extract insights for RAG prompt
-    predictive_insights = None
-    if predictive_result['predictive_used'] and 'predictive_results' in predictive_result:
-        # Format insights for prompt
-        predictive_insights = f"📊 **Predictive Model Insights:**\n\n"
-        for result in predictive_result['predictive_results'][:5]:  # Top 5
-            tech_name = result.get('auto_tech_cluster', 'Unknown technology')
-            area = result.get('auto_focus_area', 'Unknown area')
-            predictive_insights += f"- **{tech_name}** ({area}): "
-            
-            if 'last_share_patent' in result:
-                current = result.get('last_share_patent', 0) * 100
-                forecast = result.get('forecast_share_patent_mean', 0) * 100
-                predictive_insights += f"Current: {current:.1f}% patents, Forecast: {forecast:.1f}% patents\n"
-            elif 'growth_slope_n_total' in result:
-                growth = result.get('growth_slope_n_total', 0)
-                predictive_insights += f"Growth rate: {growth:.3f}\n"
-            else:
-                predictive_insights += "Data available\n"
-    
-    # Process with RAG
-    try:
-        k = determine_source_count(question)
-        
-        # Use universal hybrid retrieval
-        retrieved_data = retrieve_with_expansion(
-            question, 
-            retriever, 
-            query_expander=query_expander, 
-            k=k
-        )
-        
-        if not retrieved_data:
-            # If no RAG results, just return predictive results
-            return predictive_result
-        
-        # Build context from retrieved data
-        context_parts = []
-        for i, item in enumerate(retrieved_data):
-            content = item.get('text', item.get('content', ''))
-            source_file = item.get('source_file', 'unknown')
-            
-            readable_name = format_source_name(source_file)
-            similarity = item.get('similarity_score', 0)
-            
-            context_parts.append(f"--- DOCUMENT {i+1} ---")
-            context_parts.append(f"Source: {readable_name}")
-            context_parts.append(f"Relevance Score: {similarity:.3f}")
-            context_parts.append(f"Content:\n{content}")
-            context_parts.append("")  # Empty line for separation
-        
-        context = "\n".join(context_parts)
-        
-        # Build enhanced prompt with predictive insights
-        prompt = f"""CONTEXT:
-{context}
-
-USER QUESTION:
-{question}
-
-{predictive_insights}
-
-ANALYSIS INSTRUCTIONS:
-You are an automotive technology intelligence analyst. Integrate the predictive model insights above with the document evidence below.
-
-1. **CROSS-REFERENCE**: Connect predictive forecasts with document evidence when possible
-2. **VALIDATE**: Check if document evidence supports or contradicts the predictions
-3. **PROVIDE CONTEXT**: Explain why certain technologies might be growing or transitioning
-4. **CITE SOURCES**: For each key point from documents, include [Source: Name]
-
-FORMAT REQUIREMENTS:
-- Start with a summary that combines predictive insights with document evidence
-- Use **bold** for technology names and key findings
-- Include specific metrics and examples
-- Group technologies by theme or growth stage
-
-ANSWER:
-"""
-        
-        # Adjust tokens based on context length
-        max_tokens = 1000 if len(context) > 3000 else 800
-        
-        response = groq_client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens,
-            temperature=0.3
-        )
-        
-        answer = response.choices[0].message.content
-        
-        return {
-            'answer': answer,
-            'sources': retrieved_data,
-            'success': True,
-            'source_count': k,
-            'predictive_used': True
-        }
-        
-    except Exception as e:
-        # Fall back to predictive only
-        return predictive_result
-
 def ask_question(question, retriever, groq_client, predictive_functions=None, query_expander=None):
-    """Main question processing function with routing logic"""
+    """Main question processing function with simplified routing logic"""
     
     # Determine question category
     category = determine_question_category(question)
     
     # Route to appropriate processor
-    if category.startswith('predictive_'):
+    if category in ['predictive_growth', 'predictive_maturity']:
         if predictive_functions:
             return process_predictive_query(question, predictive_functions)
         else:
             # Fall back to RAG if predictive not available
             return process_rag_query(question, retriever, groq_client, query_expander)
-    
-    elif category == 'rag_only':
-        return process_rag_query(question, retriever, groq_client, query_expander)
-    
-    elif category == 'hybrid':
-        if predictive_functions:
-            return process_hybrid_query(question, retriever, groq_client, predictive_functions, query_expander)
-        else:
-            return process_rag_query(question, retriever, groq_client, query_expander)
-    
     else:
-        # Default to RAG
+        # Everything else goes to RAG
         return process_rag_query(question, retriever, groq_client, query_expander)
 
 # Streamlit UI
@@ -1122,8 +957,8 @@ def main():
         layout="wide"
     )
     
-    st.title("INNOVATION INTELLIGENCE SUITE")
-    st.markdown("Ask questions about latest tech trends in the automotive industry, including patents and startups.")
+    st.title("Uncover What's Next in Auto Tech")
+    st.markdown("Developed as a Data Science + AI Bootcamp capstone project (2025)")
     
     # Initialize RAG system
     if 'rag_initialized' not in st.session_state:
@@ -1215,50 +1050,36 @@ def main():
     
     # Query interface (only shown when system is ready)
     if st.session_state.get('predictive_initialized', False):
-        st.success("🎉 System ready with RAG + Predictive Analytics!")
+        st.success("System ready with RAG + Predictive Analytics!")
     else:
-        st.success("🎉 System ready with RAG!")
+        st.success("System ready.")
     
     # Initialize question input in session state if not exists
     if 'question_input' not in st.session_state:
         st.session_state.question_input = ""
     
-    # Initialize button flags if not exists
-    button_flags = [
-        'research_clicked', 'patents_clicked', 'startups_clicked',
-        'trends_clicked', 'agents_clicked', 'maturity_clicked',
-        'growth_clicked', 'transition_clicked'
-    ]
+    # Simplified button state management
+    button_questions = {
+        'research_clicked': "Summarize the latest AI research on autonomous driving vehicles.",
+        'patents_clicked': "Show me recent patents on AI for automotive vehicles.",
+        'startups_clicked': "Which startups work on automotive and autonomous driving?",
+        'trends_clicked': "What are the key challenges and pain points in automotive AI adoption?",
+        'agents_clicked': "Summarize latest tech trends in development of AI agents.",
+        'growth_clicked': "What are the fastest growing automotive technologies?",
+        'maturity_clicked': "Which automotive technologies are reaching commercial maturity in the next 12 months?"
+    }
     
-    for flag in button_flags:
+    # Initialize button flags
+    for flag in button_questions.keys():
         if flag not in st.session_state:
             st.session_state[flag] = False
     
     # Check for button clicks BEFORE creating the text input
-    if st.session_state.research_clicked:
-        st.session_state.question_input = "Summarize the latest AI research on autonomous driving vehicles."
-        st.session_state.research_clicked = False
-    elif st.session_state.patents_clicked:
-        st.session_state.question_input = "Show me recent patents on AI for automotive vehicles."
-        st.session_state.patents_clicked = False
-    elif st.session_state.startups_clicked:
-        st.session_state.question_input = "Which startups work on automotive and autonomous driving?"
-        st.session_state.startups_clicked = False
-    elif st.session_state.trends_clicked:
-        st.session_state.question_input = "What are the key challenges and pain points in automotive AI adoption?"
-        st.session_state.trends_clicked = False
-    elif st.session_state.agents_clicked:
-        st.session_state.question_input = "Summarize latest tech trends in development of AI agents."
-        st.session_state.agents_clicked = False
-    elif st.session_state.maturity_clicked:
-        st.session_state.question_input = "Which automotive technologies are reaching commercial maturity in the next 12 months?"
-        st.session_state.maturity_clicked = False
-    elif st.session_state.growth_clicked:
-        st.session_state.question_input = "What are the fastest growing automotive technologies?"
-        st.session_state.growth_clicked = False
-    elif st.session_state.transition_clicked:
-        st.session_state.question_input = "Which technologies are transitioning from research to application?"
-        st.session_state.transition_clicked = False
+    for flag, question_text in button_questions.items():
+        if st.session_state[flag]:
+            st.session_state.question_input = question_text
+            st.session_state[flag] = False
+            st.rerun()
     
     # Query input - NOW this comes AFTER button checks
     question = st.text_input(
@@ -1269,40 +1090,37 @@ def main():
     )
     
     # Pre-defined query buttons
-    st.subheader("📋 Example Questions")
+    st.subheader("Example Questions")
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown("**📚 Document Intelligence**")
-        if st.button("🔬 Latest AI Research", use_container_width=True, key="research_btn"):
+        st.markdown("**🚀 Innovation Intelligence**")
+        if st.button("Latest AI Research", use_container_width=True, key="research_btn"):
             st.session_state.research_clicked = True
             st.rerun()
-        if st.button("📜 Automotive Patents", use_container_width=True, key="patents_btn"):
+        if st.button("Automotive Patents", use_container_width=True, key="patents_btn"):
             st.session_state.patents_clicked = True
             st.rerun()
-        if st.button("🚀 Startups in Automotive", use_container_width=True, key="startups_btn"):
+        if st.button("Startups in Automotive", use_container_width=True, key="startups_btn"):
             st.session_state.startups_clicked = True
             st.rerun()
     
     with col2:
         st.markdown("**📈 Market Insights**")
-        if st.button("📊 Industry Pain Points", use_container_width=True, key="trends_btn"):
+        if st.button("Industry Pain Points", use_container_width=True, key="trends_btn"):
             st.session_state.trends_clicked = True
             st.rerun()
-        if st.button("🤖 AI Agents Development", use_container_width=True, key="agents_btn"):
+        if st.button("AI Agents Development", use_container_width=True, key="agents_btn"):
             st.session_state.agents_clicked = True
-            st.rerun()
-        if st.button("🎯 Tech Maturity", use_container_width=True, key="maturity_btn"):
-            st.session_state.maturity_clicked = True
             st.rerun()
     
     with col3:
         st.markdown("**🔮 Predictive Analytics**")
-        if st.button("📈 Fastest Growing Tech", use_container_width=True, key="growth_btn"):
+        if st.button("Fastest Growing Tech", use_container_width=True, key="growth_btn"):
             st.session_state.growth_clicked = True
             st.rerun()
-        if st.button("🔄 Research to Application", use_container_width=True, key="transition_btn"):
-            st.session_state.transition_clicked = True
+        if st.button("Tech Maturity", use_container_width=True, key="transition_btn"):
+            st.session_state.maturity_clicked = True
             st.rerun()
     
     # Process question
@@ -1312,8 +1130,6 @@ def main():
         
         if category.startswith('predictive_'):
             status_msg = "🔮 Running predictive analysis..."
-        elif category == 'hybrid':
-            status_msg = "🤝 Combining predictive and document analysis..."
         else:
             status_msg = "🔍 Searching documents and generating answer..."
         
@@ -1327,18 +1143,15 @@ def main():
             )
         
         # Display results with appropriate header
-        if result.get('predictive_used', False):
-            st.subheader("🔮 **Predictive Analysis Results**")
-        else:
-            st.subheader("📝 **Answer**")
+        st.subheader("📝 **Answer**")
         
         st.write(result['answer'])
         
         # Show source badge
         if result.get('predictive_used', False):
-            st.caption("🔮 *Powered by Time-Series Predictive Model*")
+            st.caption("*Based on Time-Series Predictive Model*")
         elif result['sources']:
-            st.caption(f"📚 *Based on {len(result['sources'])} documents*")
+            st.caption(f"*Based on {len(result['sources'])} documents*")
         
         # Display sources if available
         if result['sources']:
@@ -1354,14 +1167,7 @@ def main():
         
         # Footer
         st.markdown("---")
-        components = []
-        if result.get('predictive_used', False):
-            components.append("Predictive Analytics")
-        if result['sources']:
-            components.append("Document Intelligence")
-        
-        if components:
-            st.caption(f"Powered by {' + '.join(components)} | Innovation Intelligence Suite")
+        st.caption(f"Powered by Innovation Intelligence Suite (2025)")
 
 if __name__ == "__main__":
     main()

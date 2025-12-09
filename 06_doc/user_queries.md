@@ -28,12 +28,9 @@ Note: The Innovation Intelligence Suite will return on these queries within the 
 
 5. “Show me recent patents on AI for automotive vehicles.” (Factual extraction / Sourcing)
 
-6. “Which technologies are likely to mature next year?” (Timing / Predictive)
+6. “Which automotive technologies are reaching commercial maturity in the next 12 months?” (Shift / TRL/Maturity)
 
 7. "Which AI research topics are growing fastest?" (Trend / Analytical)
-
-8. “Which automotive technologies are reaching commercial maturity in the next 12 months?” (Shift / TRL/Maturity)
-
 
 Out of Scope: 
 - strategic suggestion questions, such as priotization 
