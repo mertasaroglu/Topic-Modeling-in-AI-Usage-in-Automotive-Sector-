@@ -381,7 +381,7 @@ def format_predictive_results(results_df, category):
     
 
 def build_smart_prompt(question, context, predictive_insights=None):
-    """Your existing prompt template - UNCHANGED"""
+    """Your existing prompt template - UPDATED with consistent requirements"""
     question_lower = question.lower()
     
     # Detect query type for targeted guidance
@@ -392,7 +392,8 @@ def build_smart_prompt(question, context, predictive_insights=None):
                            ['patent', 'intellectual property', 'ip', 'jurisdiction', 'ep', 'us', 'wo'])
     
     is_research_question = any(keyword in question_lower for keyword in 
-                             ['research', 'study', 'paper', 'academic', 'scientific', 'methodology'])
+                             ['research', 'study', 'paper', 'academic', 'scientific', 'methodology',
+                              'journal', 'article', 'publication'])
     
     is_trend_question = any(keyword in question_lower for keyword in 
                           ['trend', 'forecast', 'future', 'emerging', 'development', 'innovation', 'pain point', 'challenge'])
@@ -403,22 +404,27 @@ def build_smart_prompt(question, context, predictive_insights=None):
     is_technology_question = any(keyword in question_lower for keyword in 
                                ['technology', 'tech', 'system', 'solution', 'application', 'deployment', 'agent', 'agents'])
     
-    # Build targeted guidance sections
+    # Build targeted guidance sections - UPDATED
     guidance_sections = []
     
-    # Patents
+    # Patents - UPDATED with strict requirements
     if is_patent_question:
         guidance_sections.append("""
-🔍 **PATENT QUERY GUIDANCE:**
-1. **EXTRACT PATENT DETAILS**: Patent numbers, titles, inventors, assignees, jurisdictions
-2. **ANALYZE JURISDICTIONS**: 
-   - EP: European Patent Office (covers multiple countries)
+🔍 **PATENT QUERY GUIDANCE - STRICT REQUIREMENTS:**
+
+**MANDATORY PATENT FORMAT (For each patent mentioned):**
+1. **PATENT DETAILS**: Always include: Patent number
+2. **ABSTRACT SUMMARY**: 
+   - ALWAYS include a summary of the patent abstract
+   - If no abstract is available in context, DO NOT MENTION THE PATENT AT ALL
+   - Skip patents entirely if abstract information is missing
+3. **JURISDICTION ANALYSIS**: Clearly indicate jurisdiction type:
+   - EP: European Patent Office (covers multiple European countries)
    - US: United States Patent and Trademark Office
-   - WO: World Intellectual Property Organization (international applications)
-3. **IDENTIFY TECHNOLOGIES**: Specific automotive/AI technologies protected
-4. **NOTE KEY DATES**: Filing dates, publication dates, grant dates when available
-5. **ORGANIZE BY TYPE**: Group by jurisdiction or technology area
-6. **SOURCE SPECIFICALLY**: Always cite patent database sources [Source: Automotive Technology Patents Database]
+   - WO: World Intellectual Property Organization (international/PCT applications)
+4. **TECHNOLOGY FOCUS**: Specific automotive/AI technologies protected
+5. **KEY DATES**: Include filing date, publication date, grant date when available
+6. **SOURCE FORMAT**: [Source: Lens.org Automotive Technology Patents 2025] - USE THIS EXACT FORMAT
 """)
     
     # Startups
@@ -430,19 +436,24 @@ def build_smart_prompt(question, context, predictive_insights=None):
 3. **FOCUS ON DATABASES**: Prioritize information from startup-specific sources
 4. **ORGANIZE CLEARLY**: Create numbered lists with consistent formatting
 5. **HIGHLIGHT AI FOCUS**: Note AI applications in automotive context
-6. **CITE PROPERLY**: Always include source names
+6. **SOURCE FORMAT**: [Source: Seedtable Best Automotive Industry Startups to Watch in 2025] OR [Source: AutoTechInsight Automotive Startup Profiles & Tracker]
 """)
     
-    # Research
+    # Research - UPDATED with strict requirements
     if is_research_question:
         guidance_sections.append("""
-📚 **RESEARCH QUERY GUIDANCE:**
-1. **EXTRACT KEY FINDINGS**: Main conclusions, methodologies, results
-2. **IDENTIFY AUTHORS & INSTITUTIONS**: Research teams and affiliations
-3. **NOTE TECHNICAL DETAILS**: Specific algorithms, models, datasets used
-4. **ASSESS NOVELTY**: Unique contributions or innovations mentioned
-5. **CONNECT TO APPLICATIONS**: Practical automotive applications discussed
-6. **ORGANIZE BY THEME**: Group related research findings together
+📚 **RESEARCH QUERY GUIDANCE - STRICT REQUIREMENTS:**
+
+**MANDATORY RESEARCH PAPER FORMAT (For each paper mentioned):**
+1. **PAPER DETAILS**: Always include: Title, authors, institution/affiliation, publication year
+2. **ABSTRACT SUMMARY**: 
+   - ALWAYS include a short summary of the research (2-3 sentences)
+   - Summarize key findings, methodology, and contributions
+   - Focus on automotive/AI applications and relevance
+3. **TECHNICAL DETAILS**: Specific algorithms, models, datasets, methodologies used
+4. **KEY FINDINGS**: Main conclusions and results
+5. **AUTOMOTIVE RELEVANCE**: Practical applications in automotive context
+6. **SOURCE FORMAT**: [Source: Lens.org Automotive Research Papers Abstracts 2025] - USE THIS EXACT FORMAT
 """)
     
     # Trends
@@ -455,6 +466,7 @@ def build_smart_prompt(question, context, predictive_insights=None):
 4. **HIGHLIGHT KEY PLAYERS**: Companies, institutions mentioned
 5. **PROVIDE EXAMPLES**: Specific technologies or cases mentioned
 6. **COMPARE SOURCES**: Note consistency or variations across different reports
+7. **SOURCE FORMAT**: Use appropriate source format based on document type
 """)
     
     # Maturity
@@ -486,13 +498,7 @@ def build_smart_prompt(question, context, predictive_insights=None):
 2. **EXTRACT TRANSITION EVIDENCE**: Patents, funding, partnerships, deployments
 3. **ASSESS TIMELINES**: When technology moved/might move between stages
 4. **PROVIDE SPECIFIC EXAMPLES**: Companies, products, projects mentioned
-5. **CITE SOURCES**: For each stage assessment
-
-**OUTPUT FORMAT:**
-- Start with overall maturity assessment                               
-- List specific technologies and their stages (auto_tech_cluster column)
-- Include evidence for each classification
-- Note gaps in information if present
+5. **SOURCE FORMAT**: Use appropriate source format based on document type
 """)
     
     # Technology
@@ -505,20 +511,51 @@ def build_smart_prompt(question, context, predictive_insights=None):
 4. **ASSESS INTEGRATION**: How technologies work together or integrate
 5. **HIGHLIGHT INNOVATIONS**: Novel approaches or breakthroughs
 6. **COMPARE ALTERNATIVES**: Different technology options mentioned
+7. **SOURCE FORMAT**: Use appropriate source format based on document type
 """)
     
-    # General guidance
+    # UNIFIED REFERENCING REQUIREMENTS - NEW SECTION
+    unified_referencing = """
+🔗 **UNIFIED REFERENCING REQUIREMENTS - STRICTLY ENFORCED:**
+
+**MANDATORY SOURCE FORMATTING:**
+ALWAYS use these EXACT source formats - no variations allowed:
+
+1. **PATENTS**: [Source: Lens.org Automotive Technology Patents 2025]
+2. **RESEARCH PAPERS**: [Source: Lens.org Automotive Research Papers Abstracts 2025]
+3. **STARTUPS**: [Source: Seedtable Best Automotive Industry Startups to Watch in 2025] 
+   OR [Source: AutoTechInsight Automotive Startup Profiles & Tracker]
+4. **INDUSTRY REPORTS**: 
+   - [Source: BCG: AI Value Creation 2025]
+   - [Source: McKinsey Technology Trends 2025]
+   - [Source: WEF: Emerging Technologies 2025]
+   - [Source: Automotive Software 2030 Report]
+5. **TECHNICAL PAPERS**: Use specific paper titles with icons as shown in context
+
+**REFERENCING RULES:**
+- Each key fact must have a source reference
+- Use the EXACT format shown above - no deviations
+- Place reference at the end of the sentence or paragraph
+- If multiple facts from same source, reference once at end of paragraph
+"""
+    
+    # General guidance - UPDATED
     general_guidance = """
 📋 **GENERAL ANSWER GUIDELINES:**
 1. **BE SPECIFIC**: Use exact names, numbers, dates from context
 2. **BE COMPREHENSIVE**: Cover all relevant aspects of the question
 3. **BE STRUCTURED**: Use clear organization (numbered lists, sections)
 4. **BE ACCURATE**: Only use information from the provided context
-5. **CITE SOURCES**: For each key point, include [Source: Name]
+5. **CITE SOURCES**: For each key point, include source in EXACT format specified above
 6. **ACKNOWLEDGE LIMITATIONS**: If information is incomplete, state what's missing
+
+**SPECIAL REQUIREMENTS:**
+- For patents: Only include if abstract is available, otherwise skip entirely
+- For research papers: Always include a short summary (2-3 sentences)
+- Use consistent source formatting as specified in Unified Referencing section
 """
     
-    # Combine all guidance
+    # Combine all guidance with unified referencing
     targeted_guidance = "\n\n".join(guidance_sections)
     
     prompt = f"""
@@ -533,6 +570,8 @@ You are an automotive technology intelligence analyst. Your task is to provide d
 
 {targeted_guidance}
 
+{unified_referencing}
+
 {general_guidance}
 
 FORMAT REQUIREMENTS:
@@ -545,12 +584,18 @@ FORMAT REQUIREMENTS:
 ANSWER STRUCTURE:
 1. Direct answer to the main question
 2. Supporting details with specific examples
-3. Source citations for each key point
+3. Source citations in EXACT format specified above
 4. Summary or implications if relevant
+
+**CRITICAL REMINDERS:**
+1. **PATENTS**: Only mention patents that have abstracts in the context. Skip patents without abstracts.
+2. **RESEARCH PAPERS**: Always include a short summary (2-3 sentences) for each paper mentioned.
+3. **SOURCES**: Always use the EXACT source formats specified above - no variations.
 
 ANSWER:
 """
     return prompt
+
 
 def determine_source_count(question):
     """Dynamic source counting based on question type - UNCHANGED"""
@@ -570,36 +615,36 @@ def determine_source_count(question):
         return 4
 
 def format_source_name(source_file):
-    """Enhanced file name formatting with icons - UNCHANGED"""
+    """Enhanced file name formatting - WITHOUT EMOJIS for consistency"""
     name_mapping = {
         # Automotive Papers
-        'a_benchmark_framework_for_AL_models_in_automotive_aerodynamics.txt': '📊 AI in Automotive Aerodynamics Research',
-        'AL_agents_in_engineering_design_a_multiagent_framework_for_aesthetic_and_aerodynamic_car_design.txt': '🤖 AI Agents in Car Design Research',
-        'automating_automotive_software_development_a_synergy_of_generative_AL_and_formal_methods.txt': '⚙️ AI for Automotive Software Development',
-        'automotive-software-and-electronics-2030-full-report.txt': '📈 Automotive Software 2030 Report',
-        'drive_disfluency-rich_synthetic_dialog_data_generation_framework_for_intelligent_vehicle_environments.txt': '🗣️ AI Dialogue Systems for Vehicles',
-        'Embedded_acoustic_intelligence_for_automotive_systems.txt': '🔊 Acoustic AI for Automotive Systems',
-        'enhanced_drift_aware_computer_vision_achitecture_for_autonomous_driving.txt': '👁️ Computer Vision for Autonomous Driving',
-        'Gen_AL_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt': '🎨 Generative AI in Automotive Applications',
-        'generative_AL_for_autonomous_driving_a_review.txt': '📚 Generative AI for Autonomous Driving Review',
-        'leveraging_vision_language_models_for_visual_grounding_and_analysis_of_automative_UI.txt': '👁️🗣️ Vision-Language Models for Automotive UI',
+        'a_benchmark_framework_for_AL_models_in_automotive_aerodynamics.txt': 'AI in Automotive Aerodynamics Research',
+        'AL_agents_in_engineering_design_a_multiagent_framework_for_aesthetic_and_aerodynamic_car_design.txt': 'AI Agents in Car Design Research',
+        'automating_automotive_software_development_a_synergy_of_generative_AL_and_formal_methods.txt': 'AI for Automotive Software Development',
+        'automotive-software-and-electronics-2030-full-report.txt': 'Automotive Software 2030 Report',
+        'drive_disfluency-rich_synthetic_dialog_data_generation_framework_for_intelligent_vehicle_environments.txt': 'AI Dialogue Systems for Vehicles',
+        'Embedded_acoustic_intelligence_for_automotive_systems.txt': 'Acoustic AI for Automotive Systems',
+        'enhanced_drift_aware_computer_vision_achitecture_for_autonomous_driving.txt': 'Computer Vision for Autonomous Driving',
+        'Gen_AL_in_automotive_applications_challenges_and_opportunities_with_a_case_study_on_in-vehicle_experience.txt': 'Generative AI in Automotive Applications',
+        'generative_AL_for_autonomous_driving_a_review.txt': 'Generative AI for Autonomous Driving Review',
+        'leveraging_vision_language_models_for_visual_grounding_and_analysis_of_automative_UI.txt': 'Vision-Language Models for Automotive UI',
         
         # Tech Reports
-        'bog_ai_value_2025.txt': '🏢 BCG: AI Value Creation 2025',
-        'mckinsey_tech_trends_2025.txt': '📊 McKinsey Technology Trends 2025',
-        'wef_emerging_tech_2025.txt': '🌍 WEF: Emerging Technologies 2025',
+        'bog_ai_value_2025.txt': 'BCG: AI Value Creation 2025',
+        'mckinsey_tech_trends_2025.txt': 'McKinsey Technology Trends 2025',
+        'wef_emerging_tech_2025.txt': 'WEF: Emerging Technologies 2025',
         
-        # Processed Files
-        'autotechinsight_startups_processed.txt': '🚀 AutoTechInsight Automotive Startup Profiles & Tracker',
-        'seedtable_startups_processed.txt': '📈 Seedtable Best Automotive Industry Startups to Watch in 2025',
-        'automotive_papers_processed.txt': '📚 Automotive Research Papers Database',
-        'automotive_patents_processed.txt': '📜 Automotive Technology Patents Database',
+        # Processed Files - CRITICAL: These must match what the LLM will output
+        'autotechinsight_startups_processed.txt': 'AutoTechInsight Automotive Startup Profiles & Tracker',
+        'seedtable_startups_processed.txt': 'Seedtable Best Automotive Industry Startups to Watch in 2025',
+        'automotive_papers_processed.txt': 'Lens.org Automotive Research Papers Abstracts 2025',
+        'automotive_patents_processed.txt': 'Lens.org Automotive Technology Patents 2025',
         
         # Generic fallbacks
-        'startup': '🚀 Startup Database',
-        'patent': '📜 Patent Database',
-        'paper': '📚 Research Database',
-        'report': '📊 Industry Report',
+        'startup': 'Startup Database',
+        'patent': 'Patent Database',
+        'paper': 'Research Database',
+        'report': 'Industry Report',
     }
     
     # Try exact match first
