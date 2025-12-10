@@ -321,7 +321,7 @@ def format_predictive_results(results_df, category):
     try:
         # GROWTH QUERY FORMAT
         if category == 'predictive_growth':
-            formatted = "**Fastest Growing Automotive Technologies**\n\n"
+            formatted = "**Academic Growth in Automotive Technologies**\n\n"
             
             # Check if we have the required columns
             required_cols = ['auto_tech_cluster', 'auto_focus_area', 'growth_slope_n_total']
@@ -354,16 +354,16 @@ def format_predictive_results(results_df, category):
                 if isinstance(growth, (int, float)):
                     # Convert growth rate to percentage
                     growth_pct = growth * 100
-                    formatted += f"**Growth Rate:** {growth_pct:.1f}%\n\n"
+                    formatted += f"**Quarterly Growth Rate (Last Quarter vs. Previous Quarter):** {growth_pct:.1f}%\n\n"
                 else:
-                    formatted += f"**Growth Rate:** {growth}\n\n"
+                    formatted += f"**Quarterly Growth Rate (Last Quarter vs. Previous Quarter):** {growth}\n\n"
                 
                 recent_activity = getattr(row, 'n_total_last', getattr(row, 'recent_activity', 0))
-                formatted += f"**Recent Activity:** {int(recent_activity)} documents\n\n"
+                formatted += f"**Papers Published (Last Quarter):** {int(recent_activity)} documents\n\n"
         
         # MATURITY QUERY FORMAT - UPDATED to remove Current, Forecast, Growth
         elif category == 'predictive_maturity':
-            formatted = "**Technologies Likely to Mature in Coming Year**\n\n"
+            formatted = "**Rising Commercial Interest in Automotive Technologies**\n\n"
             
             # Check if we have the required columns
             required_cols = ['auto_tech_cluster', 'auto_focus_area', 'last_share_patent', 'forecast_share_patent_mean', 'delta_share_patent']
@@ -1082,7 +1082,7 @@ def process_predictive_query(question, predictive_functions):
                         tech_text += f"**Definition:** Technology for {tech_display.lower()} applications\n\n"
                     tech_text += f"**Area:** {area_display}\n\n"
                     tech_text += f"**Growth Rate:** {growth_pct:.1f}%\n\n"
-                    tech_text += f"**Recent Activity:** {int(recent_activity)} documents\n\n"
+                    tech_text += f"**Papers Published (Latest Quarter):** {int(recent_activity)} documents\n\n"
                     
                     # Generate graph for this technology
                     graph_fig = None
@@ -1116,13 +1116,13 @@ def process_predictive_query(question, predictive_functions):
                     })
             
             # Don't include methodology note here - will add it at the end
-            insights = "##### Fastest Growing Automotive Technologies\n\n"
+            insights = "##### Academic Growth in Automotive Technologies\n\n"
             
         elif category == 'predictive_maturity':
             results = predictive_functions['get_likely_to_mature_next_year'](ts_data)
             
             # Generate formatted text WITHOUT graphs for maturity, but WITH separators
-            formatted_text = "##### Technologies Likely to Mature in Coming Year\n\n"
+            formatted_text = "##### Rising Commercial Interest in Automotive Technologies\n\n"
             
             if not results.empty:
                 for idx, row in enumerate(results.head(15).itertuples(), 1):
@@ -1385,7 +1385,7 @@ def main():
         'startups_clicked': "Which startups work on automotive and autonomous driving?",
         'trends_clicked': "What are the key challenges and pain points in automotive AI adoption?",
         'agents_clicked': "Summarize latest tech trends in development of AI agents.",
-        'growth_clicked': "What are the fastest growing automotive technologies?",
+        'growth_clicked': "What are the fastest growing automotive technologies in academia?",
         'maturity_clicked': "Which automotive technologies are reaching commercial maturity in the next 12 months?"
     }
     
@@ -1435,10 +1435,10 @@ def main():
     
     with col3:
         st.markdown("**🔮 Predictive Analytics**")
-        if st.button("Fastest Growing Tech", use_container_width=True, key="growth_btn"):
+        if st.button("Academic growth", use_container_width=True, key="growth_btn"):
             st.session_state.growth_clicked = True
             st.rerun()
-        if st.button("Tech Maturity", use_container_width=True, key="transition_btn"):
+        if st.button("Commercial interest", use_container_width=True, key="transition_btn"):
             st.session_state.maturity_clicked = True
             st.rerun()
     
@@ -1466,7 +1466,7 @@ def main():
         
         if result.get('predictive_used', False) and 'technology_items' in result and result['technology_items']:
             # For growth queries: Show each technology with its graph
-            st.markdown("##### Fastest Growing Automotive Technologies")
+            st.markdown("##### Academic Growth in Automotive Technologies")
             
             # Display each technology with its graph
             for item in result['technology_items']:
