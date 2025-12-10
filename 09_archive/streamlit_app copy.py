@@ -317,12 +317,12 @@ def format_predictive_results(results_df, category):
                 if isinstance(growth, (int, float)):
                     # Convert growth rate to percentage
                     growth_pct = growth * 100
-                    formatted += f"**Growth Rate:** {growth_pct:.1f}%\n\n"
+                    formatted += f"**Quarterly Growth Rate (Last Quarter vs. Previous Quarter):** {growth_pct:.1f}%\n\n"
                 else:
-                    formatted += f"**Growth Rate:** {growth}\n\n"
+                    formatted += f"**Quarterly Growth Rate (Last Quarter vs. Previous Quarter):** {growth}\n\n"
                 
                 recent_activity = getattr(row, 'n_total_last', getattr(row, 'recent_activity', 0))
-                formatted += f"**Recent Activity:** {int(recent_activity)} documents\n\n"
+                formatted += f"**Papers Published (Last Quarter):** {int(recent_activity)} documents\n\n"
         
         # MATURITY QUERY FORMAT  
         elif category == 'predictive_maturity':
@@ -1058,7 +1058,7 @@ def process_predictive_query(question, predictive_functions):
                     tech_text = f"**{idx}. {tech_display}**\n\n"
                     tech_text += f"**Definition:** {definition}\n\n"
                     tech_text += f"**Area:** {area_display}\n\n"
-                    tech_text += f"**Growth Rate:** {growth_pct:.1f}%\n\n"
+                    tech_text += f"**Quarterly Growth Rate (Last Quarter vs. Previous Quarter):** {growth_pct:.1f}%\n\n"
                     tech_text += f"**Recent Activity:** {int(recent_activity)} documents\n\n"
                     
                     # Generate graph for this technology
@@ -1093,13 +1093,13 @@ def process_predictive_query(question, predictive_functions):
                     })
             
             # Don't include methodology note here - will add it at the end
-            insights = "##### Fastest Growing Automotive Technologies\n\n"
+            insights = "##### Academic Growth in Automotive Technologies\n\n"
             
         elif category == 'predictive_maturity':
             results = predictive_functions['get_likely_to_mature_next_year'](ts_data)
             
             # Generate formatted text WITHOUT graphs for maturity, but WITH separators
-            formatted_text = "##### Technologies Likely to Mature in Coming Year\n\n"
+            formatted_text = "##### Rising Commercial Interest in Automotive Technologies\n\n"
             
             if not results.empty:
                 for idx, row in enumerate(results.head(15).itertuples(), 1):
