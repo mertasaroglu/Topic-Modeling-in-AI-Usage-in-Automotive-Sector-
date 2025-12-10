@@ -359,7 +359,7 @@ def format_predictive_results(results_df, category):
                     formatted += f"**Quarterly Growth Rate (Last Quarter vs. Previous Quarter):** {growth}\n\n"
                 
                 recent_activity = getattr(row, 'n_total_last', getattr(row, 'recent_activity', 0))
-                formatted += f"**Papers Published (Last Quarter):** {int(recent_activity)} documents\n\n"
+                formatted += f"**Journal Articles Published (Last Quarter):** {int(recent_activity)} documents\n\n"
         
         # MATURITY QUERY FORMAT - UPDATED to remove Current, Forecast, Growth
         elif category == 'predictive_maturity':
@@ -1081,8 +1081,8 @@ def process_predictive_query(question, predictive_functions):
                     else:
                         tech_text += f"**Definition:** Technology for {tech_display.lower()} applications\n\n"
                     tech_text += f"**Area:** {area_display}\n\n"
-                    tech_text += f"**Growth Rate:** {growth_pct:.1f}%\n\n"
-                    tech_text += f"**Papers Published (Latest Quarter):** {int(recent_activity)} documents\n\n"
+                    tech_text += f"**Quarterly Growth Rate (Last Quarter vs. Previous Quarter):** {growth_pct:.1f}%\n\n"
+                    tech_text += f"**Journal Articles Published (Last Quarter):** {int(recent_activity)} documents\n\n"
                     
                     # Generate graph for this technology
                     graph_fig = None
