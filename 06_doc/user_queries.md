@@ -18,19 +18,20 @@ information about emerging technologies, startups, and research trends connected
 
 Note: The Innovation Intelligence Suite will return on these queries within the prototype scope.
 
-1. “Which startups work on automotive and autonomous driving?” (Sourcing / Analytical) - take out of scope?
+1. "Summarize the latest AI research on autonomous driving vehicles." (Descriptive / Explanatory)
 
-2. "Summarize the latest AI research on autonomous driving vehicles." (Descriptive / Explanatory)
+2. “Show me recent patents on AI for automotive vehicles.” (Factual extraction / Sourcing)
 
-3. "What are the latest tech trends in development of AI agents" (Descriptive / Topic extraction -- connected to project case study)
+3. "Which startups work on automotive and autonomous driving?” (Sourcing / Analytical) - take out of scope?
 
 4. "What are the key challenges and pain points in automotive AI adoption?" (Descriptive / Explanatory)
 
-5. “Show me recent patents on AI for automotive vehicles.” (Factual extraction / Sourcing)
+5. "Summarize latest tech trends in development of AI agents." (Descriptive / Topic extraction -- connected to project case study)
 
-6. “Which automotive technologies are reaching commercial maturity in the next 12 months?” (Shift / TRL/Maturity)
+6. "What are the fastest growing technologies growing in academia?" (Trend / Analytical)
 
-7. "Which AI research topics are growing fastest?" (Trend / Analytical)
+7. “Which automotive technologies are reaching commercial maturity in the next 12 months?” (Shift / TRL/Maturity)
+     
 
 Out of Scope: 
 - strategic suggestion questions, such as priotization 
