@@ -1,10 +1,11 @@
-# innovation-intelligence-suite
+# Innovation Intelligence Suite
 
 ## Overview 
 This capstone project explores how AI/ML can accelerate insight generation for R&D teams:
-- A **Retrieval-Augmented Generation (RAG)** interface synthesizing information and answering domain-scoped innovation queries. 
-- A **Technology Adoption Readiness Predictor** that classifies emerging technologies by maturity adding an intelligence layer to RAG by feeding tags into a prediction model. 
-- **Automotive AI technology focus** with research papers, tech reports, startups and patent data (2025).
+
+- A **Retrieval-Augmented Generation (RAG)** interface synthesizing information and answering domain-scoped innovation queries
+- A **Technology Adoption Readiness Predictor** that classifies emerging technologies by feeding tags into a prediction model, adding an intelligence layer to the suite
+- **Automotive AI technology focus** with research papers, tech reports, startups and patent data (2025)
 
 Developed as a Data Science + AI Bootcamp capstone project (2025).
 
@@ -13,7 +14,7 @@ Developed as a Data Science + AI Bootcamp capstone project (2025).
 - Retrieve insights on specific innovation topics from research papers, tech reports, startups and patent data (2025) 
 - Source attribution with relevance scoring
 - Template-based answer generation with full transparency
-- Semi-supervised TRL classifier (Fraunhofer ISI-inspired).
+- Topic modeling and trend forecasting based on academic and commercial interest (25,000+ patent and research papers) (Fraunhofer ISI-inspired)
 
 ## Quick Start
 
