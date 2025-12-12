@@ -1,14 +1,13 @@
 # AUTOMOTIVE TECH INNOVATION INTELLIGENCE SUITE - STREAMLIT APP
-# Complete RAG interface with Predictive Model Integration
 
 import streamlit as st
 import sys
 import os
 import importlib.util
 import re
-import matplotlib.pyplot as plt  # For plotting graphs
+import matplotlib.pyplot as plt
 
-# ADDED: Technology definitions dictionary - UPDATED with correct formatting
+# Technology definitions dictionary
 AUTO_TOP_SEEDS_1 = {
     "Sensor_Fusion": "multi sensor fusion architecture combining lidar radar and camera into unified perception outputs",
     "Occupancy_Grid": "spatial occupancy grid mapping for free space and obstacle representation around the vehicle",
@@ -77,6 +76,8 @@ AUTO_TOP_SEEDS_9 = {
     "Integrity_Protection": "data and message integrity protection mechanisms (integrity protection)",
     "Functional_Safety": "automotive functional safety and fail safe systems (functional safety)"
 }
+
+# Main dictionary organizing technologies by area
 AUTO_TOP_SEEDS = {
     "Perception": AUTO_TOP_SEEDS_1,
     "Communication_Technologies": AUTO_TOP_SEEDS_2,
@@ -89,7 +90,7 @@ AUTO_TOP_SEEDS = {
     "Cybersecurity": AUTO_TOP_SEEDS_9,
 }
 
-# ADDED: Mapping between display area names and dictionary keys
+# Mapping between display area names and dictionary keys
 AREA_NAME_MAPPING = {
     "Sensing Perception VehicleUnderstanding": "Perception",
     "Robotic Factory Autonomous Delivery": "Robotics", 
@@ -107,9 +108,9 @@ AREA_NAME_MAPPING = {
 }
 
 def get_correct_paths():
-    """Get absolute paths based on your exact folder structure"""
-    current_dir = os.path.dirname(os.path.abspath(__file__))  # 05_app folder
-    project_root = os.path.dirname(current_dir)  # innovation-intelligence-suite
+    """Get absolute paths based on folder structure"""
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(current_dir)
     
     rag_components_path = os.path.join(project_root, '03_notebooks', 'rag_notebooks', 'rag_components')
     vector_index_path = os.path.join(project_root, '04_models', 'vector_index')
@@ -120,7 +121,6 @@ def import_your_components():
     """Import FAISS retriever with exact paths"""
     rag_components_path, _, _ = get_correct_paths()
     
-    # FAISS retriever
     faiss_retriever_path = os.path.join(rag_components_path, 'faiss_retriever.py')
     
     if not os.path.exists(faiss_retriever_path):
@@ -159,7 +159,7 @@ def import_predictive_components():
             "get_fastest_growing_topics": predictive_analytics.get_fastest_growing_topics,
             "get_likely_to_mature_next_year": predictive_analytics.get_likely_to_mature_next_year,
             "plot_simple_timeseries": predictive_analytics.plot_simple_timeseries,
-            "plot_maturity_derivatives": predictive_analytics.plot_maturity_derivatives,  # From Mert
+            "plot_maturity_derivatives": predictive_analytics.plot_maturity_derivatives,
         }
 
         return predictive_functions, None
@@ -174,9 +174,8 @@ def import_query_expander():
     rag_components_path, _, _ = get_correct_paths()
     expander_path = os.path.join(rag_components_path, 'query_expander.py')
     
-    # Only import if file exists
     if not os.path.exists(expander_path):
-        return None, None  # Returns None if no expander available
+        return None, None
     
     try:
         if rag_components_path not in sys.path:
@@ -187,11 +186,10 @@ def import_query_expander():
         spec.loader.exec_module(expander_module)
         return expander_module, None
     except Exception as e:
-        # Silent fail - system works without expander
         return None, None
 
 def setup_groq_client():
-    """Your exact client setup from notebook 03"""
+    """Setup Groq client for LLM interactions"""
     try:
         from groq import Groq
         from dotenv import load_dotenv
@@ -209,7 +207,7 @@ def setup_groq_client():
         return None, f"Error setting up Groq client: {str(e)}"
 
 def analyze_question_type(question):
-    """Enhanced question type analysis with predictive model detection"""
+    """Analyze question type to determine processing approach"""
     question_lower = question.lower()
     
     # Define question type characteristics
@@ -224,19 +222,15 @@ def analyze_question_type(question):
                              ['trend', 'forecast', 'future', 'emerging', 'development', 'innovation', 
                               'pain point', 'challenge', 'barrier', 'obstacle']),
         
-        # PREDICTIVE MODEL QUERIES - Simplified detection
+        # Predictive model detection - UPDATED for commercial interest
         'is_growth_query': any(keyword in question_lower for keyword in 
                               ['fastest growing', 'growth rate', 'increasing', 'growing technology',
                                'accelerating', 'expanding', 'growth trend', 'rapid growth']),
         
-        'is_maturity_query': any(keyword in question_lower for keyword in 
-                                ['maturity', 'readiness', 'trl', 'commercial', 'stage', 'transition',
-                                 'hype cycle', 'adoption', 'development stage', 'technology readiness',
-                                 'commercialization', 'scaling', 'deployment', 'market readiness',
-                                 'innovation trigger', 'peak of expectations', 'trough of disillusionment',
-                                 'slope of enlightenment', 'plateau of productivity',
-                                 'likely to mature', 'mature next year', 'reaching maturity',
-                                 'next 12 months', 'coming year', 'near future', 'next year']),
+        'is_commercial_interest_query': any(keyword in question_lower for keyword in 
+                                ['commercial interest', 'commercial rising', 'market interest',
+                                 'business interest', 'industry interest', 'commercial adoption',
+                                 'market adoption', 'industry adoption', 'rising commercial']),
         
         'is_technology_query': any(keyword in question_lower for keyword in 
                                   ['technology', 'tech', 'system', 'solution', 'application', 
@@ -249,53 +243,55 @@ def analyze_question_type(question):
                                ['summarize', 'overview', 'explain', 'describe', 'what is']),
     }
     
-    # Determine optimal thresholds based on question type
+    # Determine thresholds based on question type
     if question_type['is_startup_query'] or question_type['is_list_query']:
-        semantic_threshold = 0.15  # Lower for broad coverage
-        keyword_threshold = 0.1    # Very low for keyword matching
-        k_semantic = 4             # More semantic results
-        k_keyword = 2              # Fewer keyword results
+        semantic_threshold = 0.15
+        keyword_threshold = 0.1
+        k_semantic = 4
+        k_keyword = 2
     elif question_type['is_patent_query']:
-        semantic_threshold = 0.25  # Moderate for technical queries
-        keyword_threshold = 0.15   # Low for technical terms
+        semantic_threshold = 0.25
+        keyword_threshold = 0.15
         k_semantic = 4
         k_keyword = 2
     elif question_type['is_research_query']:
-        semantic_threshold = 0.3   # Standard for academic content
-        keyword_threshold = 0.2    # Standard keyword matching
+        semantic_threshold = 0.3
+        keyword_threshold = 0.2
         k_semantic = 3
         k_keyword = 2
     else:
-        semantic_threshold = 0.25  # Balanced for general queries
-        keyword_threshold = 0.15   # Standard keyword matching
+        semantic_threshold = 0.25
+        keyword_threshold = 0.15
         k_semantic = 3
         k_keyword = 2
     
     return question_type, semantic_threshold, keyword_threshold, k_semantic, k_keyword
 
 def determine_question_category(question):
-    """Determine which system should handle the question - SIMPLIFIED"""
+    """Route questions to appropriate processor (RAG or predictive)"""
     question_type, _, _, _, _ = analyze_question_type(question)
     
-    # Priority: Predictive Model Questions
+    # Route to predictive model for growth or commercial interest questions
     if question_type['is_growth_query']:
         return 'predictive_growth'
-    elif question_type['is_maturity_query'] and any(word in question.lower() for word in ['next', 'future', 'coming', 'likely', 'forecast', 'prediction', '12 months']):
-        return 'predictive_maturity'
+    elif question_type['is_commercial_interest_query']:
+        # Check for time indicators (next year, coming year, etc.)
+        time_keywords = ['next', 'future', 'coming', 'likely', 'forecast', 'prediction', '12 months', 'next year']
+        if any(word in question.lower() for word in time_keywords):
+            return 'predictive_commercial_interest'
     
-    # Default: RAG-Only Questions
-    else:
-        return 'rag_only'
+    # Default to RAG for all other questions
+    return 'rag_only'
 
 def get_technology_definition(tech_name, area_display):
-    """Get technology definition with proper mapping"""
-    # Normalize the tech name to match dictionary keys
+    """Get technology definition using proper mapping"""
+    # Normalize tech name to match dictionary keys
     tech_key = tech_name.replace(' ', '_')
     
-    # Map the display area name to dictionary key
+    # Map display area name to dictionary key
     area_key = AREA_NAME_MAPPING.get(area_display, area_display.replace(' ', '_'))
     
-    # Try to get definition
+    # Try to get definition from dictionary
     definition = None
     if area_key in AUTO_TOP_SEEDS:
         # Try exact match first
@@ -311,20 +307,15 @@ def get_technology_definition(tech_name, area_display):
     return definition
 
 def get_area_display_for_tech(tech_name: str) -> str:
-    """
-    Find the area name for a given technology from the AUTO_TOP_SEEDS dictionary.
-    Example: 'Solar_Cell' -> 'Energy Source'
-    """
+    """Find the area name for a given technology from the dictionary"""
     tech_key = tech_name.replace(" ", "_")
     for area_key, tech_dict in AUTO_TOP_SEEDS.items():
         if tech_key in tech_dict:
             return area_key.replace("_", " ")
-    # Otherwise
     return "Unassigned Area"
 
 def format_predictive_results(results_df, category):
-    """Format predictive model results for display with technology definitions - ROBUST VERSION"""
-    # Check if results_df is None or empty
+    """Format predictive model results for display"""
     if results_df is None:
         return "Error: Predictive model returned None results."
     
@@ -332,16 +323,15 @@ def format_predictive_results(results_df, category):
         return "No predictive insights available for this query (empty results)."
     
     try:
-        # GROWTH QUERY FORMAT
+        # Growth query format (academic growth)
         if category == 'predictive_growth':
             formatted = "**Academic Growth in Automotive Technologies**\n\n"
             
-            # Check if we have the required columns
             required_cols = ['auto_tech_cluster', 'auto_focus_area', 'growth_slope_n_total']
             missing_cols = [col for col in required_cols if col not in results_df.columns]
             
             if missing_cols:
-                return f"Error: Missing required columns in growth data: {missing_cols}\nAvailable columns: {list(results_df.columns)}"
+                return f"Error: Missing required columns in growth data: {missing_cols}"
             
             # Create formatted output for each technology
             for idx, row in enumerate(results_df.head(10).itertuples(), 1):
@@ -353,19 +343,16 @@ def format_predictive_results(results_df, category):
                 
                 growth = getattr(row, 'growth_slope_n_total', 0)
                 
-                # Get definition using the new function
                 definition = get_technology_definition(tech, area_display)
                 
-                # Format as requested - each item on separate line with explicit line breaks
                 formatted += f"**{idx}. {tech_display}**\n\n"
                 if definition:
-                    formatted += f"**Definition:** {definition[0].upper() + definition[1:] if definition else 'N/A'}\n\n"
+                    formatted += f"**Definition:** {definition[0].upper() + definition[1:]}\n\n"
                 else:
                     formatted += f"**Definition:** Technology for {tech_display.lower()} applications\n\n"
                 formatted += f"**Area:** {area_display}\n\n"
                 
                 if isinstance(growth, (int, float)):
-                    # Convert growth rate to percentage
                     growth_pct = growth * 100
                     formatted += f"**Quarterly Growth Rate (Last Quarter vs. Previous Quarter):** {growth_pct:.1f}%\n\n"
                 else:
@@ -374,16 +361,15 @@ def format_predictive_results(results_df, category):
                 recent_activity = getattr(row, 'n_total_last', getattr(row, 'recent_activity', 0))
                 formatted += f"**Journal Articles Published (Last Quarter):** {int(recent_activity)} documents\n\n"
         
-        # MATURITY QUERY FORMAT - UPDATED to remove Current, Forecast, Growth
-        elif category == 'predictive_maturity':
+        # Commercial interest query format
+        elif category == 'predictive_commercial_interest':
             formatted = "**Rising Commercial Interest in Automotive Technologies**\n\n"
             
-            # Check if we have the required columns
             required_cols = ['auto_tech_cluster', 'auto_focus_area', 'last_share_patent', 'forecast_share_patent_mean', 'delta_share_patent']
             missing_cols = [col for col in required_cols if col not in results_df.columns]
             
             if missing_cols:
-                return f"Error: Missing required columns in maturity data: {missing_cols}\nAvailable columns: {list(results_df.columns)}"
+                return f"Error: Missing required columns in commercial interest data: {missing_cols}"
             
             # Create formatted output for each technology
             for idx, row in enumerate(results_df.head(15).itertuples(), 1):
@@ -393,13 +379,11 @@ def format_predictive_results(results_df, category):
                 area = row.auto_focus_area
                 area_display = area.replace('_', ' ') if isinstance(area, str) else str(area)
                 
-                # Get definition using the new function
                 definition = get_technology_definition(tech, area_display)
                 
-                # Format exactly as requested - each item on separate line with explicit line breaks
                 formatted += f"**{idx}. {tech_display}**\n\n"
                 if definition:
-                    formatted += f"**Definition:** {definition[0].upper() + definition[1:] if definition else 'N/A'}\n\n"
+                    formatted += f"**Definition:** {definition[0].upper() + definition[1:]}\n\n"
                 else:
                     formatted += f"**Definition:** Technology for {tech_display.lower()} applications\n\n"
                 formatted += f"**Area:** {area_display}\n\n"
@@ -416,11 +400,10 @@ def format_predictive_results(results_df, category):
     except Exception as e:
         import traceback
         error_details = traceback.format_exc()
-        return f"Error formatting predictive results: {str(e)}\n\nDebug info:\n{error_details}"
-    
+        return f"Error formatting predictive results: {str(e)}"
 
 def build_smart_prompt(question, context, predictive_insights=None):
-    """Your existing prompt template - UPDATED with consistent requirements"""
+    """Build LLM prompt with question-specific guidance"""
     question_lower = question.lower()
     
     # Detect query type for targeted guidance
@@ -437,164 +420,68 @@ def build_smart_prompt(question, context, predictive_insights=None):
     is_trend_question = any(keyword in question_lower for keyword in 
                           ['trend', 'forecast', 'future', 'emerging', 'development', 'innovation', 'pain point', 'challenge'])
     
-    is_maturity_question = any(keyword in question_lower for keyword in 
-                             ['trl', 'maturity', 'readiness', 'commercial', 'transition', 'stage'])
+    is_commercial_question = any(keyword in question_lower for keyword in 
+                             ['commercial', 'market', 'business', 'industry', 'adoption', 'interest'])
     
     is_technology_question = any(keyword in question_lower for keyword in 
                                ['technology', 'tech', 'system', 'solution', 'application', 'deployment', 'agent', 'agents'])
     
-    # Build targeted guidance sections - UPDATED
+    # Build targeted guidance sections
     guidance_sections = []
     
-    # Patents - UPDATED with strict requirements
+    # Patent guidance
     if is_patent_question:
         guidance_sections.append("""
-🔍 **PATENT QUERY GUIDANCE - STRICT REQUIREMENTS:**
-
-**MANDATORY PATENT FORMAT (For each patent mentioned):**
-1. **PATENT DETAILS**: Always include: Patent number
-2. **ABSTRACT SUMMARY**: 
-   - ALWAYS include a summary of the patent abstract
-   - If no abstract is available in context, DO NOT MENTION THE PATENT AT ALL
-   - Skip patents entirely if abstract information is missing
-3. **JURISDICTION ANALYSIS**: Clearly indicate jurisdiction type:
-   - EP: European Patent Office (covers multiple European countries)
-   - US: United States Patent and Trademark Office
-   - WO: World Intellectual Property Organization (international/PCT applications)
-4. **TECHNOLOGY FOCUS**: Specific automotive/AI technologies protected
-5. **KEY DATES**: Include filing date, publication date, grant date when available
-6. **SOURCE FORMAT**: [Source: Lens.org Automotive Technology Patents 2025] - USE THIS EXACT FORMAT
+🔍 **PATENT QUERY GUIDANCE:**
+- Always include patent abstract summary
+- Skip patents without abstracts
+- Use exact source format: [Source: Lens.org Automotive Technology Patents 2025]
 """)
     
-    # Startups
+    # Startup guidance
     if is_startup_question:
         guidance_sections.append("""
 🚀 **STARTUP QUERY GUIDANCE:**
-1. **EXTRACT COMPANY NAMES**: All startup/company names mentioned
-2. **INCLUDE DETAILS**: Location, founding year, funding stage, key technologies
-3. **FOCUS ON DATABASES**: Prioritize information from startup-specific sources
-4. **ORGANIZE CLEARLY**: Create numbered lists with consistent formatting
-5. **HIGHLIGHT AI FOCUS**: Note AI applications in automotive context
-6. **SOURCE FORMAT**: [Source: Seedtable Best Automotive Industry Startups to Watch in 2025] OR [Source: AutoTechInsight Automotive Startup Profiles & Tracker]
+- Extract company names and details
+- Use startup-specific source formats
 """)
     
-    # Research - UPDATED with strict requirements
+    # Research guidance
     if is_research_question:
         guidance_sections.append("""
-📚 **RESEARCH QUERY GUIDANCE - STRICT REQUIREMENTS:**
-
-**MANDATORY RESEARCH PAPER FORMAT (For each paper mentioned):**
-1. **PAPER DETAILS**: Always include: Title, authors, institution/affiliation, publication year
-2. **ABSTRACT SUMMARY**: 
-   - ALWAYS include a short summary of the research (2-3 sentences)
-   - Summarize key findings, methodology, and contributions
-   - Focus on automotive/AI applications and relevance
-3. **TECHNICAL DETAILS**: Specific algorithms, models, datasets, methodologies used
-4. **KEY FINDINGS**: Main conclusions and results
-5. **AUTOMOTIVE RELEVANCE**: Practical applications in automotive context
-6. **SOURCE FORMAT**: [Source: Lens.org Automotive Research Papers Abstracts 2025] - USE THIS EXACT FORMAT
+📚 **RESEARCH QUERY GUIDANCE:**
+- Always include short summary of each paper (2-3 sentences)
+- Use exact source format: [Source: Lens.org Automotive Research Papers Abstracts 2025]
 """)
     
-    # Trends
-    if is_trend_question:
-        guidance_sections.append("""
-📈 **TREND/CHALLENGE GUIDANCE:**
-1. **IDENTIFY KEY TRENDS/PAIN POINTS**: Major developments, challenges, or patterns
-2. **EXTRACT VELOCITY INDICATORS**: Growth rates, adoption curves, investment trends
-3. **NOTE DRIVERS & BARRIERS**: Factors enabling or hindering adoption
-4. **HIGHLIGHT KEY PLAYERS**: Companies, institutions mentioned
-5. **PROVIDE EXAMPLES**: Specific technologies or cases mentioned
-6. **COMPARE SOURCES**: Note consistency or variations across different reports
-7. **SOURCE FORMAT**: Use appropriate source format based on document type
-""")
-    
-    # Maturity
-    if is_maturity_question:
+    # Commercial interest guidance
+    if is_commercial_question:
         guidance_sections.append("""        
-🎯 **TECHNOLOGY MATURITY & HYPE CYCLE GUIDANCE:**
-
-**FRAMEWORK FOR ASSESSMENT:**
-1. **HYPE CYCLE PHASES** (Use when mentioned or implied):
-   - 📈 **Innovation Trigger**: Early research, proof-of-concept, initial patents
-   - 🚀 **Peak of Inflated Expectations**: Media hype, startup boom, high funding
-   - 🛑 **Trough of Disillusionment**: Implementation failures, skepticism, consolidation
-   - 📚 **Slope of Enlightenment**: Practical applications, standards, pilot projects
-   - 🏭 **Plateau of Productivity**: Mainstream adoption, price competition, services market
-
-2. **TECHNOLOGY READINESS LEVELS (TRL)** (When specifically mentioned):
-   - TRL 1-4: Basic research, lab validation (Academic focus)
-   - TRL 5-6: Prototyping, testing (University-industry collaboration)
-   - TRL 7-9: Deployment, scaling (Industry dominant)
-
-3. **ACADEMIC TO INDUSTRY TRANSFER INDICATORS**:
-   - Academic papers → Industry patents
-   - Research grants → Venture funding
-   - University labs → Startup formations
-   - Conference talks → Product demonstrations
-
-**ANALYSIS REQUIREMENTS:**
-1. **IDENTIFY CURRENT STAGE**: Based on evidence in context
-2. **EXTRACT TRANSITION EVIDENCE**: Patents, funding, partnerships, deployments
-3. **ASSESS TIMELINES**: When technology moved/might move between stages
-4. **PROVIDE SPECIFIC EXAMPLES**: Companies, products, projects mentioned
-5. **SOURCE FORMAT**: Use appropriate source format based on document type
+🎯 **COMMERCIAL INTEREST GUIDANCE:**
+- Focus on market adoption and business applications
+- Note industry partnerships and deployments
+- Highlight commercial viability indicators
 """)
     
-    # Technology
-    if is_technology_question:
-        guidance_sections.append("""
-⚙️ **TECHNOLOGY QUERY GUIDANCE:**
-1. **EXTRACT SPECIFICS**: Technology names, versions, capabilities
-2. **IDENTIFY APPLICATIONS**: How technologies are used in automotive context
-3. **NOTE PERFORMANCE METRICS**: Speed, accuracy, efficiency improvements
-4. **ASSESS INTEGRATION**: How technologies work together or integrate
-5. **HIGHLIGHT INNOVATIONS**: Novel approaches or breakthroughs
-6. **COMPARE ALTERNATIVES**: Different technology options mentioned
-7. **SOURCE FORMAT**: Use appropriate source format based on document type
-""")
-    
-    # UNIFIED REFERENCING REQUIREMENTS - NEW SECTION
+    # Unified referencing requirements
     unified_referencing = """
-🔗 **UNIFIED REFERENCING REQUIREMENTS - STRICTLY ENFORCED:**
-
-**MANDATORY SOURCE FORMATTING:**
-ALWAYS use these EXACT source formats - no variations allowed:
-
-1. **PATENTS**: [Source: Lens.org Automotive Technology Patents 2025]
-2. **RESEARCH PAPERS**: [Source: Lens.org Automotive Research Papers Abstracts 2025]
-3. **STARTUPS**: [Source: Seedtable Best Automotive Industry Startups to Watch in 2025] 
-   OR [Source: AutoTechInsight Automotive Startup Profiles & Tracker]
-4. **INDUSTRY REPORTS**: 
-   - [Source: BCG: AI Value Creation 2025]
-   - [Source: McKinsey Technology Trends 2025]
-   - [Source: WEF: Emerging Technologies 2025]
-   - [Source: Automotive Software 2030 Report]
-5. **TECHNICAL PAPERS**: Use specific paper titles with icons as shown in context
-
-**REFERENCING RULES:**
-- Each key fact must have a source reference
-- Use the EXACT format shown above - no deviations
-- Place reference at the end of the sentence or paragraph
-- If multiple facts from same source, reference once at end of paragraph
+🔗 **REFERENCING REQUIREMENTS:**
+- Patents: [Source: Lens.org Automotive Technology Patents 2025]
+- Research Papers: [Source: Lens.org Automotive Research Papers Abstracts 2025]
+- Startups: [Source: Seedtable Best Automotive Industry Startups to Watch in 2025] 
+  OR [Source: AutoTechInsight Automotive Startup Profiles & Tracker]
+- Industry Reports: Use specific report titles
 """
     
-    # General guidance - UPDATED
+    # General guidance
     general_guidance = """
 📋 **GENERAL ANSWER GUIDELINES:**
-1. **BE SPECIFIC**: Use exact names, numbers, dates from context
-2. **BE COMPREHENSIVE**: Cover all relevant aspects of the question
-3. **BE STRUCTURED**: Use clear organization (numbered lists, sections)
-4. **BE ACCURATE**: Only use information from the provided context
-5. **CITE SOURCES**: For each key point, include source in EXACT format specified above
-6. **ACKNOWLEDGE LIMITATIONS**: If information is incomplete, state what's missing
-
-**SPECIAL REQUIREMENTS:**
-- For patents: Only include if abstract is available, otherwise skip entirely
-- For research papers: Always include a short summary (2-3 sentences)
-- Use consistent source formatting as specified in Unified Referencing section
+- Be specific and use information from context only
+- Use consistent source formatting
+- Include abstracts for patents and summaries for research papers
 """
     
-    # Combine all guidance with unified referencing
+    # Combine guidance sections
     targeted_guidance = "\n\n".join(guidance_sections)
     
     prompt = f"""
@@ -605,7 +492,7 @@ USER QUESTION:
 {question}
 
 ANALYSIS INSTRUCTIONS:
-You are an automotive technology intelligence analyst. Your task is to provide detailed, accurate answers based strictly on the context provided.
+You are an automotive technology intelligence analyst. Provide detailed answers based strictly on the context.
 
 {targeted_guidance}
 
@@ -613,48 +500,30 @@ You are an automotive technology intelligence analyst. Your task is to provide d
 
 {general_guidance}
 
-FORMAT REQUIREMENTS:
-- Use **bold** for company names, technology names, patent numbers
-- Use numbered lists for multiple items (e.g., 1., 2., 3.)
-- Use bullet points for sub-items within descriptions
-- Include specific metrics (percentages, amounts, dates) when available
-- Group related information together (e.g., by technology, by company, by region)
-
 ANSWER STRUCTURE:
 1. Direct answer to the main question
 2. Supporting details with specific examples
-3. Source citations in EXACT format specified above
-4. Summary or implications if relevant
-
-**CRITICAL REMINDERS:**
-1. **PATENTS**: Only mention patents that have abstracts in the context. Skip patents without abstracts.
-2. **RESEARCH PAPERS**: Always include a short summary (2-3 sentences) for each paper mentioned.
-3. **SOURCES**: Always use the EXACT source formats specified above - no variations.
+3. Source citations in exact format specified
 
 ANSWER:
 """
     return prompt
 
-
 def determine_source_count(question):
-    """Dynamic source counting based on question type - UNCHANGED"""
+    """Determine how many sources to retrieve based on question complexity"""
     question_lower = question.lower()
     
-    # Complex questions need more sources
     if any(keyword in question_lower for keyword in ['summarize', 'comprehensive', 'overall', 'complete', 'latest']):
         return 5
-    # List questions need more sources for coverage
     elif any(keyword in question_lower for keyword in ['list', 'which', 'what are', 'show all', 'show me']):
         return 5
-    # Specific questions can use fewer sources
     elif any(keyword in question_lower for keyword in ['specific', 'exact', 'precise', 'detailed']):
         return 3
-    # Default for most questions
     else:
         return 4
 
 def format_source_name(source_file):
-    """Enhanced file name formatting - WITHOUT EMOJIS for consistency"""
+    """Format source file names for display"""
     name_mapping = {
         # Automotive Papers
         'a_benchmark_framework_for_AL_models_in_automotive_aerodynamics.txt': 'AI in Automotive Aerodynamics Research',
@@ -673,7 +542,7 @@ def format_source_name(source_file):
         'mckinsey_tech_trends_2025.txt': 'McKinsey Technology Trends 2025',
         'wef_emerging_tech_2025.txt': 'WEF: Emerging Technologies 2025',
         
-        # Processed Files - CRITICAL: These must match what the LLM will output
+        # Processed Files
         'autotechinsight_startups_processed.txt': 'AutoTechInsight Automotive Startup Profiles & Tracker',
         'seedtable_startups_processed.txt': 'Seedtable Best Automotive Industry Startups to Watch in 2025',
         'automotive_papers_processed.txt': 'Lens.org Automotive Research Papers Abstracts 2025',
@@ -686,30 +555,27 @@ def format_source_name(source_file):
         'report': 'Industry Report',
     }
     
-    # Try exact match first
     if source_file in name_mapping:
         return name_mapping[source_file]
     
-    # Try partial matching
     source_lower = source_file.lower()
     for key, value in name_mapping.items():
         if key in source_lower:
             return value
     
-    # Default formatting
     return source_file.replace('.txt', '').replace('_', ' ').title()
 
 # Initialize components with lazy loading
 @st.cache_resource
 def initialize_rag_system():
-    """Initialize all RAG components using exact paths - UNCHANGED"""
+    """Initialize all RAG components"""
     rag_components_path, vector_index_path, project_root = get_correct_paths()
     
-    # Check if FAISS vector index exists - updated check for FAISS files
+    # Check if vector index exists
     if not os.path.exists(vector_index_path):
         return None, None, None, f"Vector index not found at: {vector_index_path}"
     
-    # Check for FAISS files specifically
+    # Check for FAISS files
     faiss_files = ['faiss_index.bin', 'texts.pkl', 'metadata.pkl']
     missing_files = []
     for file in faiss_files:
@@ -717,7 +583,7 @@ def initialize_rag_system():
             missing_files.append(file)
     
     if missing_files:
-        return None, None, None, f"FAISS files missing: {', '.join(missing_files)}. Did you run the FAISS embedding creation?"
+        return None, None, None, f"FAISS files missing: {', '.join(missing_files)}"
     
     # Import FAISS retriever
     retriever_module, retriever_error = import_your_components()
@@ -726,8 +592,6 @@ def initialize_rag_system():
     
     # Import query expander
     expander_module, expander_error = import_query_expander()
-    if expander_error and "placeholder" not in expander_error:
-        print(f"Note: Query expander not fully available: {expander_error}")
     
     # Setup Groq client
     groq_client, groq_error = setup_groq_client()
@@ -738,14 +602,12 @@ def initialize_rag_system():
     try:
         retriever = retriever_module.FAISSRetriever(vector_index_path)
         
-        # Initialize query expander if module loaded
+        # Initialize query expander if available
         query_expander = None
         if expander_module and not expander_error:
             try:
                 query_expander = expander_module.QueryExpander()
-                print("✅ Enhanced query expander initialized")
             except Exception as e:
-                print(f"⚠️ Query expander init warning: {e}")
                 query_expander = None
         
         return retriever, groq_client, query_expander, None
@@ -759,171 +621,75 @@ def initialize_predictive_system():
     try:
         predictive_functions, error = import_predictive_components()
         if error:
-            print(f"⚠️ Predictive system warning: {error}")
             return None
         return predictive_functions
     except Exception as e:
-        print(f"⚠️ Predictive system initialization error: {e}")
         return None
 
 def get_targeted_keyword_queries(question, question_type):
-    """Generate targeted keyword queries based on question type - SIMPLIFIED"""
+    """Generate targeted keyword queries based on question type"""
     question_lower = question.lower()
     keyword_queries = []
     
     # Startup related keywords
     if question_type['is_startup_query']:
         keyword_queries.extend([
-            "automotive startup",
-            "AI company automotive",
-            "autonomous vehicle company",
-            "electric vehicle startup",
-            "mobility tech company",
-            "car technology startup",
-            "vehicle AI startup",
-            "automotive venture capital",
-            "tech startup funding",
-            "emerging automotive companies"
+            "automotive startup", "AI company automotive", "autonomous vehicle company",
+            "electric vehicle startup", "mobility tech company", "car technology startup"
         ])
     
     # Patent related keywords
     if question_type['is_patent_query']:
         keyword_queries.extend([
-            "automotive patent",
-            "AI patent automotive",
-            "vehicle technology patent",
-            "intellectual property automotive",
-            "patent EP automotive",
-            "patent US automotive",
-            "patent WO automotive",
-            "automotive invention",
-            "vehicle innovation patent",
-            "autonomous driving patent"
+            "automotive patent", "AI patent automotive", "vehicle technology patent",
+            "patent EP automotive", "patent US automotive", "patent WO automotive"
         ])
     
     # Research related keywords
     if question_type['is_research_query']:
         keyword_queries.extend([
-            "automotive research",
-            "AI study automotive",
-            "vehicle technology research",
-            "autonomous driving study",
-            "electric vehicle research",
-            "automotive AI paper",
-            "vehicle system research",
-            "mobility technology study",
-            "automotive engineering research",
-            "intelligent vehicle study"
+            "automotive research", "AI study automotive", "vehicle technology research",
+            "autonomous driving study", "electric vehicle research", "automotive AI paper"
         ])
     
-    # Trend related keywords
-    if question_type['is_trend_query']:
+    # Commercial interest related keywords - UPDATED
+    if question_type['is_commercial_interest_query']:
         keyword_queries.extend([
-            "automotive trend",
-            "AI trend automotive",
-            "vehicle technology trend",
-            "emerging automotive technology",
-            "future of automotive",
-            "automotive innovation trend",
-            "mobility future trend",
-            "vehicle market trend",
-            "automotive industry trend",
-            "tech trend automotive",
-            "automotive challenge",
-            "AI challenge automotive",
-            "vehicle technology barrier",
-            "automotive adoption barrier"
+            "commercial interest automotive", "market adoption automotive", "industry adoption automotive",
+            "commercial deployment automotive", "business applications automotive", "market ready automotive",
+            "commercial viability automotive", "industry partnerships automotive", "market growth automotive"
         ])
     
-    # Maturity related keywords
-    if question_type['is_maturity_query']:
-        keyword_queries.extend([
-           # TRL & Readiness Keywords
-            "technology readiness automotive",
-            "TRL automotive",
-            "maturity automotive technology",
-            "commercialization automotive",
-            "development stage automotive",
-            "automotive technology adoption",
-            "vehicle tech readiness",
-            "automotive innovation maturity",
-            "scaling automotive technology",
-            "deployment automotive AI",
-            
-            # Hype Cycle Keywords
-            "hype cycle automotive",
-            "innovation trigger automotive",
-            "peak of expectations automotive",
-            "trough of disillusionment automotive",
-            "slope of enlightenment automotive",
-            "plateau of productivity automotive",
-            "technology adoption curve automotive",
-            "market adoption automotive",
-            
-            # Market Readiness Keywords
-            "market readiness automotive",
-            "industry adoption automotive",
-            "mainstream adoption automotive",
-            "commercial deployment automotive",
-            "production ready automotive",
-            "enterprise adoption automotive"
-        ])
-    
-    # Technology/Agent related keywords
+    # Technology related keywords
     if question_type['is_technology_query']:
         # Extract technology terms from question
         tech_terms = re.findall(r'\b[A-Z][a-z]+\b', question)
-        for term in tech_terms[:3]:  # Use first 3 capitalized terms
-            if len(term) > 3 and term.lower() not in ['ai', 'automotive', 'vehicle', 'car']:  # Avoid common words
+        for term in tech_terms[:3]:
+            if len(term) > 3 and term.lower() not in ['ai', 'automotive', 'vehicle', 'car']:
                 keyword_queries.append(f"{term} automotive")
                 keyword_queries.append(f"{term} vehicle")
         
-        # Special handling for AI agents
-        if 'agent' in question_lower or 'agents' in question_lower:
-            keyword_queries.extend([
-                "AI agent automotive",
-                "intelligent agent vehicle",
-                "autonomous agent system",
-                "multi-agent system automotive",
-                "agent-based automotive"
-            ])
-        
         keyword_queries.extend([
-            "automotive technology",
-            "vehicle system",
-            "car technology",
-            "automotive solution",
-            "vehicle application",
-            "automotive AI system",
-            "intelligent vehicle technology",
-            "connected car technology",
-            "autonomous driving system",
-            "electric vehicle technology"
+            "automotive technology", "vehicle system", "car technology",
+            "automotive solution", "vehicle application", "automotive AI system"
         ])
     
-    # General automative/AI keywords (for all queries)
+    # General automotive/AI keywords
     keyword_queries.extend([
-        "automotive AI",
-        "vehicle artificial intelligence",
-        "car machine learning",
-        "autonomous vehicle",
-        "electric vehicle",
-        "connected car",
-        "smart mobility",
-        "intelligent transportation"
+        "automotive AI", "vehicle artificial intelligence", "autonomous vehicle",
+        "electric vehicle", "connected car", "smart mobility"
     ])
     
-    # Remove duplicates and limit
-    return list(set(keyword_queries))[:8]  # Max 8 keyword queries
+    return list(set(keyword_queries))[:8]
 
 def universal_hybrid_retrieval(question, retriever, query_expander=None, k=4):
-    """Your existing retrieval function - UNCHANGED"""
+    """Hybrid retrieval combining semantic and keyword search"""
     all_results = []
     
-    # Identify question type
+    # Identify question type for threshold tuning
     question_type, semantic_threshold, keyword_threshold, k_semantic, k_keyword = analyze_question_type(question)
     
-    # 1. Semantic search with query expansion
+    # Semantic search with query expansion
     if query_expander:
         try:
             expanded_queries = query_expander.expand_query(question, use_llm=False)
@@ -934,7 +700,7 @@ def universal_hybrid_retrieval(question, retriever, query_expander=None, k=4):
     else:
         expanded_queries = [question]
     
-    for query in expanded_queries[:3]:  # Use first 3 expanded queries
+    for query in expanded_queries[:3]:
         try:
             semantic_results = retriever.retrieve_with_sources(
                 query, 
@@ -945,10 +711,10 @@ def universal_hybrid_retrieval(question, retriever, query_expander=None, k=4):
         except Exception as e:
             continue
     
-    # 2. Targeted keyword search
+    # Targeted keyword search
     keyword_queries = get_targeted_keyword_queries(question, question_type)
     
-    for keyword_query in keyword_queries[:5]:  # Use first 5 keyword queries
+    for keyword_query in keyword_queries[:5]:
         try:
             keyword_results = retriever.retrieve_with_sources(
                 keyword_query,
@@ -956,11 +722,10 @@ def universal_hybrid_retrieval(question, retriever, query_expander=None, k=4):
                 threshold=keyword_threshold
             )
             
-            # Filter to ensure relevance
+            # Filter for relevance
             filtered_results = []
             for result in keyword_results:
                 content = result.get('text', result.get('content', '')).lower()
-                # Check if result contains relevant terms
                 if any(term in content for term in keyword_query.split()[:2]):
                     filtered_results.append(result)
             
@@ -968,46 +733,13 @@ def universal_hybrid_retrieval(question, retriever, query_expander=None, k=4):
         except Exception as e:
             continue
     
-    # Ensure relevant document types are included based on question type
-    required_doc_types = []
-    
-    if question_type['is_startup_query']:
-        required_doc_types.extend(['startup', 'seedtable', 'autotech'])
-    
-    if question_type['is_patent_query']:
-        required_doc_types.extend(['patent', 'lens'])
-    
-    if question_type['is_research_query']:
-        required_doc_types.extend(['paper', 'research', 'study', 'academic'])
-    
-    # Check if we have required document types
-    for doc_type in required_doc_types[:2]:  # Check first 2 required types
-        has_type = False
-        for result in all_results:
-            source_file = result.get('source_file', '').lower()
-            if doc_type in source_file:
-                has_type = True
-                break
-        
-        # If missing, try to find documents of this type
-        if not has_type:
-            try:
-                type_results = retriever.retrieve_with_sources(
-                    doc_type,
-                    k=1,
-                    threshold=0.05  # Extremely low threshold
-                )
-                all_results.extend(type_results)
-            except:
-                pass
-    
     # Remove duplicates
     unique_results = []
     seen_content = set()
     
     for result in all_results:
         content = result.get('text', result.get('content', ''))
-        content_start = content[:250]  # Use first 250 chars for deduplication
+        content_start = content[:250]
         source = result.get('source_file', 'unknown')
         signature = f"{source}:{content_start}"
         
@@ -1015,41 +747,20 @@ def universal_hybrid_retrieval(question, retriever, query_expander=None, k=4):
             seen_content.add(signature)
             unique_results.append(result)
     
-    # Enhance ranking: prioritize by relevance to question type
-    def calculate_relevance_score(result, question_type):
-        """Calculate enhanced relevance score based on question type"""
-        base_score = result.get('similarity_score', 0)
-        source_file = result.get('source_file', '').lower()
-        
-        # Type matching bonus
-        type_bonus = 0
-        
-        if question_type['is_startup_query'] and any(keyword in source_file for keyword in ['startup', 'seedtable', 'autotech']):
-            type_bonus += 0.3
-        
-        if question_type['is_patent_query'] and any(keyword in source_file for keyword in ['patent', 'lens']):
-            type_bonus += 0.3
-        
-        if question_type['is_research_query'] and any(keyword in source_file for keyword in ['paper', 'research', 'study']):
-            type_bonus += 0.2
-        
-        return base_score + type_bonus
+    # Sort by similarity score
+    unique_results.sort(key=lambda x: x.get('similarity_score', 0), reverse=True)
     
-    # Sort by enhanced relevance score
-    unique_results.sort(key=lambda x: calculate_relevance_score(x, question_type), reverse=True)
-    
-    # Return top k results
     return unique_results[:k]
 
 def retrieve_with_expansion(question, retriever, query_expander=None, k=4):
-    """Main retrieval function - UNCHANGED"""
+    """Main retrieval function"""
     return universal_hybrid_retrieval(question, retriever, query_expander, k)
 
 def process_predictive_query(question, predictive_functions):
-    """Handle questions that require predictive model - USING MERT'S VERSION"""
+    """Handle questions that require predictive model"""
     if not predictive_functions:
         return {
-            'answer': "⚠️ Predictive model components are not available. Please ensure the predictive model data files are properly set up.",
+            'answer': "⚠️ Predictive model components are not available.",
             'sources': [],
             'success': True,
             'source_count': 0,
@@ -1058,7 +769,6 @@ def process_predictive_query(question, predictive_functions):
 
     try:
         ts_data = predictive_functions["load_area_tech_ts"]()
-
         results = None
         technology_items = []
         view_type = None
@@ -1066,14 +776,11 @@ def process_predictive_query(question, predictive_functions):
         # Determine question type
         category = determine_question_category(question)
 
-        # ---------------------------------------------------
-        # A) Fastest growing technologies (GROWTH PAGE)
-        # ---------------------------------------------------
+        # Academic growth query
         if category == "predictive_growth":
-            # First get a broad list (e.g., 50)
+            # Get broad list then filter
             base_results = predictive_functions["get_fastest_growing_topics"](ts_data, top_n=50)
 
-            # Direct fallback if no results
             if base_results is None or base_results.empty:
                 return {
                     'answer': "No predictive growth insights available.",
@@ -1084,13 +791,9 @@ def process_predictive_query(question, predictive_functions):
                     'technology_items': [],
                 }
 
-            # 1) Only positive growth
+            # Filter for positive growth only
             base_results = base_results[base_results["growth_slope_n_total"] > 0].copy()
-
-            # 2) Sort by last quarter publication count (descending)
             base_results = base_results.sort_values("n_total_last", ascending=False)
-
-            # 3) Take first 5 technologies
             results = base_results.head(5).reset_index(drop=True)
             view_type = "growth"
             technology_items = []
@@ -1103,15 +806,13 @@ def process_predictive_query(question, predictive_functions):
                     tech_display = tech.replace("_", " ") if isinstance(tech, str) else str(tech)
                     raw_area_display = area.replace("_", " ") if isinstance(area, str) else str(area)
 
-                    # If area is 'Global', find area from seed dictionary
+                    # Get area from seed dictionary if not available
                     if (not isinstance(area, str)) or raw_area_display.strip().lower() == "global":
                         area_display = get_area_display_for_tech(tech)
                     else:
                         area_display = raw_area_display
 
-                    # SEED-BASED DEFINITION
                     definition = get_technology_definition(tech, area_display)
-
                     growth_pct = row.growth_slope_n_total * 100
                     recent_activity = int(row.n_total_last)
 
@@ -1141,34 +842,27 @@ def process_predictive_query(question, predictive_functions):
                         "area_display": area_display,
                     })
 
-        # ---------------------------------------------------
-        # B) Technologies likely to mature in the coming year
-        #     (MATURITY PAGE – 5 technologies, based on delta_share_patent)
-        # ---------------------------------------------------
-
-        elif category == "predictive_maturity":
-            # Get a broader candidate pool (e.g., 20)
+        # Commercial interest query
+        elif category == "predictive_commercial_interest":
+            # Get broader candidate pool
             base_results = predictive_functions["get_likely_to_mature_next_year"](
                 ts_data,
                 horizon=12,
                 top_n=20,
             )
 
-            view_type = "maturity"
+            view_type = "commercial_interest"
             technology_items = []
 
-            # Filter + sorting: only positive delta, top 5
+            # Filter and sort for positive delta_share_patent
             if base_results is not None and not base_results.empty:
                 results = base_results.copy()
 
                 if "delta_share_patent" in results.columns:
                     results = results[results["delta_share_patent"] > 0].copy()
-                    results = results.sort_values(
-                        "delta_share_patent", ascending=False
-                    )
+                    results = results.sort_values("delta_share_patent", ascending=False)
                     results = results.head(5).reset_index(drop=True)
                 else:
-                    # Safe fallback: first 5 records
                     results = results.head(5).reset_index(drop=True)
             else:
                 results = None
@@ -1176,17 +870,12 @@ def process_predictive_query(question, predictive_functions):
             if results is not None and not results.empty:
                 for idx, row in enumerate(results.itertuples(), 1):
                     tech = row.auto_tech_cluster
-                    area = row.auto_focus_area  # still use ts_data area for graphing
+                    area = row.auto_focus_area
 
                     tech_display = tech.replace("_", " ") if isinstance(tech, str) else str(tech)
-
-                    # IMPORTANT: Always get area name from seed dictionary
-                    area_display = get_area_display_for_tech(tech)  # e.g., "Communication Technologies"
-
-                    # Definition also from seed dictionary
+                    area_display = get_area_display_for_tech(tech)
                     definition = get_technology_definition(tech, area_display)
 
-                    # SIMPLE TEXT: title + definition + area
                     text = f"**{idx}. {tech_display}**\n\n"
                     if definition:
                         text += f"**Definition:** {definition[0].upper() + definition[1:]}\n\n"
@@ -1194,7 +883,7 @@ def process_predictive_query(question, predictive_functions):
                         text += f"**Definition:** Technology for {tech_display.lower()} applications\n\n"
                     text += f"**Area:** {area_display}\n\n"
 
-                    # Graph: derivative graph with original area from ts_data
+                    # Graph for commercial interest
                     fig = None
                     if "plot_maturity_derivatives" in predictive_functions:
                         try:
@@ -1204,7 +893,7 @@ def process_predictive_query(question, predictive_functions):
                                 tech=tech,
                             )
                         except Exception as e:
-                            print(f"Warning: Could not generate maturity graph for {tech}: {e}")
+                            print(f"Warning: Could not generate commercial interest graph for {tech}: {e}")
                             fig = None
 
                     technology_items.append(
@@ -1216,9 +905,6 @@ def process_predictive_query(question, predictive_functions):
                         }
                     )
 
-        # ---------------------------------------------------
-        # C) Not matching any -> no predictive
-        # ---------------------------------------------------
         else:
             return {
                 'answer': "This question doesn't match any predictive model categories.",
@@ -1228,7 +914,7 @@ def process_predictive_query(question, predictive_functions):
                 'predictive_used': False,
             }
 
-        # Common return
+        # Set title based on view type
         if view_type == "growth":
             insights_title = "Academic Growth in Automotive Technologies"
         else:
@@ -1241,6 +927,8 @@ def process_predictive_query(question, predictive_functions):
 - Based on time-series analysis of automotive technology publications and patents from Lens.org  
 - Forecasts derived from historical growth and patent dynamics  
 - Updated with the latest available data
+- Only showing quarters where data was available
+
 """
 
         return {
@@ -1268,7 +956,7 @@ def process_rag_query(question, retriever, groq_client, query_expander=None):
     try:
         k = determine_source_count(question)
         
-        # Use universal hybrid retrieval
+        # Retrieve relevant documents
         retrieved_data = retrieve_with_expansion(
             question, 
             retriever, 
@@ -1283,7 +971,7 @@ def process_rag_query(question, retriever, groq_client, query_expander=None):
                 'success': True,
                 'source_count': k,
                 'predictive_used': False,
-                'graphs': []  # ADDED: Empty graphs list
+                'graphs': []
             }
         
         # Build context from retrieved data
@@ -1299,12 +987,12 @@ def process_rag_query(question, retriever, groq_client, query_expander=None):
             context_parts.append(f"Source: {readable_name}")
             context_parts.append(f"Relevance Score: {similarity:.3f}")
             context_parts.append(f"Content:\n{content}")
-            context_parts.append("")  # Empty line for separation
+            context_parts.append("")
         
         context = "\n".join(context_parts)
         prompt = build_smart_prompt(question, context)
         
-        # Adjust tokens based on context length
+        # Generate answer using LLM
         max_tokens = 800 if len(context) > 3000 else 600
         
         response = groq_client.chat.completions.create(
@@ -1322,7 +1010,7 @@ def process_rag_query(question, retriever, groq_client, query_expander=None):
             'success': True,
             'source_count': k,
             'predictive_used': False,
-            'graphs': []  # ADDED: Empty graphs list
+            'graphs': []
         }
         
     except Exception as e:
@@ -1335,13 +1023,12 @@ def process_rag_query(question, retriever, groq_client, query_expander=None):
         }
 
 def ask_question(question, retriever, groq_client, predictive_functions=None, query_expander=None):
-    """Main question processing function with simplified routing logic"""
+    """Main question processing with routing logic"""
     
-    # Determine question category
     category = determine_question_category(question)
     
-    # Route to appropriate processor
-    if category in ['predictive_growth', 'predictive_maturity']:
+    # Route to predictive model for growth or commercial interest
+    if category in ['predictive_growth', 'predictive_commercial_interest']:
         if predictive_functions:
             return process_predictive_query(question, predictive_functions)
         else:
@@ -1371,56 +1058,19 @@ def main():
                 st.session_state.rag_initialized = False
                 st.error(f"❌ RAG system initialization failed")
                 
-                # User-friendly error messages with solutions
+                # Show appropriate error messages
                 if "Groq package not installed" in error:
                     st.error("**Missing Dependency**")
-                    st.info("""
-                    **Solution:** Install the Groq package:
-                    ```bash
-                    pip install groq
-                    ```
-                    Then restart the Streamlit app.
-                    """)
+                    st.info("Install the Groq package: `pip install groq`")
                 elif "GROQ_API_KEY" in error:
                     st.error("**API Key Missing**")
-                    st.info("""
-                    **Solution:** Add your Groq API key to the `.env` file in the project root:
-                    ```
-                    GROQ_API_KEY=your_actual_api_key_here
-                    ```
-                    """)
+                    st.info("Add your Groq API key to the `.env` file")
                 elif "Vector index not found" in error or "FAISS files missing" in error:
                     st.error("**Knowledge Base Missing**")
-                    st.info("""
-                    **Solution:** Generate the FAISS vector index first by running the FAISS embedding creation code in notebook 02.
-                    The FAISS index should be in `04_models/vector_index/` with these files:
-                    - faiss_index.bin
-                    - texts.pkl  
-                    - metadata.pkl
-                    - embeddings.npy
-                    """)
+                    st.info("Generate the FAISS vector index first")
                 elif "FAISS Retriever not found" in error:
                     st.error("**FAISS Retriever Missing**")
-                    st.info("""
-                    **Solution:** Make sure `faiss_retriever.py` exists in `rag_components/` folder.
-                    Also install required packages:
-                    ```bash
-                    pip install faiss-cpu fastembed
-                    ```
-                    """)
-                elif "Error importing FAISS retriever" in error:
-                    st.error("**Import Error**")
-                    st.info("""
-                    **Solution:** Check that `faiss_retriever.py` has correct imports:
-                    ```python
-                    import faiss
-                    from fastembed import TextEmbedding
-                    ```
-                    Install missing packages with:
-                    ```bash
-                    pip install faiss-cpu fastembed
-                    ```
-                    """)
+                    st.info("Make sure `faiss_retriever.py` exists in `rag_components/`")
                 else:
                     st.error(f"**Error:** {error}")
                     
@@ -1440,50 +1090,26 @@ def main():
                 st.session_state.predictive_initialized = False
                 st.warning("⚠️ Predictive model not available - using RAG only")
     
-        # Initialize predictive system
-    if 'predictive_initialized' not in st.session_state:
-        with st.spinner("Loading predictive model..."):
-            st.session_state.predictive_functions = initialize_predictive_system()
-            if st.session_state.predictive_functions:
-                st.session_state.predictive_initialized = True
-                st.success("✅ Predictive model loaded successfully")
-            else:
-                st.session_state.predictive_initialized = False
-                error_msg = st.session_state.get('predictive_error', 'Unknown error')
-                st.warning(f"⚠️ Predictive model not available - using RAG only")
-                
-                # Show detailed error in expander
-                with st.expander("🔍 Predictive Model Error Details"):
-                    st.error(f"Error: {error_msg}")
-                    st.info("""
-                    **Common fixes:**
-                    1. Check if `03_notebooks/predictive_notebooks/predictive_components/analytics.py` exists
-                    2. Verify all required Python packages are installed
-                    3. Ensure data files are in the correct location
-                    4. Try clearing cache: `streamlit cache clear`
-                    """)
-
     # Only show query interface if RAG system is initialized
     if not st.session_state.get('rag_initialized', False):
         st.warning("Please fix the initialization issues above to use the system.")
-        # Show footer even if system not initialized
         st.markdown("---")
         st.caption(f"Powered by Innovation Intelligence Suite (2025)")
         return
     
-    # Initialize question input in session state if not exists
+    # Initialize question input in session state
     if 'question_input' not in st.session_state:
         st.session_state.question_input = ""
     
-    # Simplified button state management - Using Siri's descriptive button labels
+    # Pre-defined button questions - UPDATED with commercial interest question
     button_questions = {
         'research_clicked': "Summarize the latest AI research on autonomous driving vehicles.",
         'patents_clicked': "Show me recent patents on AI for automotive vehicles.",
         'startups_clicked': "Which startups work on automotive and autonomous driving?",
         'trends_clicked': "What are the key challenges and pain points in automotive AI adoption?",
         'agents_clicked': "Summarize latest tech trends in development of AI agents.",
-        'growth_clicked': "What are the fastest growing automotive technologies in academia?",  # Updated to match Siri's version
-        'maturity_clicked': "Which automotive technologies are reaching commercial maturity in the next 12 months?"
+        'growth_clicked': "What are the fastest growing automotive technologies in academia?",
+        'commercial_clicked': "For which automotive technologies is the commercial interest rising in the next year?"
     }
     
     # Initialize button flags
@@ -1491,21 +1117,21 @@ def main():
         if flag not in st.session_state:
             st.session_state[flag] = False
     
-    # Check for button clicks BEFORE creating the text input
+    # Check for button clicks
     for flag, question_text in button_questions.items():
         if st.session_state[flag]:
             st.session_state.question_input = question_text
             st.session_state[flag] = False
             st.rerun()
     
-    # Query input - NOW this comes AFTER button checks
+    # Query input
     question = st.text_input(
         "💬 Your question:",
         placeholder="e.g., Which startups work on AI for automotive?",
         key="question_input"
     )
     
-    # Pre-defined query buttons - Using Siri's descriptive button labels
+    # Pre-defined query buttons - UPDATED labels
     st.subheader("Example Questions")
     col1, col2, col3 = st.columns(3)
     
@@ -1532,16 +1158,16 @@ def main():
     
     with col3:
         st.markdown("**🔮 Predictive Analytics**")
-        if st.button("Academic growth", use_container_width=True, key="growth_btn"):  # Siri's label
+        if st.button("Academic growth", use_container_width=True, key="growth_btn"):
             st.session_state.growth_clicked = True
             st.rerun()
-        if st.button("Commercial interest", use_container_width=True, key="transition_btn"):  # Siri's label
-            st.session_state.maturity_clicked = True
+        if st.button("Commercial interest", use_container_width=True, key="commercial_btn"):
+            st.session_state.commercial_clicked = True
             st.rerun()
     
     # Process question
     if question:
-        # Determine processing type for status message
+        # Determine processing type
         category = determine_question_category(question)
         
         if category.startswith('predictive_'):
@@ -1558,7 +1184,7 @@ def main():
                 query_expander=st.session_state.query_expander
             )
         
-        # Display results with appropriate header
+        # Display results
         st.subheader("📝 **Answer**")
         
         if result.get('predictive_used', False) and 'technology_items' in result and result['technology_items']:
@@ -1569,12 +1195,12 @@ def main():
             else:
                 st.markdown("##### Rising Commercial Interest in Automotive Technologies")
 
+            # Display each technology with its graph
             for item in result['technology_items']:
                 tech_container = st.container()
 
                 with tech_container:
-                    # Growth: wider text, narrower graph
-                    # Maturity: wider graph, larger size
+                    # Adjust column ratios based on view type
                     if view_type == "growth":
                         col1, col2 = st.columns([2, 1])
                     else:
@@ -1586,15 +1212,15 @@ def main():
                     with col2:
                         fig = item.get('figure')
                         if fig is not None:
-                            # Enlarge maturity graph + add spacing between subplots
-                            if view_type == "maturity":
+                            # Adjust graph size for commercial interest view
+                            if view_type == "commercial_interest":
                                 try:
                                     fig.set_size_inches(10, 4)
                                     fig.subplots_adjust(wspace=0.35)
                                 except Exception:
                                     pass
 
-                            title_suffix = "Growth Trend" if view_type == "growth" else "Maturity Derivatives"
+                            title_suffix = "Growth Trend" if view_type == "growth" else "Commercial Interest"
                             st.markdown(
                                 f"<div style='text-align: center; margin-bottom: 0.5rem;'><b>{item['tech_display']} - {title_suffix}</b></div>",
                                 unsafe_allow_html=True,
@@ -1603,31 +1229,26 @@ def main():
 
                 st.markdown("---")
 
+            # Methodology note
             st.markdown("**Methodology Note**")
             st.markdown("- Based on time-series analysis of automotive technology publications and patents from Lens.org")
             st.markdown("- Forecasts derived from historical growth and patent dynamics")
             st.markdown("- Updated with the latest available data")
+            st.markdown("- Only showing quarters where data was available")
 
             st.caption("*Based on Time-Series Predictive Modelling*")
 
         elif result.get('predictive_used', False):
-            # Predictive used but no technology_items, just show text
+            # Predictive used but no technology_items
             st.markdown(result['answer'])
             st.caption("*Based on Time-Series Predictive Modelling*")
 
-            
         else:
-            # For RAG queries
-            # Remove colon from the first line if present and format as smaller heading
+            # RAG queries
             answer_lines = result['answer'].split('\n')
             if len(answer_lines) > 0:
-                # Process first line
                 first_line = answer_lines[0].strip()
-                # Remove colon if present
-                first_line = first_line.replace(':', '')
-                # Remove bold markers if present
-                first_line = first_line.replace('**', '')
-                # Format as smaller heading
+                first_line = first_line.replace(':', '').replace('**', '')
                 answer_lines[0] = f"##### {first_line}"
                 result['answer'] = '\n'.join(answer_lines)
             
@@ -1636,7 +1257,7 @@ def main():
             if result['sources']:
                 st.caption(f"*Based on {len(result['sources'])} documents*")
         
-        # Display sources if available (for RAG queries)
+        # Display sources for RAG queries
         if result['sources']:
             with st.expander(f"📚 Source Documents ({len(result['sources'])})"):
                 for i, source in enumerate(result['sources']):
@@ -1648,7 +1269,7 @@ def main():
                     st.text(content[:500] + "..." if len(content) > 500 else content)
                     st.markdown("---")
     
-    # Footer - ALWAYS SHOWN (moved outside the if question: block)
+    # Footer
     st.markdown("---")
     st.caption(f"Powered by Innovation Intelligence Suite (2025)")
 

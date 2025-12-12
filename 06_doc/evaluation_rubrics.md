@@ -1,18 +1,28 @@
 # Evaluation Metrics
 
-Note: In real world, the product development would feature iterative testings with the target audience and sprints to refine selection of connected data sourcesv, best data processing and prompt layer.
+In real world, the product development would feature iterative testings with the target audience and sprints to refine selection of connected data sources, best data processing and prompt layer.
 
-Therefore our final presentation of the project will include a demo video of Innovation Intelligence Suite
+### RAG Model
 
-### RAG
+The performance of the model was evaluated using three methods:
 
-Qualitative test questions (relevance, accuracy, factuality) - defined questions to evaluate model performance
+1. Qualitative Test Questions
 
-Definition relevance score
-What is a good relevance score? What is our goal?
+We defined seven representative user questions, which can be found in 06_doc/user_queries.md.
+The model’s responses were reviewed through an iterative process in which source documents were refined and the prompt template was adjusted until satisfactory accuracy and clarity were achieved.
+The resulting outputs from the last iteration is available in 07_testsdemo/test_outputs.
 
-Loading time (below 10 seconds?)
+2. Relevance Score
 
+A relevance score measures how well the retrieved documents align semantically with the user query. In our system, this score is calculated using FAISS’s cosine-similarity distance metric, which compares the query embedding with document embeddings. Cosine similarity returns a value between –1 and 1, with higher values indicating stronger semantic alignment.
+
+For this project, out goal was to have a FAISS cosine-similarity score of 0.5 or higher.
+
+The threshold set for the model was a similarity score of 0.3 to ensure that only the most semantically relevant documents were passed to the model for generation (The score was reduced to 0.15 for startup questions and 0.25 for patent questions as it was found these questions needed boosting).
+
+3. Loading Time
+
+We set a performance target requiring the system to load and respond in under 10 seconds, including document retrieval, model inference, and any post-processing steps.
 
 ### Predictive Model
 
