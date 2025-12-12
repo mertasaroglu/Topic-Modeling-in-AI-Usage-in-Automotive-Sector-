@@ -12,6 +12,10 @@ This capstone project explores how AI/ML can accelerate insight generation for R
 
 Developed as a Data Science + AI Bootcamp capstone project (2025).
 
+View full project presentation: [final_capstone_project_presentation.pptx.pdf](./06_doc/final_capstone_project_presentation.pptx.pdf)
+
+*(Click link for PDF preview)*
+
 ## Features 
 - **Intelligent query processing** that classifies and routes requests to appropriate modules
 - **Multi-source synthesis**: Query and summarize automotive technology documents (18,000+ chunks)
@@ -64,7 +68,7 @@ streamlit run streamlit_app.py
 Open http://localhost:8501 in your browser
 ```
 
-**Option B: CLI/Jupyter (For Development & Testing)**
+**Option B: CLI/Jupyter (For Development & Testing -needs additional requirements installment-)**
 
 ```bash
 jupyter notebook
@@ -75,26 +79,16 @@ Notebook 03_rag_pipeline.ipynb contains the main RAG implementation
 ## Project Structure
 ```
 innovation-intelligence-suite/
-├── 01_data/                        # Data directories
+├── 01_data/                        # Data directories (processed)
 │   ├── predictive_model/           # Prediction model datasets
 │   └── rag_automotive_tech/        # RAG automotive documents
 ├── 02_images/                      # Demo & presentation images
-│   ├── demo_screenshot1.png
-│   ├── demo_screenshot2.png
-│   └── hero_image.jpg
 ├── 03_notebooks/                   # All notebooks organized by module
-│   ├── predictive_notebooks/       # Technology adoption prediction
+│   ├── predictive_notebooks/       # Technology adoption prediction development
 │   │   ├── predictive_components/  # Reusable prediction modules
-│   │   ├── 1_dataset_download.ipynb
-│   │   ├── 2_auto_area_free_tech_BAAl.ipynb
-│   │   ├── 3_predictive_model_baal.ipynb
-│   │   └── sourcesEDA.ipynb
+│   │
 │   └── rag_notebooks/              # RAG pipeline development
 │       ├── rag_components/         # Reusable RAG modules
-│       ├── 01_reports_processing_rag.ipynb
-│       ├── 02_retrieval_rag.ipynb
-│       ├── 03_generator_rag.ipynb
-│       └── 04_interface_rag.ipynb
 ├── 04_models/                      # Saved models & vector stores
 │   ├── predictive_techname/        # Prediction model files
 │   └── vector_index/               # RAG vector embeddings
@@ -107,9 +101,6 @@ innovation-intelligence-suite/
 │   └── user_queries.md
 ├── 07_tests/                       # Testing & demos
 │   └── demo_outputs/               # Test results & outputs
-│       ├── demo_results/
-│       ├── generation_tests/
-│       └── retrieval_tests/
 ├── .env                            # Environment variables
 ├── .env.example                    # Environment template
 ├── .gitignore                      # Git ignore rules
@@ -118,33 +109,3 @@ innovation-intelligence-suite/
 └── requirements.txt                # Python dependencies
 ```
 
-## Demo Queries
-Try these in the CLI or web app:
-- "Tell me about automotive startups in AI" 🚀
-- "What are the challenges in autonomous driving?" 📄  
-- "How is AI transforming the automotive industry?" 🔍
-
-## Stack 
-- **RAG Pipeline**: LangChain - FAISS - TF-IDF Vectorization
-- **Answer Generation**: Template-based with source attribution
-- **Interface**: Streamlit & Jupyter notebooks
-- **Language**: Python
-
-## What's NOT to push
-- Raw PDFs if under copyright (only metadata or short excerpts)
-- API keys (use environment variables only)  
-- Large model/vector files (>100 MB)
-- Processed chunks (can be regenerated)
-
-## Optional/Additional Enhancements
-- **MIT License** file added
-- Include a **demo video link** or **GIF** in the README
-- Add a **Streamlit Cloud or HuggingFace Space** link for live demo
-- **TRL Classifier** - Technology Readiness Level prediction (future enhancement)
-
----
-## Development
-For development and customization:
-- Use 02_retrieval_rag.ipynb for retrieval system improvements
-- Use 03_generator_rag.ipynb for answer generation enhancements  
-- All notebooks use modular components from rag_components/

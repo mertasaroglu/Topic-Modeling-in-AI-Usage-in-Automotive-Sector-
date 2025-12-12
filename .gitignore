@@ -1,54 +1,76 @@
-# =============================================
-# DATA DIRECTORIES
-# =============================================
+# ============================================
+# DEVELOPMENT .gitignore
+# (Project still in active development)
+# ============================================
 
-# Current structure - 01_data/
-**/01_data/**/raw_sources/
-**/01_data/**/processed/chunks/
-**/01_data/**/processed/*.json
-**/01_data/**/processed/*.pdf
-**/01_data/**/processed/*.txt  # Add this if you process text files
-!**/01_data/**/README.md
-**/01_data/rag_automotive_tech/raw_sources
+# 1. SECRETS & CONFIGURATION - NEVER COMMIT!
+# ============================================
+.env                    # Your actual API keys (KEEP SECRET!)
+.env.local              # Local overrides
+credentials.json        # Service credentials
 
-# Old structure - data/ (if any legacy files exist)
-data/rag_automotive_tech/raw_sources/
-data/rag_automotive_tech/processed/*.pdf
-data/rag_automotive_tech/processed/*.json
+# 2. RAW DATA SOURCES - Too large for GitHub
+# ============================================
+01_data/**/raw_sources/     # Original PDFs, documents
+01_data/**/raw_sources/*    # All raw files
+# !01_data/**/raw_sources/.gitkeep  # Uncomment if you need empty dir
 
-# =============================================
-# MODEL DIRECTORIES
-# =============================================
+# 3. GENERATED MODELS - Can be rebuilt
+# ============================================
+04_models/              # Vector stores, embeddings, ML models
+# !04_models/.gitkeep   # Uncomment to keep empty directory
+# TODO: After development, decide which models to keep
+# !04_models/vector_index/faiss_index.bin  # Example: keep final model
 
-# Current structure - 04_models/
+# 4. PROCESSED DATA - Large intermediate files
+# ============================================
+# 01_data/**/processed/  # Currently KEEPING for debugging
+# 01_data/**/processed/*.json
+# 01_data/**/processed/*.pkl
+# COMMENT OUT ABOVE LINES before final submission to keep repo small
 
-# Old structure - models/ (if any legacy files exist)
+# 5. TEST OUTPUTS - Generated during testing
+# ============================================
+07_tests/demo_outputs/  # Test results, demo outputs
+# Keep for now, clean before final
 
-# =============================================
-# MACHINE LEARNING MODEL FILES (All locations)
-# =============================================
-*.key
-*.ckpt
-*.bin
-# Add exception immediately after *.bin line
-# On macOS:
-sed -i '' '/\*\.bin/a\
-!04_models/vector_index/faiss_index.bin' .gitignore
-*.pth
-*.pt
-*.safetensors
-*.h5
-*.tflite
-*.onnx
+# 6. SYSTEM & IDE FILES - Platform specific
+# ============================================
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
 
-# =============================================
-# PYTHON & DEVELOPMENT
-# =============================================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# IDE files
+.vscode/                # VS Code settings
+.idea/                  # PyCharm/IntelliJ
+*.swp                   # Vim swap files
+*.swo
+
+# 7. PYTHON & VIRTUAL ENVIRONMENTS
+# ============================================
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Distribution / packaging
 build/
 develop-eggs/
 dist/
@@ -67,41 +89,34 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# Virtual environments
-.venv
-venv/
-env/
-ENV/
+# 8. JUPYTER NOTEBOOKS
+# ============================================
+.ipynb_checkpoints/
+*.ipynb_checkpoints*
 
-# Jupyter Notebook
-.ipynb_checkpoints
+# 9. STREAMLIT
+# ============================================
+.streamlit/             # Streamlit config & cache
+05_app/.streamlit/      # App-specific streamlit files
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Streamlit cache
-**/05_app/.streamlit/
-
-# Environment variables
-.env
-.env.local
-
-# Logs
+# 10. LOGS & TEMPORARY FILES
+# ============================================
 *.log
 logs/
-
-# Temporary files
 *.tmp
-*.temp4442_models/vector_index/faiss_index.bin
+*.temp
+.cache/
+
+# ============================================
+# DEVELOPMENT NOTES:
+# ============================================
+# - Currently keeping processed data for debugging
+# - Will need to clean 01_data/processed/ before final
+# - Will need to decide which models to keep
+# - Test outputs can be regenerated
+
+# TODO BEFORE FINAL SUBMISSION:
+# 1. Uncomment lines for 01_data/**/processed/
+# 2. Decide which models to keep (use ! exceptions)
+# 3. Clean 07_tests/demo_outputs/
+# 4. Remove these development comments

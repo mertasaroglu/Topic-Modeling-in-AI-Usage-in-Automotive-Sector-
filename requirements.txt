@@ -1,57 +1,28 @@
-# Core Data Science
-numpy==1.24.3 # Pin to compatible version
-pandaspandas==2.0.3
-scikit-learn==1.3.2
-python-dotenv==1.0.0
-spacy==3.7.2
-scipy
-pickle
-importlib
-EOF
-matplotlib
-umap
+# ============================================
+# STREAMLIT DEMO - MINIMAL REQUIREMENTS (Recommended for Demo)
+# ============================================
 
-# LangChain Ecosystem
-langchain>=0.1.0
-langchain-community>=0.0.10
-langchain-core>=0.1.0
+# CORE (Required for basic functionality)
+pandas>=2.0.3
+numpy>=1.24.3
+python-dotenv>=1.0.0
 
-# Text Processing
-nltk
-tqdm
-PyPDF2
-
-# Vector Store & Embeddings
-faiss-cpu  # Lightweight CPU version
-fastembed==0.2.5
-
-# Web Framework
+# STREAMLIT & WEB APP
 streamlit>=1.28.0
 
-# Hugging Face (optional - for future LLM integration)
-transformers==4.57.3
-torch
-accelerate>=1.0
-datasets>=4.0
-pyarrow>=10.0.0
+# RAG PIPELINE (Core functionality)
+langchain>=0.1.0
+langchain-community>=0.0.10
+faiss-cpu>=1.7.0
+fastembed>=0.2.5
 
-# Utilities
-groq
-python-dotenv
-joblib
-chardet  # For encoding detection
-os
-sys
+# TEXT PROCESSING (For document handling)
+spacy>=3.7.2
+PyPDF2>=3.0.0
+chardet>=5.2.0
 
-# Jupyter
-jupyter
-ipykernel
-ipywidgets
+# LLM API (Groq integration)
+groq>=0.3.0
 
-# Development
-black
-flake8
-pytest
-
-# Dataset
-kaggle
+# UTILITIES
+tqdm>=4.65.0
