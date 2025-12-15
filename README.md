@@ -32,7 +32,7 @@ View full project presentation: [final_capstone_project_presentation.pptx.pdf](.
 
 ### 1. Clone Repository
 ```bash 
-git clone https://github.com/<yourname>/innovation-intelligence-suite.git
+git clone https://github.com/contacttimowolf-netizen/innovation-intelligence-suite.git
 cd innovation-intelligence-suite
 ```
 
