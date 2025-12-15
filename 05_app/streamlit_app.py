@@ -222,7 +222,7 @@ def analyze_question_type(question):
                              ['trend', 'forecast', 'future', 'emerging', 'development', 'innovation', 
                               'pain point', 'challenge', 'barrier', 'obstacle']),
         
-        # Predictive model detection - UPDATED for commercial interest
+        # Predictive model detection
         'is_growth_query': any(keyword in question_lower for keyword in 
                               ['fastest growing', 'growth rate', 'increasing', 'growing technology',
                                'accelerating', 'expanding', 'growth trend', 'rapid growth']),
@@ -323,7 +323,7 @@ def format_predictive_results(results_df, category):
         return "No predictive insights available for this query (empty results)."
     
     try:
-        # Growth query format (academic growth)
+        # Academic growth query format
         if category == 'predictive_growth':
             formatted = "**Academic Growth in Automotive Technologies**\n\n"
             
@@ -652,7 +652,7 @@ def get_targeted_keyword_queries(question, question_type):
             "autonomous driving study", "electric vehicle research", "automotive AI paper"
         ])
     
-    # Commercial interest related keywords - UPDATED
+    # Commercial interest related keywords
     if question_type['is_commercial_interest_query']:
         keyword_queries.extend([
             "commercial interest automotive", "market adoption automotive", "industry adoption automotive",
@@ -1101,7 +1101,7 @@ def main():
     if 'question_input' not in st.session_state:
         st.session_state.question_input = ""
     
-    # Pre-defined button questions - UPDATED with commercial interest question
+    # Pre-defined button questions
     button_questions = {
         'research_clicked': "Summarize the latest AI research on autonomous driving vehicles.",
         'patents_clicked': "Show me recent patents on AI for automotive vehicles.",
@@ -1131,7 +1131,7 @@ def main():
         key="question_input"
     )
     
-    # Pre-defined query buttons - UPDATED labels
+    # Pre-defined query buttons
     st.subheader("Example Questions")
     col1, col2, col3 = st.columns(3)
     
