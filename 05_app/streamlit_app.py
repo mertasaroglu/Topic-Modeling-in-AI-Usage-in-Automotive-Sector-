@@ -7,6 +7,10 @@ import importlib.util
 import re
 import matplotlib.pyplot as plt
 
+# ===== LLM FEATURE FLAG (default: OFF for public demo) =====
+LLM_ENABLED = os.getenv("ENABLE_LLM", "false").strip().lower() in ("1", "true", "yes", "y", "on")
+
+
 # Technology definitions dictionary
 AUTO_TOP_SEEDS_1 = {
     "Sensor_Fusion": "multi sensor fusion architecture combining lidar radar and camera into unified perception outputs",
@@ -28,15 +32,15 @@ AUTO_TOP_SEEDS_2 = {
 }
 AUTO_TOP_SEEDS_3 = {
     "Renewable_Energy": "renewable energy systems",
-    "Solar_Cell": "photovoltaic solar cells (solar cell, perovskite solar, sensitized solar, organic photovoltaics, quantum dots, silicon solar)",
+    "Solar_Cell": "photovoltaic solar cells (perovskite solar, sensitized solar, organic photovoltaics, silicon solar)",
     "Electrochemical_Energy": "electrochemical energy systems (electrochemical energy, hydrogen evolution)",
-    "Nano_Energy": "nanoscale energy systems (nano energy, quantum dots)",
+    "Nano_Energy": "nanoscale energy systems (quantum dots)",
     "Natural_Gas_Energy": "natural gas based energy systems (natural gas)",
 }
 AUTO_TOP_SEEDS_4 = {
-    "Battery_Management_System": "battery management and control (battery management bms, battery management system, state charge soc, state health soh, battery state health)",
+    "Battery_Management_System": "battery management and control (bms, state of charge (soc), state of health (soh)",
     "High_Energy_Batteries": "lithium ion battery technology (li ion batteries, ion batteries electric, performance lithium ion, high energy density)",
-    "Battery_Thermal_Management": "battery thermal and cooling systems (battery thermal management, thermal management systems)",
+    "Battery_Thermal_Management": "battery thermal and cooling systems",
     "Battery_Diagnostics_EIS": "electrochemical battery diagnostics (electrochemical impedance spectroscopy)",
     "Battery_Performance_Prediction": "lithium ion aging and performance prediction (prediction lithium ion, RUL)"
 }
@@ -44,7 +48,7 @@ AUTO_TOP_SEEDS_5 = {
     "Smart_Grid": "smart grid control and monitoring (smart grid technologies, power grid)",
     "Distributed_Energy_Resources": "distributed energy generation and control (distributed energy resources)",
     "V2G_G2V_Technologies": "bidirectional vehicle grid interaction (grid v2g technology, vehicle g2v, bidirectional energy)",
-    "Charging_Infrastructure": "ev charging systems and network (charging infrastructure)",
+    "Charging_Infrastructure": "ev charging systems and network",
     "Reactive_Power_Management": "reactive power control in grids (reactive power)",
     "DC_Microgrid": "dc based local energy networks (dc microgrid)"
 }
@@ -65,15 +69,15 @@ AUTO_TOP_SEEDS_7 = {
 AUTO_TOP_SEEDS_8 = {
     "Autonomous_Delivery_Robots": "autonomous robotic delivery and last mile transport (automated delivery, robotic delivery shipping)",
     "Warehouse_Intelligence_Robots": "autonomous warehouse robots for inventory tracking mapping inspection and stock counting (counting stock warehouse)",
-    "AGV_Systems": "automated guided vehicles for structured factory and warehouse transport (automated guided vehicle)",
+    "AGV_Systems": "automated guided vehicles for structured factory and last mile transportation",
     "Hybrid_Modular_Robotics": "hybrid and modular robotic system architectures combining multiple robot types into reconfigurable platforms (hybrid modular)"
 }
 AUTO_TOP_SEEDS_9 = {
     "Intrusion_Detection": "network intrusion detection (intrusion detection)",
     "Cyber_Physical_Security": "security of cyber physical automotive systems (cyber physical)",
-    "InVehicle_Network_Protocols": "automotive communication and bus protocols (controller area network, protocols)",
+    "InVehicle_Network_Protocols": "automotive communication and bus protocols (controller area network)",
     "Cryptography_Key_Management": "encryption ciphering and cryptographic key management (ciphering key)",
-    "Integrity_Protection": "data and message integrity protection mechanisms (integrity protection)",
+    "Integrity_Protection": "data and message integrity protection mechanisms",
     "Functional_Safety": "automotive functional safety and fail safe systems (functional safety)"
 }
 
@@ -222,7 +226,7 @@ def analyze_question_type(question):
                              ['trend', 'forecast', 'future', 'emerging', 'development', 'innovation', 
                               'pain point', 'challenge', 'barrier', 'obstacle']),
         
-        # Predictive model detection
+        # Predictive model detection - UPDATED for commercial interest
         'is_growth_query': any(keyword in question_lower for keyword in 
                               ['fastest growing', 'growth rate', 'increasing', 'growing technology',
                                'accelerating', 'expanding', 'growth trend', 'rapid growth']),
@@ -323,7 +327,7 @@ def format_predictive_results(results_df, category):
         return "No predictive insights available for this query (empty results)."
     
     try:
-        # Academic growth query format
+        # Growth query format (academic growth)
         if category == 'predictive_growth':
             formatted = "**Academic Growth in Automotive Technologies**\n\n"
             
@@ -568,52 +572,57 @@ def format_source_name(source_file):
 # Initialize components with lazy loading
 @st.cache_resource
 def initialize_rag_system():
-    """Initialize all RAG components"""
+    """Initialize RAG components (retriever always, LLM optional)"""
     rag_components_path, vector_index_path, project_root = get_correct_paths()
-    
+
     # Check if vector index exists
     if not os.path.exists(vector_index_path):
         return None, None, None, f"Vector index not found at: {vector_index_path}"
-    
+
     # Check for FAISS files
     faiss_files = ['faiss_index.bin', 'texts.pkl', 'metadata.pkl']
     missing_files = []
     for file in faiss_files:
         if not os.path.exists(os.path.join(vector_index_path, file)):
             missing_files.append(file)
-    
+
     if missing_files:
         return None, None, None, f"FAISS files missing: {', '.join(missing_files)}"
-    
+
     # Import FAISS retriever
     retriever_module, retriever_error = import_your_components()
     if retriever_error:
         return None, None, None, retriever_error
-    
+
     # Import query expander
     expander_module, expander_error = import_query_expander()
-    
-    # Setup Groq client
-    groq_client, groq_error = setup_groq_client()
-    if groq_error:
-        return None, None, None, groq_error
-    
+
     # Initialize FAISS retriever
     try:
         retriever = retriever_module.FAISSRetriever(vector_index_path)
-        
+
         # Initialize query expander if available
         query_expander = None
         if expander_module and not expander_error:
             try:
                 query_expander = expander_module.QueryExpander()
-            except Exception as e:
+            except Exception:
                 query_expander = None
-        
+
+        # LLM (Groq) is OPTIONAL
+        groq_client = None
+        groq_error = None
+        if LLM_ENABLED:
+            groq_client, groq_error = setup_groq_client()
+            if groq_error:
+                # LLM requested but not available -> still allow retriever-only mode
+                groq_client = None
+
         return retriever, groq_client, query_expander, None
-        
+
     except Exception as e:
         return None, None, None, f"Error initializing FAISS retriever: {str(e)}"
+
 
 @st.cache_resource
 def initialize_predictive_system():
@@ -652,7 +661,7 @@ def get_targeted_keyword_queries(question, question_type):
             "autonomous driving study", "electric vehicle research", "automotive AI paper"
         ])
     
-    # Commercial interest related keywords
+    # Commercial interest related keywords - UPDATED
     if question_type['is_commercial_interest_query']:
         keyword_queries.extend([
             "commercial interest automotive", "market adoption automotive", "industry adoption automotive",
@@ -952,18 +961,17 @@ def process_predictive_query(question, predictive_functions):
         }
 
 def process_rag_query(question, retriever, groq_client, query_expander=None):
-    """Handle RAG-based questions"""
+    """Handle RAG-based questions. If LLM is disabled/unavailable -> retrieval-only."""
     try:
         k = determine_source_count(question)
-        
-        # Retrieve relevant documents
+
         retrieved_data = retrieve_with_expansion(
-            question, 
-            retriever, 
-            query_expander=query_expander, 
+            question,
+            retriever,
+            query_expander=query_expander,
             k=k
         )
-        
+
         if not retrieved_data:
             return {
                 'answer': "I couldn't find relevant information in our knowledge base for this specific question.",
@@ -973,37 +981,52 @@ def process_rag_query(question, retriever, groq_client, query_expander=None):
                 'predictive_used': False,
                 'graphs': []
             }
-        
-        # Build context from retrieved data
+
+        # If LLM not available -> retrieval-only response
+        if (not LLM_ENABLED) or (groq_client is None):
+            answer = (
+                "##### Retrieval-only mode (LLM disabled)\n\n"
+                "LLM-based synthesis is disabled in the public demo.\n"
+                "You can still inspect the retrieved source documents below."
+            )
+            return {
+                'answer': answer,
+                'sources': retrieved_data,
+                'success': True,
+                'source_count': k,
+                'predictive_used': False,
+                'graphs': []
+            }
+
+        # Build context
         context_parts = []
         for i, item in enumerate(retrieved_data):
             content = item.get('text', item.get('content', ''))
             source_file = item.get('source_file', 'unknown')
-            
+
             readable_name = format_source_name(source_file)
             similarity = item.get('similarity_score', 0)
-            
+
             context_parts.append(f"--- DOCUMENT {i+1} ---")
             context_parts.append(f"Source: {readable_name}")
             context_parts.append(f"Relevance Score: {similarity:.3f}")
             context_parts.append(f"Content:\n{content}")
             context_parts.append("")
-        
+
         context = "\n".join(context_parts)
         prompt = build_smart_prompt(question, context)
-        
-        # Generate answer using LLM
+
         max_tokens = 800 if len(context) > 3000 else 600
-        
+
         response = groq_client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=max_tokens,
             temperature=0.3
         )
-        
+
         answer = response.choices[0].message.content
-        
+
         return {
             'answer': answer,
             'sources': retrieved_data,
@@ -1012,7 +1035,7 @@ def process_rag_query(question, retriever, groq_client, query_expander=None):
             'predictive_used': False,
             'graphs': []
         }
-        
+
     except Exception as e:
         return {
             'answer': f"I encountered an error while processing your question: {str(e)}",
@@ -1021,6 +1044,7 @@ def process_rag_query(question, retriever, groq_client, query_expander=None):
             'predictive_used': False,
             'graphs': []
         }
+
 
 def ask_question(question, retriever, groq_client, predictive_functions=None, query_expander=None):
     """Main question processing with routing logic"""
@@ -1045,40 +1069,29 @@ def main():
         page_icon="🚗", 
         layout="wide"
     )
-    
+    DEMO_PRED_ONLY = os.getenv("DEMO_PRED_ONLY", "true").strip().lower() in ("1","true","yes","y","on")
     st.title("Uncover What's Next in Auto Tech")
     st.markdown("Developed as a Data Science + AI Bootcamp capstone project")
     
     # Initialize RAG system
-    if 'rag_initialized' not in st.session_state:
-        with st.spinner("Loading RAG system..."):
-            st.session_state.retriever, st.session_state.groq_client, st.session_state.query_expander, error = initialize_rag_system()
-            
+    if DEMO_PRED_ONLY:
+        st.session_state.rag_initialized = False
+        st.session_state.retriever = None
+        st.session_state.groq_client = None
+        st.session_state.query_expander = None
+    else:
+        if 'rag_initialized' not in st.session_state:
+            with st.spinner("Loading RAG system..."):
+                st.session_state.retriever, st.session_state.groq_client, st.session_state.query_expander, error = initialize_rag_system()
+
             if error:
                 st.session_state.rag_initialized = False
                 st.error(f"❌ RAG system initialization failed")
-                
-                # Show appropriate error messages
-                if "Groq package not installed" in error:
-                    st.error("**Missing Dependency**")
-                    st.info("Install the Groq package: `pip install groq`")
-                elif "GROQ_API_KEY" in error:
-                    st.error("**API Key Missing**")
-                    st.info("Add your Groq API key to the `.env` file")
-                elif "Vector index not found" in error or "FAISS files missing" in error:
-                    st.error("**Knowledge Base Missing**")
-                    st.info("Generate the FAISS vector index first")
-                elif "FAISS Retriever not found" in error:
-                    st.error("**FAISS Retriever Missing**")
-                    st.info("Make sure `faiss_retriever.py` exists in `rag_components/`")
-                else:
-                    st.error(f"**Error:** {error}")
-                    
-            elif st.session_state.retriever and st.session_state.groq_client:
+                # (istersen bu error detaylarını da burada bırakabilirsin)
+            elif st.session_state.retriever and (st.session_state.groq_client or not LLM_ENABLED):
                 st.session_state.rag_initialized = True
             else:
                 st.session_state.rag_initialized = False
-                st.error("❌ Failed to initialize RAG system")
     
     # Initialize predictive system
     if 'predictive_initialized' not in st.session_state:
@@ -1091,23 +1104,23 @@ def main():
                 st.warning("⚠️ Predictive model not available - using RAG only")
     
     # Only show query interface if RAG system is initialized
-    if not st.session_state.get('rag_initialized', False):
-        st.warning("Please fix the initialization issues above to use the system.")
-        st.markdown("---")
-        st.caption(f"Powered by Innovation Intelligence Suite (2025)")
-        return
+    if not DEMO_PRED_ONLY:
+        st.warning("RAG retriever is not available. Predictive analytics can still run if loaded.")
+
     
-    # Initialize question input in session state
+# Initialize question input (force empty on first load)
     if 'question_input' not in st.session_state:
         st.session_state.question_input = ""
+
+    if 'fresh_load' not in st.session_state:
+        st.session_state.fresh_load = True
+        st.session_state.question_input = ""  # force empty on first render
     
-    # Pre-defined button questions
+    RAG_UI_ENABLED = st.session_state.get('rag_initialized', False)
+    LLM_UI_ENABLED = LLM_ENABLED and (st.session_state.get('groq_client') is not None)
+    
+    # Pre-defined button questions - UPDATED with commercial interest question
     button_questions = {
-        'research_clicked': "Summarize the latest AI research on autonomous driving vehicles.",
-        'patents_clicked': "Show me recent patents on AI for automotive vehicles.",
-        'startups_clicked': "Which startups work on automotive and autonomous driving?",
-        'trends_clicked': "What are the key challenges and pain points in automotive AI adoption?",
-        'agents_clicked': "Summarize latest tech trends in development of AI agents.",
         'growth_clicked': "What are the fastest growing automotive technologies in academia?",
         'commercial_clicked': "For which automotive technologies is the commercial interest rising in the next year?"
     }
@@ -1127,40 +1140,21 @@ def main():
     # Query input
     question = st.text_input(
         "💬 Your question:",
-        placeholder="e.g., Which startups work on AI for automotive?",
+        placeholder="",   # <- tamamen boş
         key="question_input"
     )
     
-    # Pre-defined query buttons
-    st.subheader("Example Questions")
-    col1, col2, col3 = st.columns(3)
-    
+    # Pre-defined query buttons - UPDATED labels
+    st.subheader("Predictive Analytics")
+
+    col1, col2 = st.columns(2)
+
     with col1:
-        st.markdown("**🚀 Innovation Intelligence**")
-        if st.button("Latest AI Research", use_container_width=True, key="research_btn"):
-            st.session_state.research_clicked = True
-            st.rerun()
-        if st.button("Automotive Patents", use_container_width=True, key="patents_btn"):
-            st.session_state.patents_clicked = True
-            st.rerun()
-        if st.button("Startups in Automotive", use_container_width=True, key="startups_btn"):
-            st.session_state.startups_clicked = True
-            st.rerun()
-    
-    with col2:
-        st.markdown("**📈 Market Insights**")
-        if st.button("Industry Pain Points", use_container_width=True, key="trends_btn"):
-            st.session_state.trends_clicked = True
-            st.rerun()
-        if st.button("AI Agents Development", use_container_width=True, key="agents_btn"):
-            st.session_state.agents_clicked = True
-            st.rerun()
-    
-    with col3:
-        st.markdown("**🔮 Predictive Analytics**")
         if st.button("Academic growth", use_container_width=True, key="growth_btn"):
             st.session_state.growth_clicked = True
             st.rerun()
+
+    with col2:
         if st.button("Commercial interest", use_container_width=True, key="commercial_btn"):
             st.session_state.commercial_clicked = True
             st.rerun()
