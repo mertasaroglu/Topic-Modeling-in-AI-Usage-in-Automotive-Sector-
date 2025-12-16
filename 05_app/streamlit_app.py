@@ -1065,7 +1065,7 @@ def ask_question(question, retriever, groq_client, predictive_functions=None, qu
 
 def main():
     st.set_page_config(
-        page_title="INNOVATION INTELLIGENCE SUITE", 
+        page_title="AUTO TECH INTELLIGENCE", 
         page_icon="🚗", 
         layout="wide"
     )
