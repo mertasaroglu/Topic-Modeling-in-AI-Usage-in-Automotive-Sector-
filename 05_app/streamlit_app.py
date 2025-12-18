@@ -36,7 +36,7 @@ AUTO_TOP_SEEDS_3 = {
 AUTO_TOP_SEEDS_4 = {
     "Battery_Management_System": "battery management and control (bms, state of charge (soc), state of health (soh))",
     "High_Energy_Batteries": "lithium ion battery technology (li ion batteries, ion batteries electric, performance lithium ion, high energy density)",
-    "Battery_Thermal_Management": "battery thermal and cooling systems (battery thermal management, thermal management systems)",
+    "Battery_Thermal_Management": "battery thermal and cooling systems",
     "Battery_Diagnostics_EIS": "electrochemical battery diagnostics (electrochemical impedance spectroscopy)",
     "Battery_Performance_Prediction": "lithium ion aging and performance prediction (prediction lithium ion, RUL)"
 }
