@@ -71,7 +71,7 @@ AUTO_TOP_SEEDS_8 = {
 AUTO_TOP_SEEDS_9 = {
     "Intrusion_Detection": "network intrusion detection (intrusion detection)",
     "Cyber_Physical_Security": "security of cyber physical automotive systems (cyber physical)",
-    "InVehicle_Network_Protocols": "automotive communication and bus protocols (controller area network, protocols)",
+    "InVehicle_Network_Protocols": "automotive communication and bus protocols (controller area network)",
     "Cryptography_Key_Management": "encryption ciphering and cryptographic key management (ciphering key)",
     "Integrity_Protection": "data and message integrity protection mechanisms",
     "Functional_Safety": "automotive functional safety and fail safe systems (functional safety)"
